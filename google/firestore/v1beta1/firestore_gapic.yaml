@@ -139,6 +139,15 @@ interfaces:
     rpc_timeout_multiplier: 1
     max_rpc_timeout_millis: 300000
     total_timeout_millis: 600000
+  - name: listen
+    initial_retry_delay_millis: 100
+    retry_delay_multiplier: 1.3
+    max_retry_delay_millis: 60000
+    # One day
+    initial_rpc_timeout_millis: 86400000
+    rpc_timeout_multiplier: 1
+    max_rpc_timeout_millis: 86400000
+    total_timeout_millis: 86400000
   methods:
   - name: GetDocument
     required_fields:
@@ -285,11 +294,11 @@ interfaces:
     required_fields:
     - database
     retry_codes_name: idempotent
-    retry_params_name: streaming
+    retry_params_name: listen
     field_name_patterns:
       database: database_root
-    # Five minutes
-    timeout_millis: 300000
+    # One day
+    timeout_millis: 86400000
   - name: ListCollectionIds
     flattening:
       groups:
