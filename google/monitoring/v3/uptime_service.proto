@@ -17,7 +17,6 @@ syntax = "proto3";
 package google.monitoring.v3;
 
 import "google/api/annotations.proto";
-import "google/api/monitored_resource.proto";
 import "google/monitoring/v3/uptime.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/field_mask.proto";

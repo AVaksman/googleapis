@@ -29,7 +29,18 @@ option java_package = "com.google.monitoring.v3";
 // This message configures which resources and services to monitor for
 // availability.
 message UptimeCheckConfig {
-  // Information required for an HTTP/HTTPS uptime check request.
+  // The resource submessage for group checks. It can be used instead of a
+  // monitored resource, when multiple resources are being monitored.
+  message ResourceGroup {
+    // The group of resources being monitored. Should be only the
+    // group_id, not projects/<project_id>/groups/<group_id>.
+    string group_id = 1;
+
+    // The resource type of the group members.
+    GroupResourceType resource_type = 2;
+  }
+
+  // Information involved in an HTTP/HTTPS uptime check request.
   message HttpCheck {
     // A type of authentication to perform against the specified resource or URL
     // that uses username and password.
@@ -47,15 +58,16 @@ message UptimeCheckConfig {
 
     // The path to the page to run the check against. Will be combined with the
     // host (specified within the MonitoredResource) and port to construct the
-    // full URL.
+    // full URL. Optional (defaults to "/").
     string path = 2;
 
     // The port to the page to run the check against. Will be combined with host
     // (specified within the MonitoredResource) and path to construct the full
-    // URL.
+    // URL. Optional (defaults to 80 without SSL, or 443 with SSL).
     int32 port = 3;
 
-    // The authentication information.
+    // The authentication information. Optional when creating an HTTP check;
+    // defaults to empty.
     BasicAuthentication auth_info = 4;
 
     // Boolean specifiying whether to encrypt the header information.
@@ -80,6 +92,7 @@ message UptimeCheckConfig {
   message TcpCheck {
     // The port to the page to run the check against. Will be combined with host
     // (specified within the MonitoredResource) to construct the full URL.
+    // Required.
     int32 port = 1;
   }
 
@@ -103,43 +116,48 @@ message UptimeCheckConfig {
 
   // A human-friendly name for the uptime check configuration. The display name
   // should be unique within a Stackdriver Account in order to make it easier
-  // to identify; however, uniqueness is not enforced.
+  // to identify; however, uniqueness is not enforced. Required.
   string display_name = 2;
 
-  // The monitored resource associated with the configuration.
-  google.api.MonitoredResource resource = 3;
+  // The resource the check is checking. Required.
+  oneof resource {
+    // The monitored resource associated with the configuration.
+    google.api.MonitoredResource monitored_resource = 3;
+
+    // The group resource associated with the configuration.
+    ResourceGroup resource_group = 4;
+  }
 
   // The type of uptime check request.
   oneof check_request_type {
     // Contains information needed to make an HTTP or HTTPS check.
-    HttpCheck http_check = 4;
+    HttpCheck http_check = 5;
 
     // Contains information needed to make a TCP check.
-    TcpCheck tcp_check = 5;
+    TcpCheck tcp_check = 6;
   }
 
   // How often the uptime check is performed.
-  // Currently, only 1 minute, 5 minutes, 10 minutes, and 15 minutes
-  // (60, 300, 600, and 900 seconds) are supported.
-  google.protobuf.Duration period = 6;
+  // Currently, only 1, 5, 10, and 15 minutes are supported. Required.
+  google.protobuf.Duration period = 7;
 
   // The maximum amount of time to wait for the request to complete (must be
-  // between 1 and 60 seconds).
-  google.protobuf.Duration timeout = 7;
+  // between 1 and 60 seconds). Required.
+  google.protobuf.Duration timeout = 8;
 
   // The expected content on the page the check is run against.
   // Currently, only the first entry in the list is supported, and other entries
   // will be ignored. The server will look for an exact match of the string in
   // the page response's content. This field is optional and should only be
   // specified if a content match is required.
-  repeated ContentMatcher content_matchers = 8;
+  repeated ContentMatcher content_matchers = 9;
 
   // The list of regions from which the check will be run.
-  // If this field is specified, a minimum of 3 regions must be provided, or an
-  // error message is returned.
+  // If this field is specified, enough regions to include a minimum of
+  // 3 locations must be provided, or an error message is returned.
   // Not specifying this field will result in uptime checks running from all
   // regions.
-  repeated UptimeCheckRegion selected_regions = 9;
+  repeated UptimeCheckRegion selected_regions = 10;
 }
 
 // Contains the region, location, and list of IP
@@ -180,4 +198,18 @@ enum UptimeCheckRegion {
   // Allows checks to run from locations within the Asia Pacific area (ex:
   // Singapore).
   ASIA_PACIFIC = 4;
+}
+
+// The supported resource types that can be used as values of
+// group_resource.resource_type. gae_app and uptime_url are not allowed
+// because group checks on App Engine modules and URLs are not allowed.
+enum GroupResourceType {
+  // Default value (not valid).
+  RESOURCE_TYPE_UNSPECIFIED = 0;
+
+  // A group of instances (could be either GCE or AWS_EC2).
+  INSTANCE = 1;
+
+  // A group of AWS load balancers.
+  AWS_ELB_LOAD_BALANCER = 2;
 }
