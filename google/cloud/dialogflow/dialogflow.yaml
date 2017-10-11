@@ -1,0 +1,29 @@
+type: google.api.Service
+config_version: 3
+name: dialogflow.googleapis.com
+title: Dialogflow API
+
+apis:
+- name: google.cloud.dialogflow.v2beta1.Agents
+- name: google.cloud.dialogflow.v2beta1.Contexts
+- name: google.cloud.dialogflow.v2beta1.EntityTypes
+- name: google.cloud.dialogflow.v2beta1.Intents
+- name: google.cloud.dialogflow.v2beta1.Runtimes
+- name: google.cloud.dialogflow.v2beta1.SessionEntityTypes
+- name: google.cloud.dialogflow.v2beta1.Sessions
+- name: google.cloud.dialogflow.v2beta1.Tiers
+- name: google.cloud.dialogflow.v2beta1.Versions
+
+documentation:
+  summary: |-
+    Dialogflow is an enterprise-grade NLU platform that makes it easy for
+    developers to design and integrate conversational user interfaces into
+    mobile apps, web applications, devices, and bots.
+  overview: This is where the overview goes.
+
+authentication:
+  rules:
+  - selector: '*'
+    oauth:
+      canonical_scopes: |-
+        https://www.googleapis.com/auth/cloud-platform
