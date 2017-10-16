@@ -17,7 +17,6 @@ syntax = "proto3";
 package google.spanner.admin.instance.v1;
 
 import "google/api/annotations.proto";
-import "google/api/auth.proto";
 import "google/iam/v1/iam_policy.proto";
 import "google/iam/v1/policy.proto";
 import "google/longrunning/operations.proto";
@@ -245,7 +244,23 @@ message Instance {
   // Must be unique per project and between 4 and 30 characters in length.
   string display_name = 3;
 
-  // Required. The number of nodes allocated to this instance.
+  // Required. The number of nodes allocated to this instance. This may be zero
+  // in API responses for instances that are not yet in state `READY`.
+  //
+  // Each Spanner node can provide up to 10,000 QPS of reads or 2000 QPS of
+  // writes (writing single rows at 1KB data per row), and 2 TiB storage.
+  //
+  // For optimal performance, we recommend provisioning enough nodes to keep
+  // overall CPU utilization under 75%.
+  //
+  // A minimum of 3 nodes is recommended for production environments.  This
+  // minimum is required for SLAs to apply to your instance.
+  //
+  // Note that Cloud Spanner performance is highly dependent on workload, schema
+  // design, and dataset characteristics. The performance numbers above are
+  // estimates, and assume [best
+  // practices](https://cloud.google.com/spanner/docs/bulk-loading) are
+  // followed.
   int32 node_count = 5;
 
   // Output only. The current instance state. For

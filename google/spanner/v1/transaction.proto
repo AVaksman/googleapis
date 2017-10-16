@@ -245,12 +245,13 @@ option java_package = "com.google.spanner.v1";
 // timestamp become too old while executing. Reads and SQL queries with
 // too-old read timestamps fail with the error `FAILED_PRECONDITION`.
 message TransactionOptions {
-  // Options for read-write transactions.
+  // Message type to initiate a read-write transaction. Currently this
+  // transaction type has no options.
   message ReadWrite {
 
   }
 
-  // Options for read-only transactions.
+  // Message type to initiate a read-only transaction.
   message ReadOnly {
     // How to choose the timestamp for the read-only transaction.
     oneof timestamp_bound {
