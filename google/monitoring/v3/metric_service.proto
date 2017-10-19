@@ -1,4 +1,4 @@
-// Copyright 2016 Google Inc.
+// Copyright 2017 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import "google/api/metric.proto";
 import "google/api/monitored_resource.proto";
 import "google/monitoring/v3/common.proto";
 import "google/monitoring/v3/metric.proto";
+import "google/protobuf/duration.proto";
 import "google/protobuf/empty.proto";
 import "google/rpc/status.proto";
 
@@ -81,6 +82,12 @@ service MetricService {
   }
 }
 
+// Ignore; do not use this message.
+message MonitoringDummyMessage {
+  // Ignore.
+  string dummy = 1;
+}
+
 // The `ListMonitoredResourceDescriptors` request.
 message ListMonitoredResourceDescriptorsRequest {
   // The project on which to execute the request. The format is
@@ -105,7 +112,7 @@ message ListMonitoredResourceDescriptorsRequest {
   string page_token = 4;
 }
 
-// The `ListMonitoredResourcDescriptors` response.
+// The `ListMonitoredResourceDescriptors` response.
 message ListMonitoredResourceDescriptorsResponse {
   // The monitored resource descriptors that are available to this project
   // and that match `filter`, if present.
@@ -216,6 +223,7 @@ message ListTimeSeriesRequest {
   //
   //     metric.type = "compute.googleapis.com/instance/cpu/usage_time" AND
   //         metric.label.instance_name = "my-instance-name"
+  //
   string filter = 2;
 
   // The time interval for which results should be returned. Only time series

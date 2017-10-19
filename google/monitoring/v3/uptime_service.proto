@@ -40,9 +40,7 @@ service UptimeCheckService {
   // Lists the existing valid uptime check configurations for the project,
   // leaving out any invalid configurations.
   rpc ListUptimeCheckConfigs(ListUptimeCheckConfigsRequest) returns (ListUptimeCheckConfigsResponse) {
-    option (google.api.http) = {
-      get: "/v3/{parent=projects/*}/uptimeCheckConfigs"
-    };
+    option (google.api.http) = { get: "/v3/{parent=projects/*}/uptimeCheckConfigs" };
   }
 
   // Gets a single uptime check configuration.
@@ -71,11 +69,8 @@ service UptimeCheckService {
   }
 
   // Returns the list of IPs that checkers run from
-  rpc ListUptimeCheckIps(ListUptimeCheckIpsRequest)
-      returns (ListUptimeCheckIpsResponse) {
-    option (google.api.http) = {
-      get: "/v3/uptimeCheckIps"
-    };
+  rpc ListUptimeCheckIps(ListUptimeCheckIpsRequest) returns (ListUptimeCheckIpsResponse) {
+    option (google.api.http) = { get: "/v3/uptimeCheckIps" };
   }
 }
 
