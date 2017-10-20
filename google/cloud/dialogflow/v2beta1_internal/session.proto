@@ -179,27 +179,35 @@ message QueryResult {
   // The text to be pronounced to the user or shown on the screen.
   string fulfillment_text = 6;
 
-  // The collection of rich messages to present to the  user.
+  // The collection of rich messages to present to the user.
   repeated Intent.Message fulfillment_messages = 7;
+
+  // If the query was fulfilled by a webhook call, this field is set to the
+  // value of the `source` field returned in the webhook response.
+  string webhook_source = 8;
+
+  // If the query was fulfilled by a webhook call, this field is set to the
+  // value of the `payload` field returned in the webhook response.
+  google.protobuf.Struct webhook_payload = 9;
 
   // The collection of output contexts. If applicable,
   // `output_contexts.parameters` contains entries with name
   // `<parameter name>.original` containing the original parameter values
   // before the query.
-  repeated Context output_contexts = 8;
+  repeated Context output_contexts = 10;
 
   // The intent that matched the conversational query. Some, not
   // all fields are filled in this message, including but not limited to:
   // `name`, `display_name` and `webhook_state`.
-  Intent intent = 9;
+  Intent intent = 11;
 
   // The intent detection confidence. Values range from 0.0
   // (completely uncertain) to 1.0 (completely certain).
-  float intent_detection_confidence = 10;
+  float intent_detection_confidence = 12;
 
   // The free-form diagnostic info. For example, this field
   // could contain webhook call latency.
-  google.protobuf.Struct diagnostic_info = 12;
+  google.protobuf.Struct diagnostic_info = 14;
 }
 
 // The top-level message sent by the client to the

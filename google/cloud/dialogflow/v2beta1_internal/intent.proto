@@ -431,6 +431,17 @@ message Intent {
     Platform platform = 6;
   }
 
+  // Represents a single followup intent in the chain.
+  message FollowupIntentInfo {
+    // The unique identifier of the followup intent.
+    // Format: `projects/<Project ID>/agent/intents/<Intent ID>`.
+    string followup_intent_name = 1;
+
+    // The unique identifier of the followup intent parent.
+    // Format: `projects/<Project ID>/agent/intents/<Intent ID>`.
+    string parent_followup_intent_name = 2;
+  }
+
   // Represents the different states that webhooks can be in.
   enum WebhookState {
     // Webhook is disabled in the agent and in the intent.
@@ -501,6 +512,21 @@ message Intent {
   // Optional. The list of platforms for which the first response will be
   // taken from among the messages assigned to the DEFAULT_PLATFORM.
   repeated Message.Platform default_response_platforms = 15;
+
+  // The unique identifier of the root intent in the chain of followup intents.
+  // It identifies the correct followup intents chain for this intent.
+  // Format: `projects/<Project ID>/agent/intents/<Intent ID>`.
+  string root_followup_intent_name = 16;
+
+  // The unique identifier of the parent intent in the chain of followup
+  // intents.
+  // It identifies the parent followup intent.
+  // Format: `projects/<Project ID>/agent/intents/<Intent ID>`.
+  string parent_followup_intent_name = 17;
+
+  // Optional. Collection of information about all followup intents that have
+  // name of this intent as a root_name.
+  repeated FollowupIntentInfo followup_intent_info = 18;
 }
 
 // The request message for [Intents.ListIntents].
