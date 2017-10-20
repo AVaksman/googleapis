@@ -24,10 +24,12 @@ import "google/protobuf/field_mask.proto";
 import "google/protobuf/struct.proto";
 
 option cc_enable_arenas = true;
+option csharp_namespace = "Google.Cloud.Dialogflow.V2beta1";
 option go_package = "google.golang.org/genproto/googleapis/cloud/dialogflow/v2beta1;dialogflow";
 option java_multiple_files = true;
 option java_outer_classname = "IntentProto";
 option java_package = "com.google.cloud.dialogflow.v2beta1";
+option objc_class_prefix = "DF";
 
 
 // Manages agent intents.
@@ -112,11 +114,11 @@ message Intent {
 
       // Examples do not contain @-prefixed entity type names, but example parts
       // can be annotated with entity types.
-      TYPE_EXAMPLE = 1;
+      EXAMPLE = 1;
 
       // Templates are not annotated with entity types, but they can contain
       // @-prefixed entity type names as substrings.
-      TYPE_TEMPLATE = 2;
+      TEMPLATE = 2;
     }
 
     // Required. The unique identifier of this training phrase.
@@ -172,8 +174,7 @@ message Intent {
     // user in order to collect value for the parameter.
     repeated string prompts = 7;
 
-    // Optional. Indicates whether the parameter represents a list of
-    // values.
+    // Optional. Indicates whether the parameter represents a list of values.
     bool is_list = 8;
   }
 
@@ -238,6 +239,12 @@ message Intent {
 
       // Optional. The text to display.
       string display_text = 3;
+    }
+
+    // The collection of simple response candidates.
+    message SimpleResponses {
+      // Required. The list of simple responses.
+      repeated SimpleResponse simple_responses = 1;
     }
 
     // The basic card message. Useful for displaying information.
@@ -360,28 +367,28 @@ message Intent {
       PLATFORM_UNSPECIFIED = 0;
 
       // Facebook.
-      PLATFORM_FACEBOOK = 1;
+      FACEBOOK = 1;
 
       // Slack.
-      PLATFORM_SLACK = 2;
+      SLACK = 2;
 
       // Telegram.
-      PLATFORM_TELEGRAM = 3;
+      TELEGRAM = 3;
 
       // Kik.
-      PLATFORM_KIK = 4;
+      KIK = 4;
 
       // Skype.
-      PLATFORM_SKYPE = 5;
+      SKYPE = 5;
 
       // Line.
-      PLATFORM_LINE = 6;
+      LINE = 6;
 
       // Viber.
-      PLATFORM_VIBER = 7;
+      VIBER = 7;
 
       // Actions on Google.
-      PLATFORM_ACTIONS_ON_GOOGLE = 8;
+      ACTIONS_ON_GOOGLE = 8;
     }
 
     // Required. The rich response message.
@@ -401,8 +408,8 @@ message Intent {
       // The response containing a custom payload.
       google.protobuf.Struct payload = 5;
 
-      // The voice and text-only response for Actions on Google.
-      SimpleResponse simple_response = 7;
+      // The voice and text-only responses for Actions on Google.
+      SimpleResponses simple_responses = 7;
 
       // The basic card response for Actions on Google.
       BasicCard basic_card = 8;
@@ -624,6 +631,12 @@ message BatchUpdateIntentsRequest {
 
   // Optional. The resource view to apply to the returned intent.
   IntentView intent_view = 6;
+}
+
+// The response message for [Intents.BatchUpdateIntents].
+message BatchUpdateIntentsResponse {
+  // The collection of updated or created intents.
+  repeated Intent intents = 1;
 }
 
 // The request message for [Intents.BatchDeleteIntents].

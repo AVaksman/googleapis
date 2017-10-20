@@ -17,25 +17,33 @@ syntax = "proto3";
 package google.cloud.dialogflow.v2beta1;
 
 import "google/api/annotations.proto";
+import "google/cloud/dialogflow/v2beta1/tier.proto";
 import "google/longrunning/operations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/field_mask.proto";
 
 option cc_enable_arenas = true;
+option csharp_namespace = "Google.Cloud.Dialogflow.V2beta1";
 option go_package = "google.golang.org/genproto/googleapis/cloud/dialogflow/v2beta1;dialogflow";
 option java_multiple_files = true;
 option java_outer_classname = "AgentProto";
 option java_package = "com.google.cloud.dialogflow.v2beta1";
+option objc_class_prefix = "DF";
 
 
 // Manages conversational agents.
 //
 //
-// Refer to [documentation](https://api.ai/docs/agents) for more details for
-// # more details about agents.
+// Refer to [documentation](https://api.ai/docs/agents) for more details about
+// # agents.
 //
 // Standard methods.
 service Agents {
+  // Retrieves the specified agent.
+  rpc GetAgent(GetAgentRequest) returns (Agent) {
+    option (google.api.http) = { get: "/v2beta1/{parent=projects/*}/agent" };
+  }
+
   // Returns the list of agents.
   //
   // Since there is at most one conversational agent per project, this method is
@@ -43,42 +51,24 @@ service Agents {
   // access to. One can achieve that with a wildcard project collection id "-".
   // Refer to [List
   // Sub-Collections](https://cloud.google.com/apis/design/design_patterns#list_sub-collections).
-  rpc ListAgents(ListAgentsRequest) returns (ListAgentsResponse) {
-    option (google.api.http) = { get: "/v2beta1/{name=projects/*/agent}" };
-  }
-
-  // Retrieves the specified agent.
-  rpc GetAgent(GetAgentRequest) returns (Agent) {
-    option (google.api.http) = { get: "/v2beta1/{name=projects/*/agent}" };
-  }
-
-  // Updates the specified agent.
-  rpc UpdateAgent(UpdateAgentRequest) returns (Agent) {
-    option (google.api.http) = { patch: "/v2beta1/{agent.name=projects/*/agent}" body: "agent" };
-  }
-
-  // Deletes the specified agent.
-  rpc DeleteAgent(DeleteAgentRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = { delete: "/v2beta1/{name=projects/*/agent}" };
+  rpc SearchAgents(SearchAgentsRequest) returns (SearchAgentsResponse) {
+    option (google.api.http) = { get: "/v2beta1/{parent=projects/*}/agent:search" };
   }
 
   // Trains the specified agent.
   //
-  // Note that only the agent instance loaded in the "default" runtime is
-  // retrained.
   //
   // Operation<response: google.protobuf.Empty>
   rpc TrainAgent(TrainAgentRequest) returns (google.longrunning.Operation) {
-    option (google.api.http) = { post: "/v2beta1/{name=projects/*/agent}:train" body: "*" };
+    option (google.api.http) = { post: "/v2beta1/{parent=projects/*}/agent:train" body: "*" };
   }
 
   // Exports the specified agent to a ZIP file.
   //
-  // The agent instance loaded in the "default" runtime is exported.
   //
   // Operation<response: ExportAgentResponse>
   rpc ExportAgent(ExportAgentRequest) returns (google.longrunning.Operation) {
-    option (google.api.http) = { post: "/v2beta1/{name=projects/*/agent}:export" body: "*" };
+    option (google.api.http) = { post: "/v2beta1/{parent=projects/*}/agent:export" body: "*" };
   }
 
   // Imports the specified agent from a ZIP file.
@@ -87,12 +77,10 @@ service Agents {
   // Intents and entity types with the same name are replaced with the new
   // versions from ImportAgentRequest.
   //
-  // The agent instance loaded in the "default" runtime is modified by this
-  // operation.
   //
   // Operation<response: google.protobuf.Empty>
   rpc ImportAgent(ImportAgentRequest) returns (google.longrunning.Operation) {
-    option (google.api.http) = { post: "/v2beta1/{name=projects/*/agent}:import" body: "*" };
+    option (google.api.http) = { post: "/v2beta1/{parent=projects/*}/agent:import" body: "*" };
   }
 
   // Restores the specified agent from a ZIP file.
@@ -100,12 +88,10 @@ service Agents {
   // Replaces the current agent version with a new one. All the intents and
   // entity types in the older version are deleted.
   //
-  // The agent instance loaded in the "default" runtime is modified by this
-  // operation.
   //
   // Operation<response: google.protobuf.Empty>
   rpc RestoreAgent(RestoreAgentRequest) returns (google.longrunning.Operation) {
-    option (google.api.http) = { post: "/v2beta1/{name=projects/*/agent}:restore" body: "*" };
+    option (google.api.http) = { post: "/v2beta1/{parent=projects/*}/agent:restore" body: "*" };
   }
 }
 
@@ -125,9 +111,9 @@ message Agent {
     MATCH_MODE_ML_ONLY = 2;
   }
 
-  // Required. The unique identifier of this conversational agent.
-  // Format: `projects/<Project ID>/agent`.
-  string name = 1;
+  // Required. The project of this agent.
+  // Format: `projects/<Project ID>`.
+  string parent = 1;
 
   // Required. The name of this agent.
   string display_name = 2;
@@ -148,6 +134,7 @@ message Agent {
   string time_zone = 5;
 
   // Optional. The description of this agent.
+  // The maximum length is 500 characters. If exceeded, the request is rejected.
   string description = 6;
 
   // Optional. The URI of the agent's avatar.
@@ -155,14 +142,11 @@ message Agent {
   // [Web Demo](https://api.ai/docs/integrations/web-demo) integration.
   string avatar_uri = 7;
 
-  // Optional. Determines whether this agent is public or private.
-  bool private = 8;
-
   // Optional. Determines whether this agent should log conversation queries.
-  bool logging_enabled = 9;
+  bool enable_logging = 8;
 
   // Optional. Determines how intents are detected from user queries.
-  MatchMode match_mode = 10;
+  MatchMode match_mode = 9;
 
   // Optional. To filter out false positive results and still get variety in
   // matched natural language inputs for your agent, you can tune the machine
@@ -171,14 +155,21 @@ message Agent {
   // are no fallback intents defined, no intent will be triggered. The score
   // values range from 0.0 (completely uncertain) to 1.0 (completely certain).
   // If set to 0.0, the default of 0.3 is used.
-  float ml_threshold = 11;
+  float classification_threshold = 10;
 }
 
-// The request message for [Agents.ListAgents].
-message ListAgentsRequest {
+// The request message for [Agents.GetAgent].
+message GetAgentRequest {
+  // Required. The name of the agent.
+  // Format: `projects/<Project ID>`.
+  string parent = 1;
+}
+
+// The request message for [Agents.SearchAgents].
+message SearchAgentsRequest {
   // Required. The project to list agents from.
-  // Format: `projects/<Project ID or '-'>/agent`.
-  string name = 1;
+  // Format: `projects/<Project ID or '-'>`.
+  string parent = 1;
 
   // Optional. The maximum number of items to return in a single page. By
   // default 100 and at most 1000.
@@ -188,8 +179,8 @@ message ListAgentsRequest {
   string page_token = 3;
 }
 
-// The response message for [Agents.ListAgents].
-message ListAgentsResponse {
+// The response message for [Agents.SearchAgents].
+message SearchAgentsResponse {
   // The list of agents. There will be a maximum number of items returned based
   // on the page_size field in the request.
   repeated Agent agents = 1;
@@ -199,52 +190,42 @@ message ListAgentsResponse {
   string next_page_token = 2;
 }
 
-// The request message for [Agents.GetAgent].
-message GetAgentRequest {
-  // Required. The name of the agent.
-  // Format: `projects/<Project ID>/agent`.
-  string name = 1;
-}
-
-// The request message for [Agents.UpdateAgent].
-message UpdateAgentRequest {
-  // Required. The agent to update.
-  // Format: `projects/<Project ID>/agent`.
-  Agent agent = 1;
-
-  // Optional. The mask to control which fields get updated.
-  google.protobuf.FieldMask update_mask = 2;
-}
-
-// The request message for [Agents.DeleteAgent].
-message DeleteAgentRequest {
-  // Required. The name of the agent to delete.
-  // Format: `projects/<Project ID>/agent`.
-  string name = 1;
-}
-
 // The request message for [Agents.TrainAgent].
 message TrainAgentRequest {
   // Required. The name of the agent to train.
-  // Format: `projects/<Project ID>/agent`.
-  string name = 1;
+  // Format: `projects/<Project ID>`.
+  string parent = 1;
 }
 
 // The request message for [Agents.ExportAgent].
 message ExportAgentRequest {
   // Required. The name of the agent to export.
-  // Format: `projects/<Project ID>/agent`.
-  string name = 1;
+  // Format: `projects/<Project ID>`.
+  string parent = 1;
 
   // Optional. The URI to export the agent to. Note: The URI must start with
   // "gs://". If left unspecified, the serialized agent is returned inline.
   string agent_uri = 2;
 }
 
+// The response message for [Agents.ExportAgent].
+message ExportAgentResponse {
+  // Required. The exported agent.
+  oneof agent {
+    // The URI to a file containing the exported agent. This field is populated
+    // only if `agent_uri`
+    string agent_uri = 1;
+
+    // The exported agent.
+    bytes agent_content = 2;
+  }
+}
+
 // The request message for [Agents.ImportAgent].
 message ImportAgentRequest {
   // Required. The name of the agent to import.
-  string name = 1;
+  // Format: `projects/<Project ID>`.
+  string parent = 1;
 
   // Required. The agent to import.
   oneof agent {
@@ -253,14 +234,15 @@ message ImportAgentRequest {
     string agent_uri = 2;
 
     // The agent to import.
-    bytes agent_inline = 3;
+    bytes agent_content = 3;
   }
 }
 
 // The request message for [Agents.RestoreAgent].
 message RestoreAgentRequest {
   // Required. The name of the agent to restore.
-  string name = 1;
+  // Format: `projects/<Project ID>`.
+  string parent = 1;
 
   // Required. The agent to restore.
   oneof agent {
@@ -269,6 +251,6 @@ message RestoreAgentRequest {
     string agent_uri = 2;
 
     // The agent to restore.
-    bytes agent_inline = 3;
+    bytes agent_content = 3;
   }
 }

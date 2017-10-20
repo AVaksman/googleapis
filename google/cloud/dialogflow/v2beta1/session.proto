@@ -25,10 +25,12 @@ import "google/rpc/status.proto";
 import "google/type/latlng.proto";
 
 option cc_enable_arenas = true;
+option csharp_namespace = "Google.Cloud.Dialogflow.V2beta1";
 option go_package = "google.golang.org/genproto/googleapis/cloud/dialogflow/v2beta1;dialogflow";
 option java_multiple_files = true;
 option java_outer_classname = "SessionProto";
 option java_package = "com.google.cloud.dialogflow.v2beta1";
+option objc_class_prefix = "DF";
 
 
 // Manages user sessions.
@@ -41,7 +43,7 @@ service Sessions {
   // and session entity types to be updated, which in turn might affect
   // results of future queries.
   rpc DetectIntent(DetectIntentRequest) returns (DetectIntentResponse) {
-    option (google.api.http) = { post: "/v2beta1/{session=projects/*/agent/runtimes/*/sessions/*}:detectIntent" body: "*" };
+    option (google.api.http) = { post: "/v2beta1/{session=projects/*/agent/sessions/*}:detectIntent" body: "*" };
   }
 
   // Processes a natural language query in audio format in a streaming fashion
@@ -53,7 +55,7 @@ service Sessions {
 // The request to detect user's intent.
 message DetectIntentRequest {
   // Required. The name of the session this query is sent to. Format:
-  // `projects/<Project ID>/agent/runtimes/<Runtime ID>/sessions/<Session ID>`.
+  // `projects/<Project ID>/agent/sessions/<Session ID>`.
   // It's up to the API caller to choose an appropriate session ID. It can be
   // a random number or some type of user identifier (preferably hashed).
   // The length of the session ID must not exceed 36 bytes.
@@ -172,7 +174,7 @@ message QueryResult {
   //    the required parameter values have been collected.
   // - `true` if all required parameter values have been collected, or if the
   //    matched intent doesn't contain any required parameters.
-  bool all_required_params_collected = 5;
+  bool all_required_params_present = 5;
 
   // The text to be pronounced to the user or shown on the screen.
   string fulfillment_text = 6;
@@ -214,7 +216,7 @@ message QueryResult {
 message StreamingDetectIntentRequest {
   // Required. The name of the session the query is sent to.
   // Format of the session name:
-  // `projects/<Project ID>/agent/runtimes/<Runtime ID>/sessions/<Session ID>`.
+  // `projects/<Project ID>/agent/sessions/<Session ID>`.
   // It’s up to the API caller to choose an appropriate <Session ID>. It can be
   // a random number or some type of user identifier (preferably hashed).
   // The length of the session ID must not exceed 36 characters.
@@ -312,7 +314,7 @@ message StreamingRecognitionResult {
     MESSAGE_TYPE_UNSPECIFIED = 0;
 
     // Message contains a (possibly partial) transcript.
-    MESSAGE_TYPE_TRANSCRIPT = 1;
+    TRANSCRIPT = 1;
 
     // Event indicates that the server has detected the end of the user's speech
     // utterance and expects no additional speech. Therefore, the server will
@@ -321,7 +323,7 @@ message StreamingRecognitionResult {
     // data, half-close the gRPC connection, and wait for any additional results
     // until the server closes the gRPC connection. This message is only sent if
     // `single_utterance` was set to `true`, and is not used otherwise.
-    MESSAGE_TYPE_END_OF_SINGLE_UTTERANCE = 2;
+    END_OF_SINGLE_UTTERANCE = 2;
   }
 
   // Type of the result message.
@@ -354,14 +356,6 @@ message InputAudioConfig {
   // Note that queries in the same session do not necessarily need to specify
   // the same language.
   string language_code = 3;
-
-  // Optional. The number of channels in the input audio data.
-  // Valid values for LINEAR16 and FLAC are `1`-`8`.
-  // Valid values for MULAW, AMR and AMR_WB are only `1`.
-  // If `0` or omitted, defaults to one channel (mono).
-  // NOTE: Currently, we perform recognition only on channel 0 and ignore
-  // all other channels.
-  int32 audio_channel_count = 6;
 
   // Optional. The collection of phrase hints which are used to boost accuracy
   // of speech recognition.
