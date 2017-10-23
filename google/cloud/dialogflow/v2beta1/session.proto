@@ -215,8 +215,9 @@ message QueryResult {
 //
 // Multiple request messages should be sent in order:
 //
-// 1.  The first message must contain `session`, `query_params`, `query_input`
-//     and optionally `single_utterance`.     The message must not contain `input_audio`.
+// 1.  The first message must contain `session`, `query_input` plus optionally
+//     `query_params` and/or `single_utterance`. The message must not contain
+//     `input_audio`.
 //
 // 2.  If `query_input` was set to a streaming input audio config,
 //     all subsequent messages must contain only `input_audio`.
@@ -230,7 +231,7 @@ message StreamingDetectIntentRequest {
   // The length of the session ID must not exceed 36 characters.
   string session = 1;
 
-  // Required. The parameters of this query.
+  // Optional. The parameters of this query.
   QueryParameters query_params = 2;
 
   // Required. The input specification. It can be set to:
