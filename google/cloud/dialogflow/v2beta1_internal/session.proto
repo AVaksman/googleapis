@@ -121,6 +121,10 @@ message QueryParameters {
   // Optional. This field can be used to pass custom data into the webhook
   // associated with the agent. Arbitrary JSON objects are supported.
   google.protobuf.Struct payload = 6;
+
+  // The new field is populated only by Bots Proxy and AoG Proxy. It is used by
+  // Webhook logic to populate the corresponding field in webhook request.
+  string source = 7;
 }
 
 // Represents the query input. It can contain either:
@@ -216,8 +220,7 @@ message QueryResult {
 // Multiple request messages should be sent in order:
 //
 // 1.  The first message must contain `session`, `query_input` plus optionally
-//     `query_params` and/or `single_utterance`. The message must not contain
-//     `input_audio`.
+//     `query_params` and/or `single_utterance`. The message must not contain `input_audio`.
 //
 // 2.  If `query_input` was set to a streaming input audio config,
 //     all subsequent messages must contain only `input_audio`.
