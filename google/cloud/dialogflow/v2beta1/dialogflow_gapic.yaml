@@ -148,7 +148,7 @@ interfaces:
     timeout_millis: 60000
     long_running:
       return_type: google.protobuf.Empty
-      metadata_type: com.google.protobuf.Struct
+      metadata_type: google.protobuf.Struct
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
@@ -168,20 +168,14 @@ interfaces:
     timeout_millis: 60000
     long_running:
       return_type: google.cloud.dialogflow.v2beta1.ExportAgentResponse
-      metadata_type: com.google.protobuf.Struct
+      metadata_type: google.protobuf.Struct
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
       total_poll_timeout_millis: 300000
   - name: ImportAgent
-    flattening:
-      groups:
-      - parameters:
-        - parent
-        - agent
     required_fields:
     - parent
-    - agent
     request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
@@ -190,20 +184,15 @@ interfaces:
     timeout_millis: 60000
     long_running:
       return_type: google.protobuf.Empty
-      metadata_type: com.google.protobuf.Struct
+      metadata_type: google.protobuf.Struct
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
       total_poll_timeout_millis: 300000
   - name: RestoreAgent
-    flattening:
-      groups:
-      - parameters:
-        - parent
-        - agent
+
     required_fields:
     - parent
-    - agent
     request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
@@ -212,7 +201,7 @@ interfaces:
     timeout_millis: 60000
     long_running:
       return_type: google.protobuf.Empty
-      metadata_type: com.google.protobuf.Struct
+      metadata_type: google.protobuf.Struct
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
@@ -396,7 +385,7 @@ interfaces:
   # classes.
   collections:
   - name_pattern: projects/{project}/agent
-    entity_name: project
+    entity_name: project_agent
   - name_pattern: projects/{project}/agent/entityTypes/{entity_type}
     entity_name: entity_type
   # Definition for retryable codes.
@@ -481,7 +470,7 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
-      parent: project
+      parent: project_agent
     timeout_millis: 60000
   - name: GetEntityType
     flattening:
@@ -516,7 +505,7 @@ interfaces:
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
-      parent: project
+      parent: project_agent
     timeout_millis: 60000
   - name: UpdateEntityType
     flattening:
@@ -548,27 +537,17 @@ interfaces:
       name: entity_type
     timeout_millis: 60000
   - name: BatchUpdateEntityTypes
-    flattening:
-      groups:
-      - parameters:
-        - parent
-        - entity_type_batch
-      - parameters:
-        - parent
-        - entity_type_batch
-        - language_code
     required_fields:
     - parent
-    - entity_type_batch
     request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
-      parent: project
+      parent: project_agent
     timeout_millis: 60000
     long_running:
       return_type: google.cloud.dialogflow.v2beta1.BatchUpdateEntityTypesResponse
-      metadata_type: com.google.protobuf.Struct
+      metadata_type: google.protobuf.Struct
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
@@ -586,11 +565,11 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
-      parent: project
+      parent: project_agent
     timeout_millis: 60000
     long_running:
       return_type: google.protobuf.Empty
-      metadata_type: com.google.protobuf.Struct
+      metadata_type: google.protobuf.Struct
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
@@ -616,7 +595,7 @@ interfaces:
     timeout_millis: 60000
     long_running:
       return_type: google.protobuf.Empty
-      metadata_type: com.google.protobuf.Struct
+      metadata_type: google.protobuf.Struct
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
@@ -642,7 +621,7 @@ interfaces:
     timeout_millis: 60000
     long_running:
       return_type: google.protobuf.Empty
-      metadata_type: com.google.protobuf.Struct
+      metadata_type: google.protobuf.Struct
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
@@ -668,7 +647,7 @@ interfaces:
     timeout_millis: 60000
     long_running:
       return_type: google.protobuf.Empty
-      metadata_type: com.google.protobuf.Struct
+      metadata_type: google.protobuf.Struct
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
@@ -687,7 +666,7 @@ interfaces:
   # classes.
   collections:
   - name_pattern: projects/{project}/agent
-    entity_name: project
+    entity_name: project_agent
   - name_pattern: projects/{project}/agent/intents/{intent}
     entity_name: intent
   - name_pattern: projects/{project}/agents/{agent}
@@ -774,7 +753,7 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
-      parent: project
+      parent: project_agent
     timeout_millis: 60000
   - name: GetIntent
     flattening:
@@ -809,7 +788,7 @@ interfaces:
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
-      parent: project
+      parent: project_agent
     timeout_millis: 60000
   - name: UpdateIntent
     flattening:
@@ -844,18 +823,8 @@ interfaces:
       name: intent
     timeout_millis: 60000
   - name: BatchUpdateIntents
-    flattening:
-      groups:
-      - parameters:
-        - parent
-        - intent_batch
-      - parameters:
-        - parent
-        - intent_batch
-        - language_code
     required_fields:
     - parent
-    - intent_batch
     - language_code
     request_object_method: true
     retry_codes_name: non_idempotent
@@ -865,11 +834,11 @@ interfaces:
     timeout_millis: 60000
     long_running:
       return_type: google.cloud.dialogflow.v2beta1.BatchUpdateIntentsResponse
-      metadata_type: com.google.protobuf.Struct
+      metadata_type: google.protobuf.Struct
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
-      total_poll_timeout_millis: 30
+      total_poll_timeout_millis: 300000
   - name: BatchDeleteIntents
     flattening:
       groups:
@@ -887,11 +856,11 @@ interfaces:
     timeout_millis: 60000
     long_running:
       return_type: google.protobuf.Empty
-      metadata_type: com.google.protobuf.Struct
+      metadata_type: google.protobuf.Struct
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
-      total_poll_timeout_millis: 30
+      total_poll_timeout_millis: 300000
   # The fully qualified name of the API interface.
 - name: google.cloud.dialogflow.v2beta1.SessionEntityTypes
   # A list of resource collection configurations.
@@ -908,7 +877,7 @@ interfaces:
   - name_pattern: projects/{project}/agent/sessions/{session}
     entity_name: session
   - name_pattern: projects/{project}/agent/sessions/{session}/entityTypes/{entity_type}
-    entity_name: entity_type
+    entity_name: session_entity_type
   # Definition for retryable codes.
   retry_codes_def:
   - name: idempotent
@@ -1001,7 +970,7 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
-      name: entity_type
+      name: session_entity_type
     timeout_millis: 60000
   - name: CreateSessionEntityType
     flattening:
@@ -1029,7 +998,7 @@ interfaces:
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
-      session_entity_type.name: entity_type
+      session_entity_type.name: session_entity_type
     timeout_millis: 60000
   - name: DeleteSessionEntityType
     flattening:
@@ -1042,7 +1011,7 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
-      name: entity_type
+      name: session_entity_type
     timeout_millis: 60000
   # The fully qualified name of the API interface.
 - name: google.cloud.dialogflow.v2beta1.Sessions
