@@ -26,6 +26,12 @@ documentation:
     mobile apps, web applications, devices, and bots.
   overview: This is where the overview goes.
 
+http:
+  rules:
+  - selector: google.longrunning.Operations.GetOperation
+    get: '/v2beta1/{name=projects/*/operations/*}'
+
+
 authentication:
   rules:
   - selector: '*'

@@ -16,6 +16,7 @@ syntax = "proto3";
 
 package google.cloud.dialogflow.v2beta1;
 
+import "google/api/annotations.proto";
 import "google/cloud/dialogflow/v2beta1/context.proto";
 import "google/cloud/dialogflow/v2beta1/intent.proto";
 import "google/cloud/dialogflow/v2beta1/session.proto";
