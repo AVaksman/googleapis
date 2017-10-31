@@ -25,6 +25,7 @@ import "google/protobuf/timestamp.proto";
 option go_package = "google.golang.org/genproto/googleapis/cloud/bigquery/v3;bigquery";
 option java_package = "com.google.cloud.bigquery.v3";
 
+
 // Provides methods for reading a single BigQuery table with high throughput
 service ParallelReadService {
   // Starts a new session to read a given table.

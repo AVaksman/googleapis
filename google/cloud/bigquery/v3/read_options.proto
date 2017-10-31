@@ -19,6 +19,7 @@ package google.cloud.bigquery.v3;
 option go_package = "google.golang.org/genproto/googleapis/cloud/bigquery/v3;bigquery";
 option java_package = "com.google.cloud.bigquery.v3";
 
+
 // Options dictating how we read a table.
 message TableReadOptions {
   // Optional. Names of the fields in the table that should be read. If empty,
