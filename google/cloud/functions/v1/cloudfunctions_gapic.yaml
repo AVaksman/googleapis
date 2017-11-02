@@ -3,19 +3,19 @@ config_schema_version: 1.0.0
 # The settings of generated code in a specific language.
 language_settings:
   java:
-    package_name: com.google.cloud.functions.v1beta2
+    package_name: com.google.cloud.functions.v1
   python:
-    package_name: google.cloud.functions_v1beta2.gapic
+    package_name: google.cloud.functions_v1.gapic
   go:
-    package_name: cloud.google.com/go/cloud/functions/apiv1beta2
+    package_name: cloud.google.com/go/cloud/functions/apiv1
   csharp:
-    package_name: Google.Cloud.Functions.V1beta2
+    package_name: Google.Cloud.Functions.V1
   ruby:
-    package_name: Google::Cloud::Functions::V1beta2
+    package_name: Google::Cloud::Functions::V1
   php:
-    package_name: Google\Cloud\Functions\V1beta2
+    package_name: Google\Cloud\Functions\V1
   nodejs:
-    package_name: functions.v1beta2
+    package_name: functions.v1
 # The configuration for the license header to put on generated files.
 license_header:
   # The file containing the copyright line(s).
@@ -25,7 +25,7 @@ license_header:
 # A list of API interface configurations.
 interfaces:
   # The fully qualified name of the API interface.
-- name: google.cloud.functions.v1beta2.CloudFunctionsService
+- name: google.cloud.functions.v1.CloudFunctionsService
   # A list of resource collection configurations.
   # Consists of a name_pattern and an entity_name.
   # The name_pattern is a pattern to describe the names of the resources of this
@@ -106,9 +106,9 @@ interfaces:
     flattening:
       groups:
       - parameters:
-        - location
+        - parent
     required_fields:
-    - location
+    - parent
     request_object_method: true
     page_streaming:
       request:
@@ -120,7 +120,7 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
-      location: location
+      parent: location
     timeout_millis: 30000
   - name: GetFunction
     flattening:
@@ -151,8 +151,8 @@ interfaces:
       location: location
     timeout_millis: 30000
     long_running:
-      return_type: google.cloud.functions.v1beta2.CloudFunction
-      metadata_type: google.cloud.functions.v1beta2.OperationMetadataV1Beta2
+      return_type: google.cloud.functions.v1.CloudFunction
+      metadata_type: google.cloud.functions.v1.OperationMetadataV1
       initial_poll_delay_millis: 20000
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 45000
@@ -161,20 +161,19 @@ interfaces:
     flattening:
       groups:
       - parameters:
-        - name
         - function
+        - update_mask
     required_fields:
-    - name
     - function
     request_object_method: true
-    retry_codes_name: idempotent
+    retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
-      name: function
+      function.name: function
     timeout_millis: 30000
     long_running:
-      return_type: google.cloud.functions.v1beta2.CloudFunction
-      metadata_type: google.cloud.functions.v1beta2.OperationMetadataV1Beta2
+      return_type: google.cloud.functions.v1.CloudFunction
+      metadata_type: google.cloud.functions.v1.OperationMetadataV1
       initial_poll_delay_millis: 20000
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 45000
@@ -193,8 +192,8 @@ interfaces:
       name: function
     timeout_millis: 30000
     long_running:
-      return_type: google.cloud.functions.v1beta2.CloudFunction
-      metadata_type: google.cloud.functions.v1beta2.OperationMetadataV1Beta2
+      return_type: google.cloud.functions.v1.CloudFunction
+      metadata_type: google.cloud.functions.v1.OperationMetadataV1
       initial_poll_delay_millis: 20000
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 45000
@@ -213,7 +212,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: function
-    timeout_millis: 600000
+    timeout_millis: 300000
   - name: GenerateUploadUrl
     flattening:
       groups:

@@ -1,0 +1,32 @@
+type: google.api.Service
+config_version: 3
+name: cloudfunctions.googleapis.com
+title: Google Cloud Functions API
+
+apis:
+- name: google.cloud.functions.v1.CloudFunctionsService
+
+types:
+- name: google.cloud.functions.v1.OperationMetadataV1
+
+documentation:
+  summary: |-
+    API for managing lightweight user-provided functions executed in response to
+    events.
+  overview: |-
+    API for managing lightweight user-provided functions executed in response to
+    events.
+
+http:
+  rules:
+  - selector: google.longrunning.Operations.ListOperations
+    get: /v1/operations
+  - selector: google.longrunning.Operations.GetOperation
+    get: '/v1/{name=operations/*}'
+
+authentication:
+  rules:
+  - selector: '*'
+    oauth:
+      canonical_scopes: |-
+        https://www.googleapis.com/auth/cloud-platform
