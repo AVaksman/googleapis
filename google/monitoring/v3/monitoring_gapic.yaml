@@ -628,10 +628,8 @@ interfaces:
     flattening:
       groups:
       - parameters:
-        - name
         - uptime_check_config
     required_fields:
-    - name
     - uptime_check_config
     request_object_method: true
     retry_codes_name: non_idempotent

@@ -127,11 +127,6 @@ message CreateUptimeCheckConfigRequest {
 
 // The protocol for the `UpdateUptimeCheckConfig` request.
 message UpdateUptimeCheckConfigRequest {
-  // The uptime check configuration to update. The format is
-  //
-  //   `projects/[PROJECT_ID]/uptimeCheckConfigs/[UPTIME_CHECK_ID]`.
-  string name = 1;
-
   // Optional. If present, only the listed fields in the current uptime check
   // configuration are updated with values from the new configuration. If this
   // field is empty, then the current configuration is completely replaced with
