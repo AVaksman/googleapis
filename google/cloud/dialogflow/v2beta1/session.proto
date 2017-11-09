@@ -402,7 +402,7 @@ message EventInput {
   // Optional. The collection of parameters associated with the event.
   google.protobuf.Struct parameters = 2;
 
-  // Optional. The language of this query. See [Language
+  // Required. The language of this query. See [Language
   // Support](https://dialogflow.com/docs/languages) for a list of the
   // currently supported language codes. Note that queries in the same session
   // do not necessarily need to specify the same language.
