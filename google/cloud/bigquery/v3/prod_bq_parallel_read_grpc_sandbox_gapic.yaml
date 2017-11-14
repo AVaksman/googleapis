@@ -143,6 +143,8 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     timeout_millis: 86400000
+    header_request_params:
+    - read_location.reader.name
   - name: CreateReaders
     flattening:
       groups:
