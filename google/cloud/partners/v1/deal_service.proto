@@ -1,0 +1,155 @@
+// Copyright 2017 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package google.cloud.partners.v1;
+
+import "google/api/annotations.proto";
+import "google/cloud/partners/v1/deal.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+
+option go_package = "google.golang.org/genproto/googleapis/cloud/partners/v1;partners";
+option java_multiple_files = true;
+option java_outer_classname = "DealServiceProto";
+option java_package = "com.google.cloud.partners.v1";
+
+
+// Deals API.
+service DealService {
+  // Gets a Deal by its [id] [google.cloud.partners.v1.Deal.id].
+  //
+  // Returns NOT_FOUND if the Deal does not exist.
+  rpc GetDeal(GetDealRequest) returns (Deal) {
+    option (google.api.http) = { get: "/v1/deals/{id}" };
+  }
+
+  // Lists Deals.
+  rpc ListDeals(ListDealsRequest) returns (ListDealsResponse) {
+    option (google.api.http) = { get: "/v1/deals" };
+  }
+
+  // Creates a Deal with DRAFT [status]
+  // [google.cloud.partners.v1.Deal.status], and returns the new Deal.
+  // Any Deal fields that are editable under DRAFT [status]
+  // [google.cloud.partners.v1.Deal.status] can be set in the request
+  // body.
+  rpc CreateDeal(CreateDealRequest) returns (Deal) {
+    option (google.api.http) = { post: "/v1/deals" body: "deal" };
+  }
+
+  // Updates a Deal based on its [deal.id]
+  // [google.cloud.partners.v1.Deal.id], and returns the updated Deal.
+  //
+  // Returns NOT_FOUND if the Deal does not exist.
+  rpc UpdateDeal(UpdateDealRequest) returns (Deal) {
+    option (google.api.http) = { patch: "/v1/deals/{deal.id}" body: "deal" };
+  }
+
+  // Deletes a Deal by its [id] [google.cloud.partners.v1.Deal.id].
+  //
+  // Returns NOT_FOUND if the Deal does not exist.
+  rpc DeleteDeal(DeleteDealRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = { delete: "/v1/deals/{id}" };
+  }
+
+  // Submits a Deal with the given [id]
+  // [google.cloud.partners.v1.Deal.id]. The deal [status]
+  // [google.cloud.partners.v1.Deal.status] must be "DRAFT" or
+  // "REJECTED".
+  //
+  // Returns NOT_FOUND if the Deal does not exist. Returns FAILED_PRECONDITION
+  // if a required field for deal submission is not set or the Deal's [status]
+  // [google.cloud.partners.v1.Deal.status] is not "DRAFT" or
+  // "REJECTED".
+  rpc SubmitDeal(SubmitDealRequest) returns (SubmitDealResponse) {
+    option (google.api.http) = { post: "/v1/deals/{id}:submit" body: "*" };
+  }
+}
+
+// Request to get a Deal.
+message GetDealRequest {
+  // The [id] [google.cloud.partners.v1.Deal.id] of the Deal to be
+  // retrieved.
+  string id = 1;
+}
+
+// Request to list Deals.
+message ListDealsRequest {
+  // Maximum number of Deals to return in one response.
+  //
+  // [page_size]
+  // [google.cloud.partners.v1.ListDealsRequest.page_size]
+  // must be non-negative and less than or equal to the max page size of 10,000.
+  // If [page_size]
+  // [google.cloud.partners.v1.ListDealsRequest.page_size]
+  // is zero or is not provided, the default page size of 100 will be used. The
+  // number of Deals returned in the response may be less than [page_size]
+  // [google.cloud.partners.v1.ListDealsRequest.page_size]
+  // if the number of matches is less than [page_size]
+  // [google.cloud.partners.v1.ListDealsRequest.page_size].
+  int32 page_size = 1;
+
+  // Page token to retrieve the next set of Deals.
+  string page_token = 2;
+
+  // Status constraints to filter Deal resources.
+  repeated DealStatus deal_statuses = 4;
+}
+
+// Response with a list of Deals and a page token to request for the next set
+// of Deal resources.
+message ListDealsResponse {
+  // The retrieved Deals.
+  repeated Deal deals = 1;
+
+  // Token to be used for retrieving the next page of Deals.
+  string next_page_token = 2;
+}
+
+// Request to create a Deal.
+message CreateDealRequest {
+  // The Deal to be created.
+  Deal deal = 1;
+}
+
+// Request to update a Deal.
+message UpdateDealRequest {
+  // The Deal to be updated.
+  Deal deal = 1;
+
+  // List of Deal fields to be updated in this request.
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+// Request to delete a Deal.
+message DeleteDealRequest {
+  // The [id] [google.cloud.partners.v1.Deal.id] of the Deal to be
+  // deleted.
+  string id = 1;
+}
+
+// Request to submit a Deal.
+message SubmitDealRequest {
+  // The [id] [google.cloud.partners.v1.Deal.id] of the Deal to be
+  // submitted.
+  string id = 1;
+}
+
+// Response to Deal submission. The response is currently blank but may be
+// extended in the future.
+message SubmitDealResponse {
+
+}
