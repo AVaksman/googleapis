@@ -76,12 +76,12 @@ message StructValue {
   // StructType
   // defined below. StructType defines field name and type for the corresponding
   // values.
-  repeated Value field = 1;
+  repeated Value fields = 1;
 }
 
 // An ordered collection of elements. The JSON representation is "array".
 message ArrayValue {
-  repeated Value element = 1;
+  repeated Value elements = 1;
 }
 
 // Schema: sent once in a session. A stripped down version of
@@ -105,7 +105,7 @@ message StructField {
 }
 
 message StructType {
-  repeated StructField field = 1;
+  repeated StructField fields = 1;
 }
 
 enum NullValue {
