@@ -21,9 +21,8 @@ types:
 
 documentation:
   summary: |-
-    Dialogflow is a natural language understanding platform that makes it easy
-    for you to design and integrate a conversational user interface into your
-    mobile app, web application, device, bot, and so on.
+    An end-to-end development suite for conversational interfaces (e.g.,
+    chatbots, voice-powered apps and devices).
   overview: |-
     [Dialogflow](http://dialogflow.com/) is a natural language understanding
     platform that makes it easy for you to design and integrate a conversational

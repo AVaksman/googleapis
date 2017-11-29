@@ -88,7 +88,7 @@ message Context {
   google.protobuf.Struct parameters = 3;
 }
 
-// The request message for [Contexts.ListContexts].
+// The request message for [Contexts.ListContexts][google.cloud.dialogflow.v2beta1.Contexts.ListContexts].
 message ListContextsRequest {
   // Required. The session to list all contexts from.
   // Format: `projects/<Project ID>/agent/sessions/<Session ID>`.
@@ -102,7 +102,7 @@ message ListContextsRequest {
   string page_token = 3;
 }
 
-// The response message for [Contexts.ListContexts].
+// The response message for [Contexts.ListContexts][google.cloud.dialogflow.v2beta1.Contexts.ListContexts].
 message ListContextsResponse {
   // The list of contexts. There will be a maximum number of items
   // returned based on the page_size field in the request.
@@ -113,14 +113,14 @@ message ListContextsResponse {
   string next_page_token = 2;
 }
 
-// The request message for [Contexts.GetContext].
+// The request message for [Contexts.GetContext][google.cloud.dialogflow.v2beta1.Contexts.GetContext].
 message GetContextRequest {
   // Required. The name of the context. Format:
   // `projects/<Project ID>/agent/sessions/<Session ID>/contexts/<Context ID>`.
   string name = 1;
 }
 
-// The request message for [Contexts.CreateContext].
+// The request message for [Contexts.CreateContext][google.cloud.dialogflow.v2beta1.Contexts.CreateContext].
 message CreateContextRequest {
   // Required. The session to create a context for.
   // Format: `projects/<Project ID>/agent/sessions/<Session ID>`.
@@ -130,7 +130,7 @@ message CreateContextRequest {
   Context context = 2;
 }
 
-// The request message for [Contexts.UpdateContext].
+// The request message for [Contexts.UpdateContext][google.cloud.dialogflow.v2beta1.Contexts.UpdateContext].
 message UpdateContextRequest {
   // Required. The context to update. Format:
   // `projects/<Project ID>/agent/sessions/<Session ID>/contexts/<Context ID>`.
@@ -140,14 +140,14 @@ message UpdateContextRequest {
   google.protobuf.FieldMask update_mask = 2;
 }
 
-// The request message for [Contexts.DeleteContext].
+// The request message for [Contexts.DeleteContext][google.cloud.dialogflow.v2beta1.Contexts.DeleteContext].
 message DeleteContextRequest {
   // Required. The name of the context to delete. Format:
   // `projects/<Project ID>/agent/sessions/<Session ID>/contexts/<Context ID>`.
   string name = 1;
 }
 
-// The request message for [Contexts.DeleteAllContexts].
+// The request message for [Contexts.DeleteAllContexts][google.cloud.dialogflow.v2beta1.Contexts.DeleteAllContexts].
 message DeleteAllContextsRequest {
   // Required. The name of the session to delete all contexts from. Format:
   // `projects/<Project ID>/agent/sessions/<Session ID>`.
