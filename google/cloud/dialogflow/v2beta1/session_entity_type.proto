@@ -35,8 +35,7 @@ option objc_class_prefix = "DF";
 // Session entity types can be redefined on a session level, allowing for
 // specific concepts, like a user's playlists.
 //
-//
-// Standard methods.
+// #
 service SessionEntityTypes {
   // Returns the list of all session entity types in the specified session.
   rpc ListSessionEntityTypes(ListSessionEntityTypesRequest) returns (ListSessionEntityTypesResponse) {

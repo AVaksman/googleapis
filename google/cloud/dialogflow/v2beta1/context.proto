@@ -33,10 +33,9 @@ option objc_class_prefix = "DF";
 // Manages contexts.
 //
 //
-// Refer to [documentation](https://dialogflow.com/docs/contexts) for more
-// # details about contexts.
-//
-// Standard methods.
+// Refer to the [Dialogflow documentation](https://dialogflow.com/docs/contexts)
+// for more details about contexts.
+// #
 service Contexts {
   // Returns the list of all contexts in the specified session.
   rpc ListContexts(ListContextsRequest) returns (ListContextsResponse) {

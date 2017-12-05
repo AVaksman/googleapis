@@ -34,10 +34,9 @@ option objc_class_prefix = "DF";
 // Manages conversational agents.
 //
 //
-// Refer to [documentation](https://dialogflow.com/docs/agents) for more details
-// # about agents.
-//
-// Standard methods.
+// Refer to the [Dialogflow documentation](https://dialogflow.com/docs/agents)
+// for more details about agents.
+// #
 service Agents {
   // Retrieves the specified agent.
   rpc GetAgent(GetAgentRequest) returns (Agent) {

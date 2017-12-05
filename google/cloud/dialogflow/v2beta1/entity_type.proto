@@ -34,10 +34,9 @@ option objc_class_prefix = "DF";
 // Manages agent entity types.
 //
 //
-// Refer to [documentation](https://dialogflow.com/docs/entities) for more
-// # details about entity types.
-//
-// Standard methods.
+// Refer to the [Dialogflow documentation](https://dialogflow.com/docs/entities)
+// for more details about entity types.
+// #
 service EntityTypes {
   // Returns the list of all entity types in the specified agent.
   rpc ListEntityTypes(ListEntityTypesRequest) returns (ListEntityTypesResponse) {
