@@ -25,6 +25,9 @@ import "google/protobuf/field_mask.proto";
 
 option cc_enable_arenas = true;
 option go_package = "google.golang.org/genproto/googleapis/cloud/iot/v1;iot";
+option java_multiple_files = true;
+option java_outer_classname = "DeviceManagerProto";
+option java_package = "com.google.cloud.iot.v1";
 
 
 // Internet of things (IoT) service. Allows to manipulate device registry

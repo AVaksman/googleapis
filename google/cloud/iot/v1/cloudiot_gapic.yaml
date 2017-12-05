@@ -150,6 +150,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       parent: location
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: GetDeviceRegistry
     flattening:
@@ -165,6 +166,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: registry
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: UpdateDeviceRegistry
     flattening:
@@ -182,6 +184,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       device_registry.name: registry
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: DeleteDeviceRegistry
     flattening:
@@ -197,6 +200,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: registry
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: ListDeviceRegistries
     flattening:
@@ -219,6 +223,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       parent: location
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: CreateDevice
     flattening:
@@ -236,6 +241,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       parent: registry
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: GetDevice
     flattening:
@@ -251,6 +257,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: device
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: UpdateDevice
     flattening:
@@ -268,6 +275,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       device.name: device
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: DeleteDevice
     flattening:
@@ -283,6 +291,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: device
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: ListDevices
     flattening:
@@ -305,6 +314,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       parent: registry
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: ModifyCloudToDeviceConfig
     flattening:
@@ -322,6 +332,7 @@ interfaces:
     retry_params_name: rate_limited_aware
     field_name_patterns:
       name: device
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: ListDeviceConfigVersions
     flattening:
@@ -337,6 +348,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: device
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: ListDeviceStates
     flattening:
@@ -352,6 +364,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: device
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: SetIamPolicy
     flattening:
@@ -369,6 +382,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       resource: registry
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: GetIamPolicy
     flattening:
@@ -384,6 +398,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       resource: registry
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: TestIamPermissions
     flattening:
@@ -401,4 +416,54 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       resource: registry
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
+resource_name_generation:
+- message_name: google.iam.v1.SetIamPolicyRequest
+  field_entity_map:
+    resource: "*"
+- message_name: google.iam.v1.GetIamPolicyRequest
+  field_entity_map:
+    resource: "*"
+- message_name: google.iam.v1.TestIamPermissionsRequest
+  field_entity_map:
+    resource: "*"
+- message_name: CreateDeviceRegistryRequest
+  field_entity_map:
+    parent: location
+- message_name: GetDeviceRegistryRequest
+  field_entity_map:
+    name: registry
+- message_name: DeleteDeviceRegistryRequest
+  field_entity_map:
+    name: registry
+- message_name: ListDeviceRegistriesRequest
+  field_entity_map:
+    parent: location
+- message_name: CreateDeviceRequest
+  field_entity_map:
+    parent: registry
+- message_name: GetDeviceRequest
+  field_entity_map:
+    name: device
+- message_name: DeleteDeviceRequest
+  field_entity_map:
+    name: device
+- message_name: ListDevicesRequest
+  field_entity_map:
+    parent: registry
+- message_name: ModifyCloudToDeviceConfigRequest
+  field_entity_map:
+    name: device
+- message_name: ListDeviceConfigVersionsRequest
+  field_entity_map:
+    name: device
+- message_name: ListDeviceStatesRequest
+  field_entity_map:
+    name: device
+- message_name: Device
+  field_entity_map:
+    name: device
+- message_name: DeviceRegistry
+  field_entity_map:
+    name: registry
