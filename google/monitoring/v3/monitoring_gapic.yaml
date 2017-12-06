@@ -71,6 +71,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: project
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: GetAlertPolicy
     flattening:
@@ -84,6 +85,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: alert_policy
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: CreateAlertPolicy
     flattening:
@@ -99,6 +101,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: project
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: DeleteAlertPolicy
     flattening:
@@ -112,6 +115,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: alert_policy
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: UpdateAlertPolicy
     flattening:
@@ -126,6 +130,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       alert_policy.name: alert_policy
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
 - name: google.monitoring.v3.GroupService
   collections:
@@ -463,6 +468,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: project
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: GetNotificationChannelDescriptor
     flattening:
@@ -476,6 +482,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: notification_channel_descriptor
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: ListNotificationChannels
     flattening:
@@ -496,6 +503,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: project
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: GetNotificationChannel
     flattening:
@@ -509,6 +517,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: notification_channel
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: CreateNotificationChannel
     flattening:
@@ -524,6 +533,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: project
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: UpdateNotificationChannel
     flattening:
@@ -552,6 +562,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: notification_channel
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
 - name: google.monitoring.v3.UptimeCheckService
   collections:
@@ -595,6 +606,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       parent: project
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: GetUptimeCheckConfig
     flattening:
@@ -608,6 +620,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: uptime_check_config
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: CreateUptimeCheckConfig
     flattening:
@@ -623,6 +636,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       parent: project
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: UpdateUptimeCheckConfig
     flattening:
@@ -649,6 +663,7 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: uptime_check_config
+    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: ListUptimeCheckIps
     request_object_method: true
@@ -709,3 +724,45 @@ resource_name_generation:
 - message_name: CreateTimeSeriesRequest
   field_entity_map:
     name: project
+- message_name: ListAlertPoliciesRequest
+  field_entity_map:
+    name: project
+- message_name: GetAlertPolicyRequest
+  field_entity_map:
+    name: alert_policy
+- message_name: CreateAlertPolicyRequest
+  field_entity_map:
+    name: project
+- message_name: DeleteAlertPolicyRequest
+  field_entity_map:
+    name: alert_policy
+- message_name: GetNotificationChannelDescriptorRequest
+  field_entity_map:
+    name: notification_channel_descriptor
+- message_name: ListNotificationChannelDescriptorsRequest
+  field_entity_map:
+    name: project
+- message_name: ListNotificationChannelsRequest
+  field_entity_map:
+    name: project
+- message_name: GetNotificationChannelRequest
+  field_entity_map:
+    name: notification_channel
+- message_name: CreateNotificationChannelRequest
+  field_entity_map:
+    name: project
+- message_name: DeleteNotificationChannelRequest
+  field_entity_map:
+    name: notification_channel
+- message_name: GetUptimeCheckConfigRequest
+  field_entity_map:
+    name: uptime_check_config
+- message_name: ListUptimeCheckConfigsRequest
+  field_entity_map:
+    parent: project
+- message_name: CreateUptimeCheckConfigRequest
+  field_entity_map:
+    parent: project
+- message_name: DeleteUptimeCheckConfigRequest
+  field_entity_map:
+    name: uptime_check_config
