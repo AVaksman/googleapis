@@ -69,7 +69,7 @@ proto_version:
   php:
     lower: '3.3.2'
   ruby:
-    lower: '3.0'
+    lower: '3.5'
   java:
     lower: '3.3.0'
 
