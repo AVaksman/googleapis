@@ -4,7 +4,6 @@ name: bigtable.googleapis.com
 title: Cloud Bigtable API
 
 apis:
-- name: google.bigtable.v1.BigtableService
 - name: google.bigtable.v2.Bigtable
 
 documentation:
