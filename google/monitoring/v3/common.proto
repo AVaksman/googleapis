@@ -26,6 +26,7 @@ option go_package = "google.golang.org/genproto/googleapis/monitoring/v3;monitor
 option java_multiple_files = true;
 option java_outer_classname = "CommonProto";
 option java_package = "com.google.monitoring.v3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
 
 
 // A single strongly-typed value.
@@ -195,6 +196,10 @@ message Aggregation {
     // with distribution values. The output is a gauge metric with value type
     // [DOUBLE][google.api.MetricDescriptor.ValueType.DOUBLE].
     ALIGN_PERCENTILE_05 = 21;
+
+    ALIGN_PERCENT_CHANGE = 23;
+
+    ALIGN_COUNT_FALSE = 24;
   }
 
   // A Reducer describes how to aggregate data points from multiple
@@ -277,6 +282,8 @@ message Aggregation {
     // metrics of numeric and distribution type. The value of the output is
     // [DOUBLE][google.api.MetricDescriptor.ValueType.DOUBLE]
     REDUCE_PERCENTILE_05 = 12;
+
+    REDUCE_COUNT_FALSE = 15;
   }
 
   // The alignment period for per-[time series][google.monitoring.v3.TimeSeries]
@@ -330,6 +337,54 @@ message Aggregation {
   // a single output time series. If `crossSeriesReducer` is not
   // defined, this field is ignored.
   repeated string group_by_fields = 5;
+}
+
+// Describes a ranking-based time series filter. Each input time series is
+// ranked with an aligner. The filter lets through up to `num_time_series` time
+// series, selecting them based on the relative ranking.
+message PickTimeSeriesFilter {
+  // The value reducers that can be applied to a PickTimeSeriesFilter.
+  enum Method {
+    // Not allowed in well-formed requests.
+    METHOD_UNSPECIFIED = 0;
+
+    // Select the mean of all values.
+    METHOD_MEAN = 1;
+
+    // Select the maximum value.
+    METHOD_MAX = 2;
+
+    // Select the minimum value.
+    METHOD_MIN = 3;
+
+    // Compute the sum of all values.
+    METHOD_SUM = 4;
+
+    // Select the most recent value.
+    METHOD_LATEST = 5;
+  }
+
+  // Describes the ranking directions.
+  enum Direction {
+    // Not allowed in well-formed requests.
+    DIRECTION_UNSPECIFIED = 0;
+
+    // Pass the highest ranking inputs.
+    TOP = 1;
+
+    // Pass the lowest ranking inputs.
+    BOTTOM = 2;
+  }
+
+  // `rankingMethod` is applied to each time series independently to produce the
+  // value which will be used to compare the time series to other time series.
+  Method ranking_method = 1;
+
+  // How many time series to return.
+  int32 num_time_series = 2;
+
+  // How to use the ranking to select time series that pass through the filter.
+  Direction direction = 3;
 }
 
 // Specifies an ordering relationship on two arguments, here called left and

@@ -27,6 +27,7 @@ option go_package = "google.golang.org/genproto/googleapis/monitoring/v3;monitor
 option java_multiple_files = true;
 option java_outer_classname = "NotificationServiceProto";
 option java_package = "com.google.monitoring.v3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
 
 
 // The Notification Channel API provides access to configuration that
@@ -74,6 +75,18 @@ service NotificationChannelService {
   rpc DeleteNotificationChannel(DeleteNotificationChannelRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = { delete: "/v3/{name=projects/*/notificationChannels/*}" };
   }
+
+  rpc SendNotificationChannelVerificationCode(SendNotificationChannelVerificationCodeRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = { post: "/v3/{name=projects/*/notificationChannels/*}:sendVerificationCode" body: "*" };
+  }
+
+  rpc GetNotificationChannelVerificationCode(GetNotificationChannelVerificationCodeRequest) returns (GetNotificationChannelVerificationCodeResponse) {
+    option (google.api.http) = { post: "/v3/{name=projects/*/notificationChannels/*}:getVerificationCode" body: "*" };
+  }
+
+  rpc VerifyNotificationChannel(VerifyNotificationChannelRequest) returns (NotificationChannel) {
+    option (google.api.http) = { post: "/v3/{name=projects/*/notificationChannels/*}:verify" body: "*" };
+  }
 }
 
 // The `ListNotificationChannelDescriptors` request.
@@ -82,6 +95,10 @@ message ListNotificationChannelDescriptorsRequest {
   // the notification channel descriptors. The expected syntax is:
   //
   //    "projects/[PROJECT_ID]"
+  //
+  // Note that this names the parent container in which to look for the
+  // descriptors; to retrieve a single descriptor by name, use the
+  // [GetNotificationChannelDescriptor][] operation, instead.
   string name = 4;
 
   // The maximum number of results to return in a single response. If
@@ -111,14 +128,20 @@ message ListNotificationChannelDescriptorsResponse {
 // The `GetNotificationChannelDescriptor` response.
 message GetNotificationChannelDescriptorRequest {
   // The channel type for which to execute the request. The format is
-  // `"projects/{project_id_or_number}/notificationChannelDescriptors/{channel_type}"`.
+  // `"projects/[PROJECT_ID]/notificationChannelDescriptors/{channel_type}"`.
   string name = 3;
 }
 
 // The `CreateNotificationChannel` request.
 message CreateNotificationChannelRequest {
-  // The project on which to execute the request. The format is
-  // `"projects/{project_id_or_number}"`.
+  // The project on which to execute the request. The format is:
+  //
+  //    `"projects/[PROJECT_ID]"`.
+  //
+  // Note that this names the container into which the channel will be
+  // written. This does not name the newly created channel. The resulting
+  // channel's name will have a normalized version of this field as a prefix,
+  // but will add "/notificationChannels/[CHANNEL_ID]" to identify the channel.
   string name = 3;
 
   // The definition of the `NotificationChannel` to create.
@@ -128,7 +151,10 @@ message CreateNotificationChannelRequest {
 // The `ListNotificationChannels` request.
 message ListNotificationChannelsRequest {
   // The project on which to execute the request. The format is
-  // `"projects/{project_id_or_number}"`.
+  // `"projects/[PROJECT_ID]"`. That is, this names the container
+  // in which to look for the notification channels; it does not name a
+  // specific channel. To query a specific channel by name, use the
+  // [GetNotificationChannel][] operation.
   string name = 5;
 
   // If provided, this field specifies the criteria that must be met by
@@ -168,7 +194,7 @@ message ListNotificationChannelsResponse {
 // The `GetNotificationChannel` request.
 message GetNotificationChannelRequest {
   // The channel for which to execute the request. The format is
-  // `"projects/{project_id_or_number}/notificationChannels/{channel_id}"`.
+  // `"projects/[PROJECT_ID]/notificationChannels/[CHANNEL_ID]"`.
   string name = 3;
 }
 
@@ -187,7 +213,7 @@ message UpdateNotificationChannelRequest {
 // The `DeleteNotificationChannel` request.
 message DeleteNotificationChannelRequest {
   // The channel for which to execute the request. The format is
-  // `"projects/{project_id_or_number}/notificationChannels/{channel_id}"`.
+  // `"projects/[PROJECT_ID]/notificationChannels/[CHANNEL_ID]"`.
   string name = 3;
 
   // If true, the notification channel will be deleted regardless of its
@@ -195,4 +221,54 @@ message DeleteNotificationChannelRequest {
   // channel). If false, channels that are still referenced by an existing
   // alerting policy will fail to be deleted in a delete operation.
   bool force = 5;
+}
+
+message SendNotificationChannelVerificationCodeRequest {
+  // The notification channel to which to send a verification code.
+  string name = 1;
+}
+
+message GetNotificationChannelVerificationCodeRequest {
+  // The notification channel for which a verification code is to be generated
+  // and retrieved. This must name a channel that is already verified; if
+  // the specified channel is not verified, the request will fail.
+  string name = 1;
+
+  // The desired expiration time. If specified, the API will guarantee that
+  // the returned code will not be valid after the specified timestamp;
+  // however, the API cannot guarantee that the returned code will be
+  // valid for at least as long as the requested time (the API puts an upper
+  // bound on the amount of time for which a code may be valid). If omitted,
+  // a default expiration will be used, which may be less than the max
+  // permissible expiration (so specifying an expiration may extend the
+  // code's lifetime over omitting an expiration, even though the API does
+  // impose an upper limit on the maximum expiration that is permitted).
+  google.protobuf.Timestamp expire_time = 2;
+}
+
+message GetNotificationChannelVerificationCodeResponse {
+  // The verification code, which may be used to verify other channels
+  // that have an equivalent identity (i.e. other channels of the same
+  // type with the same fingerprint such as other email channels with
+  // the same email address or other sms channels with the same number).
+  string code = 1;
+
+  // The expiration time associated with the code that was returned. If
+  // an expiration was provided in the request, this is the minimum of the
+  // requested expiration in the request and the max permitted expiration.
+  google.protobuf.Timestamp expire_time = 2;
+}
+
+message VerifyNotificationChannelRequest {
+  // The notification channel to verify.
+  string name = 1;
+
+  // The verification code that was delivered to the channel as
+  // a result of invoking the `SendNotificationChannelVerificationCode` API
+  // method or that was retrieved from a verified channel via
+  // `GetNotificationChannelVerificationCode`. For example, one might have
+  // "G-123456" or "TKNZGhhd2EyN3I1MnRnMjRv" (in general, one is only
+  // guaranteed that the code is valid UTF-8; one should not
+  // make any assumptions regarding the structure or format of the code).
+  string code = 2;
 }

@@ -20,12 +20,14 @@ import "google/api/annotations.proto";
 import "google/monitoring/v3/common.proto";
 import "google/monitoring/v3/mutation_record.proto";
 import "google/protobuf/duration.proto";
+import "google/protobuf/wrappers.proto";
 
 option csharp_namespace = "Google.Cloud.Monitoring.V3";
 option go_package = "google.golang.org/genproto/googleapis/monitoring/v3;monitoring";
 option java_multiple_files = true;
 option java_outer_classname = "AlertProto";
 option java_package = "com.google.monitoring.v3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
 
 
 // A description of the conditions under which some aspect of your system is
@@ -36,6 +38,8 @@ message AlertPolicy {
   // A string and a MIME type that describes the string's format.
   message Documentation {
     // The text of the documentation, interpreted according to `mime_type`.
+    // The content may not exceed 8,192 Unicode characters and may not exceed
+    // more than 10,240 bytes when encoded in UTF-8 format, whichever is first.
     string content = 1;
 
     // The format of the `content` field. Presently, only the value
@@ -69,10 +73,12 @@ message AlertPolicy {
       // A [filter](/monitoring/api/v3/filters) that
       // identifies which time series should be compared with the threshold.
       // The filter is similar to the one that is specified in the
-      // [`MetricService.ListTimeSeries` request](/monitoring/api/ref_v3/rest/v3/projects.timeSeries/list)
-      // (that call is useful to verify the time series that will be retrieved /
+      // [`MetricService.ListTimeSeries`
+      // request](/monitoring/api/ref_v3/rest/v3/projects.timeSeries/list) (that
+      // call is useful to verify the time series that will be retrieved /
       // processed) and must specify the metric type and optionally may contain
       // restrictions on resource type, resource labels, and metric labels.
+      // This field may not exceed 2048 Unicode characters in length.
       string filter = 2;
 
       // Specifies the alignment of data points in individual time series as
@@ -96,6 +102,7 @@ message AlertPolicy {
       // call is useful to verify the time series that will be retrieved /
       // processed) and must specify the metric type and optionally may contain
       // restrictions on resource type, resource labels, and metric labels.
+      // This field may not exceed 2048 Unicode characters in length.
       string denominator_filter = 9;
 
       // Specifies the alignment of data points in individual time series
@@ -152,10 +159,12 @@ message AlertPolicy {
       // A [filter](/monitoring/api/v3/filters) that
       // identifies which time series should be compared with the threshold.
       // The filter is similar to the one that is specified in the
-      // [`MetricService.ListTimeSeries` request](/monitoring/api/ref_v3/rest/v3/projects.timeSeries/list)
-      // (that call is useful to verify the time series that will be retrieved /
+      // [`MetricService.ListTimeSeries`
+      // request](/monitoring/api/ref_v3/rest/v3/projects.timeSeries/list) (that
+      // call is useful to verify the time series that will be retrieved /
       // processed) and must specify the metric type and optionally may contain
       // restrictions on resource type, resource labels, and metric labels.
+      // This field may not exceed 2048 Unicode characters in length.
       string filter = 1;
 
       // Specifies the alignment of data points in individual time series as
@@ -194,7 +203,7 @@ message AlertPolicy {
     // When calling the
     // [alertPolicies.create][google.monitoring.v3.AlertPolicyService.CreateAlertPolicy]
     // method, do not include the `name` field in the conditions of the
-    // requested alert policy.  Stackdriver Monitoring creates the
+    // requested alerting policy.  Stackdriver Monitoring creates the
     // condition identifiers and includes them in the new policy.
     //
     // When calling the
@@ -240,6 +249,12 @@ message AlertPolicy {
     // Combine conditions using the logical `OR` operator. An incident
     // is created if any of the listed conditions is met.
     OR = 2;
+
+    // Combine conditions using logical 'AND' operator. Unlike the regular
+    // "AND" option, this one requires that not only are all conditions
+    // satisfied but there is at least one resource such that all conditions
+    // are simultaneously satisfied for the given resource.
+    AND_WITH_MATCHING_RESOURCE = 3;
   }
 
   // Required if the policy exists. The resource name for this policy. The
@@ -250,19 +265,20 @@ message AlertPolicy {
   // `[ALERT_POLICY_ID]` is assigned by Stackdriver Monitoring when the policy
   // is created.  When calling the
   // [alertPolicies.create][google.monitoring.v3.AlertPolicyService.CreateAlertPolicy]
-  // method, do not include the `name` field in the alert policy passed as part
-  // of request.
+  // method, do not include the `name` field in the alerting policy passed as
+  // part of the request.
   string name = 1;
 
   // A short name or phrase used to identify the policy in dashboards,
   // notifications, and incidents. To avoid confusion, don't use the same
-  // display name for multiple policies in the same project.
+  // display name for multiple policies in the same project. The name is
+  // limited to 512 Unicode characters.
   string display_name = 2;
 
   // Documentation that is included with notifications and incidents related to
   // this policy. Best practice is for the documentation to include information
   // to help responders understand, mitigate, escalate, and/or correct the
-  // underlying problems detected by the alert policy.  Notification channels
+  // underlying problems detected by the alerting policy.  Notification channels
   // that have limited capacity might not show this documentation.
   Documentation documentation = 13;
 
@@ -285,9 +301,12 @@ message AlertPolicy {
   // to determine if an incident should be opened.
   ConditionCombinerType combiner = 6;
 
-  // Whether or not the policy is disabled. Policies that are disabled do not
-  // produce notifications or incidents.
-  bool disabled = 7;
+  // Whether or not the policy is enabled. On write, the default interpretation
+  // if unset is that the policy is enabled. On read, clients should not make
+  // any assumption about the state if it has not been populated. The
+  // field should always be populated on List and Get operations, unless
+  // a field projection has been specified that strips it out.
+  google.protobuf.BoolValue enabled = 17;
 
   // Identifies notification channels to which notifications should be sent
   // when incidents are opened or closed, or when new violations occur on
@@ -300,9 +319,9 @@ message AlertPolicy {
   //     "projects/[PROJECT_ID]/notificationChannels/[CHANNEL_ID]"
   repeated string notification_channels = 14;
 
-  // A record of the creation of the alert policy.
+  // A record of the creation of the alerting policy.
   MutationRecord creation_record = 10;
 
-  // A record of the most recent change to the alert policy.
+  // A record of the most recent change to the alerting policy.
   MutationRecord mutation_record = 11;
 }
