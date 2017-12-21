@@ -15,7 +15,7 @@ language_settings:
   php:
     package_name: Google\Cloud\Oslogin\V1beta
   nodejs:
-    package_name: oslogin.v1beta
+    package_name: os-login.v1beta
 # The configuration for the license header to put on generated files.
 license_header:
   # The file containing the copyright line(s).
