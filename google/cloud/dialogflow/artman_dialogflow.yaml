@@ -1,7 +1,6 @@
 common:
   api_name: dialogflow
   api_version: v2beta1
-  organization_name: google-cloud
   proto_deps:
     - name: google-common-protos
   src_proto_paths:
