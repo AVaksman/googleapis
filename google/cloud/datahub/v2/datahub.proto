@@ -745,7 +745,6 @@ message SelectorSpec {
   // Specifies type of resource (entry or dataset) to be returned in the list
   // response.
   enum TypeSelector {
-    option allow_alias = true;
     // Dataset entries.
     DATASET = 0;
 
@@ -973,7 +972,6 @@ message TouchEntryRequest {
 
 // Type of the entry.
 enum EntryType {
-  option allow_alias = true;
   // Default unknown type
   ENTRY_TYPE_UNKNOWN = 0;
 
