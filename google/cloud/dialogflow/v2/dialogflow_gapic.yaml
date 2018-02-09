@@ -7,7 +7,7 @@ language_settings:
   python:
     package_name: google.cloud.dialogflow_v2.gapic
   go:
-    package_name: cloud.google.com/go/cloud/dialogflow/apiv2
+    package_name: cloud.google.com/go/dialogflow/apiv2
   csharp:
     package_name: Google.Cloud.Dialogflow.V2
   ruby:
