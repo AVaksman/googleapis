@@ -857,7 +857,7 @@ interfaces:
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
-      parent: agent
+      parent: project_agent
     timeout_millis: 60000
     long_running:
       return_type: google.cloud.dialogflow.v2beta1.BatchUpdateIntentsResponse
@@ -880,7 +880,7 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
-      parent: project
+      parent: project_agent
     timeout_millis: 60000
     long_running:
       return_type: google.protobuf.Empty
@@ -1231,10 +1231,10 @@ resource_name_generation:
     name: intent
 - message_name: BatchUpdateIntentsRequest
   field_entity_map:
-    parent: agent
+    parent: project_agent
 - message_name: BatchDeleteIntentsRequest
   field_entity_map:
-    parent: project
+    parent: project_agent
 - message_name: ListSessionEntityTypesRequest
   field_entity_map:
     parent: session
