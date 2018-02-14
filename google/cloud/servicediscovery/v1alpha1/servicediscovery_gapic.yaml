@@ -1,0 +1,498 @@
+type: com.google.api.codegen.ConfigProto
+config_schema_version: 1.0.0
+# The settings of generated code in a specific language.
+language_settings:
+  java:
+    package_name: com.google.cloud.servicediscovery.v1alpha1
+  python:
+    package_name: google.cloud.servicediscovery_v1alpha1.gapic
+  go:
+    package_name: cloud.google.com/go/cloud/servicediscovery/apiv1alpha1
+  csharp:
+    package_name: Google.Cloud.Servicediscovery.V1alpha1
+  ruby:
+    package_name: Google::Cloud::Servicediscovery::V1alpha1
+  php:
+    package_name: Google\Cloud\Servicediscovery\V1alpha1
+  nodejs:
+    package_name: servicediscovery.v1alpha1
+# The configuration for the license header to put on generated files.
+license_header:
+  # The file containing the copyright line(s).
+  copyright_file: copyright-google.txt
+  # The file containing the raw license header without any copyright line(s).
+  license_file: license-header-apache-2.0.txt
+# A list of API interface configurations.
+interfaces:
+  # The fully qualified name of the API interface.
+- name: google.cloud.servicediscovery.v1alpha1.LookupService
+  # A list of resource collection configurations.
+  # Consists of a name_pattern and an entity_name.
+  # The name_pattern is a pattern to describe the names of the resources of this
+  # collection, using the platform's conventions for URI patterns. A generator
+  # may use this to generate methods to compose and decompose such names. The
+  # pattern should use named placeholders as in `shelves/{shelf}/books/{book}`;
+  # those will be taken as hints for the parameter names of the generated
+  # methods. If empty, no name methods are generated.
+  # The entity_name is the name to be used as a basis for generated methods and
+  # classes.
+  collections:
+  - name_pattern: projects/{project}/locations/{location}/registries/{registry}/services/{service}
+    entity_name: service
+  # Definition for retryable codes.
+  retry_codes_def:
+  - name: idempotent
+    retry_codes:
+    - UNAVAILABLE
+    - DEADLINE_EXCEEDED
+  - name: non_idempotent
+    retry_codes: []
+  # Definition for retry/backoff parameters.
+  retry_params_def:
+  - name: default
+    initial_retry_delay_millis: 100
+    retry_delay_multiplier: 1.3
+    max_retry_delay_millis: 60000
+    initial_rpc_timeout_millis: 20000
+    rpc_timeout_multiplier: 1
+    max_rpc_timeout_millis: 20000
+    total_timeout_millis: 600000
+  # A list of method configurations.
+  # Common properties:
+  #
+  #   name - The simple name of the method.
+  #
+  #   flattening - Specifies the configuration for parameter flattening.
+  #   Describes the parameter groups for which a generator should produce method
+  #   overloads which allow a client to directly pass request message fields as
+  #   method parameters. This information may or may not be used, depending on
+  #   the target language.
+  #   Consists of groups, which each represent a list of parameters to be
+  #   flattened. Each parameter listed must be a field of the request message.
+  #
+  #   required_fields - Fields that are always required for a request to be
+  #   valid.
+  #
+  #   request_object_method - Turns on or off the generation of a method whose
+  #   sole parameter is a request object. Not all languages will generate this
+  #   method.
+  #
+  #   resource_name_treatment - An enum that specifies how to treat the resource
+  #   name formats defined in the field_name_patterns and
+  #   response_field_name_patterns fields.
+  #   UNSET: default value
+  #   NONE: the collection configs will not be used by the generated code.
+  #   VALIDATE: string fields will be validated by the client against the
+  #   specified resource name formats.
+  #   STATIC_TYPES: the client will use generated types for resource names.
+  #
+  #   page_streaming - Specifies the configuration for paging.
+  #   Describes information for generating a method which transforms a paging
+  #   list RPC into a stream of resources.
+  #   Consists of a request and a response.
+  #   The request specifies request information of the list method. It defines
+  #   which fields match the paging pattern in the request. The request consists
+  #   of a page_size_field and a token_field. The page_size_field is the name of
+  #   the optional field specifying the maximum number of elements to be
+  #   returned in the response. The token_field is the name of the field in the
+  #   request containing the page token.
+  #   The response specifies response information of the list method. It defines
+  #   which fields match the paging pattern in the response. The response
+  #   consists of a token_field and a resources_field. The token_field is the
+  #   name of the field in the response containing the next page token. The
+  #   resources_field is the name of the field in the response containing the
+  #   list of resources belonging to the page.
+  #
+  #   retry_codes_name - Specifies the configuration for retryable codes. The
+  #   name must be defined in interfaces.retry_codes_def.
+  #
+  #   retry_params_name - Specifies the configuration for retry/backoff
+  #   parameters. The name must be defined in interfaces.retry_params_def.
+  #
+  #   field_name_patterns - Maps the field name of the request type to
+  #   entity_name of interfaces.collections.
+  #   Specifies the string pattern that the field must follow.
+  #
+  #   timeout_millis - Specifies the default timeout for a non-retrying call. If
+  #   the call is retrying, refer to retry_params_name instead.
+  methods:
+  - name: LookupServiceEndpoints
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    request_object_method: false
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: service
+    timeout_millis: 10000
+  # The fully qualified name of the API interface.
+- name: google.cloud.servicediscovery.v1alpha1.RegistrationService
+  # A list of resource collection configurations.
+  # Consists of a name_pattern and an entity_name.
+  # The name_pattern is a pattern to describe the names of the resources of this
+  # collection, using the platform's conventions for URI patterns. A generator
+  # may use this to generate methods to compose and decompose such names. The
+  # pattern should use named placeholders as in `shelves/{shelf}/books/{book}`;
+  # those will be taken as hints for the parameter names of the generated
+  # methods. If empty, no name methods are generated.
+  # The entity_name is the name to be used as a basis for generated methods and
+  # classes.
+  collections:
+  - name_pattern: projects/{project}/locations/{location}
+    entity_name: location
+  - name_pattern: projects/{project}/locations/{location}/registries/{registry}
+    entity_name: registry
+  - name_pattern: projects/{project}/locations/{location}/registries/{registry}/services/{service}
+    entity_name: service
+  - name_pattern: projects/{project}/locations/{location}/registries/{registry}/services/{service}/endpoints/{endpoint}
+    entity_name: endpoint
+  # Definition for retryable codes.
+  retry_codes_def:
+  - name: idempotent
+    retry_codes:
+    - UNAVAILABLE
+    - DEADLINE_EXCEEDED
+  - name: non_idempotent
+    retry_codes: []
+  # Definition for retry/backoff parameters.
+  retry_params_def:
+  - name: default
+    initial_retry_delay_millis: 100
+    retry_delay_multiplier: 1.3
+    max_retry_delay_millis: 60000
+    initial_rpc_timeout_millis: 20000
+    rpc_timeout_multiplier: 1
+    max_rpc_timeout_millis: 20000
+    total_timeout_millis: 600000
+  # A list of method configurations.
+  # Common properties:
+  #
+  #   name - The simple name of the method.
+  #
+  #   flattening - Specifies the configuration for parameter flattening.
+  #   Describes the parameter groups for which a generator should produce method
+  #   overloads which allow a client to directly pass request message fields as
+  #   method parameters. This information may or may not be used, depending on
+  #   the target language.
+  #   Consists of groups, which each represent a list of parameters to be
+  #   flattened. Each parameter listed must be a field of the request message.
+  #
+  #   required_fields - Fields that are always required for a request to be
+  #   valid.
+  #
+  #   request_object_method - Turns on or off the generation of a method whose
+  #   sole parameter is a request object. Not all languages will generate this
+  #   method.
+  #
+  #   resource_name_treatment - An enum that specifies how to treat the resource
+  #   name formats defined in the field_name_patterns and
+  #   response_field_name_patterns fields.
+  #   UNSET: default value
+  #   NONE: the collection configs will not be used by the generated code.
+  #   VALIDATE: string fields will be validated by the client against the
+  #   specified resource name formats.
+  #   STATIC_TYPES: the client will use generated types for resource names.
+  #
+  #   page_streaming - Specifies the configuration for paging.
+  #   Describes information for generating a method which transforms a paging
+  #   list RPC into a stream of resources.
+  #   Consists of a request and a response.
+  #   The request specifies request information of the list method. It defines
+  #   which fields match the paging pattern in the request. The request consists
+  #   of a page_size_field and a token_field. The page_size_field is the name of
+  #   the optional field specifying the maximum number of elements to be
+  #   returned in the response. The token_field is the name of the field in the
+  #   request containing the page token.
+  #   The response specifies response information of the list method. It defines
+  #   which fields match the paging pattern in the response. The response
+  #   consists of a token_field and a resources_field. The token_field is the
+  #   name of the field in the response containing the next page token. The
+  #   resources_field is the name of the field in the response containing the
+  #   list of resources belonging to the page.
+  #
+  #   retry_codes_name - Specifies the configuration for retryable codes. The
+  #   name must be defined in interfaces.retry_codes_def.
+  #
+  #   retry_params_name - Specifies the configuration for retry/backoff
+  #   parameters. The name must be defined in interfaces.retry_params_def.
+  #
+  #   field_name_patterns - Maps the field name of the request type to
+  #   entity_name of interfaces.collections.
+  #   Specifies the string pattern that the field must follow.
+  #
+  #   timeout_millis - Specifies the default timeout for a non-retrying call. If
+  #   the call is retrying, refer to retry_params_name instead.
+  methods:
+  - name: CreateServiceRegistry
+    flattening:
+      groups:
+      - parameters:
+        - parent
+        - service_registry_id
+        - service_registry
+    required_fields:
+    - parent
+    - service_registry_id
+    - service_registry
+    request_object_method: true
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: location
+    timeout_millis: 10000
+  - name: ListServiceRegistries
+    flattening:
+      groups:
+      - parameters:
+        - parent
+    required_fields:
+    - parent
+    request_object_method: false
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: location
+    timeout_millis: 10000
+  - name: GetServiceRegistry
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    request_object_method: false
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: registry
+    timeout_millis: 10000
+  - name: DeleteServiceRegistry
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    request_object_method: false
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: registry
+    timeout_millis: 10000
+  - name: CreateService
+    flattening:
+      groups:
+      - parameters:
+        - parent
+        - service_name
+        - service
+    required_fields:
+    - parent
+    - service_name
+    - service
+    request_object_method: true
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: registry
+    timeout_millis: 10000
+  - name: ListServices
+    flattening:
+      groups:
+      - parameters:
+        - parent
+    required_fields:
+    - parent
+    request_object_method: false
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: registry
+    timeout_millis: 10000
+  - name: GetService
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    request_object_method: false
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: service
+    timeout_millis: 10000
+  - name: DeleteService
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    request_object_method: false
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: service
+    timeout_millis: 10000
+  - name: UpdateServiceMetadata
+    flattening:
+      groups:
+      - parameters:
+        - name
+        - metadata
+    required_fields:
+    - name
+    - metadata
+    request_object_method: true
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: service
+    timeout_millis: 10000
+  - name: RemoveServiceMetadata
+    flattening:
+      groups:
+      - parameters:
+        - name
+        - keys
+    required_fields:
+    - name
+    - keys
+    request_object_method: true
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: service
+    timeout_millis: 10000
+  - name: CreateServiceEndpoint
+    flattening:
+      groups:
+      - parameters:
+        - parent
+        - service_endpoint
+    required_fields:
+    - parent
+    - service_endpoint
+    request_object_method: true
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: service
+    timeout_millis: 10000
+  - name: ListServiceEndpoints
+    flattening:
+      groups:
+      - parameters:
+        - parent
+    required_fields:
+    - parent
+    request_object_method: false
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: service
+    timeout_millis: 10000
+  - name: GetServiceEndpoint
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    request_object_method: false
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: endpoint
+    timeout_millis: 10000
+  - name: DeleteServiceEndpoint
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    request_object_method: false
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: endpoint
+    timeout_millis: 10000
+  - name: UpdateServiceEndpointMetadata
+    flattening:
+      groups:
+      - parameters:
+        - name
+        - metadata
+    required_fields:
+    - name
+    - metadata
+    request_object_method: true
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: endpoint
+    timeout_millis: 10000
+  - name: RemoveServiceEndpointMetadata
+    flattening:
+      groups:
+      - parameters:
+        - name
+        - keys
+    required_fields:
+    - name
+    - keys
+    request_object_method: true
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: endpoint
+    timeout_millis: 10000
+  - name: GetIamPolicy
+    flattening:
+      groups:
+      - parameters:
+        - resource
+    required_fields:
+    - resource
+    request_object_method: false
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      resource: registry
+    timeout_millis: 20000
+  - name: SetIamPolicy
+    flattening:
+      groups:
+      - parameters:
+        - resource
+        - policy
+    required_fields:
+    - resource
+    - policy
+    request_object_method: true
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      resource: registry
+    timeout_millis: 20000
+  - name: TestIamPermissions
+    flattening:
+      groups:
+      - parameters:
+        - resource
+        - permissions
+    required_fields:
+    - resource
+    - permissions
+    request_object_method: true
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      resource: registry
+    timeout_millis: 20000

@@ -1,0 +1,353 @@
+// Copyright 2018 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package google.cloud.servicediscovery.v1alpha1;
+
+import "google/api/annotations.proto";
+import "google/cloud/servicediscovery/v1alpha1/service.proto";
+import "google/cloud/servicediscovery/v1alpha1/service_endpoint.proto";
+import "google/cloud/servicediscovery/v1alpha1/service_registry.proto";
+import "google/iam/v1/iam_policy.proto";
+import "google/iam/v1/policy.proto";
+import "google/protobuf/empty.proto";
+
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/cloud/servicediscovery/v1alpha1;servicediscovery";
+option java_multiple_files = true;
+option java_outer_classname = "RegistrationServiceProto";
+option java_package = "com.google.cloud.servicediscovery.v1alpha1";
+
+// Service Discovery API for Registering Services.
+service RegistrationService {
+  // Creates a new Service Registry.
+  rpc CreateServiceRegistry(CreateServiceRegistryRequest)
+      returns (ServiceRegistry) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{parent=projects/*/locations/*}/registries"
+      body: "service_registry"
+    };
+  }
+
+  // Lists all service registries.
+  rpc ListServiceRegistries(ListServiceRegistriesRequest)
+      returns (ListServiceRegistriesResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{parent=projects/*/locations/*}/registries"
+    };
+  }
+
+  // Returns a Service Registry.
+  rpc GetServiceRegistry(GetServiceRegistryRequest) returns (ServiceRegistry) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{name=projects/*/locations/*/registries/*}"
+    };
+  }
+
+  // Deletes a Service Registry. This will delete all services and endpoints.
+  rpc DeleteServiceRegistry(DeleteServiceRegistryRequest)
+      returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1alpha1/{name=projects/*/locations/*/registries/*}"
+    };
+  }
+
+  // Creates a new Service.
+  rpc CreateService(CreateServiceRequest) returns (Service) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{parent=projects/*/locations/*/registries/*}/services"
+      body: "service"
+    };
+  }
+
+  // Lists all services belonging to a registry.
+  rpc ListServices(ListServicesRequest) returns (ListServicesResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{parent=projects/*/locations/*/registries/*}/services"
+    };
+  }
+
+  // Returns a Service.
+  rpc GetService(GetServiceRequest) returns (Service) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*}"
+    };
+  }
+
+  // Deletes a Service. This deletes all Service Endpoints associated with
+  // this service.
+  rpc DeleteService(DeleteServiceRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*}"
+    };
+  }
+
+  // Updates keys in Service metadata. Only the provided keys are
+  // added/updated (PATCH semantics).
+  rpc UpdateServiceMetadata(UpdateServiceMetadataRequest) returns (Service) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*}:updatemetadata"
+      body: "metadata"
+    };
+  }
+
+  // Removes keys in Service metadata.
+  rpc RemoveServiceMetadata(RemoveServiceMetadataRequest) returns (Service) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*}:deletemetadata"
+      body: "keys"
+    };
+  }
+
+  // Creates a new Service Endpoint.
+  rpc CreateServiceEndpoint(CreateServiceEndpointRequest)
+      returns (ServiceEndpoint) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{parent=projects/*/locations/*/registries/*/services/*}/endpoints"
+      body: "service_endpoint"
+    };
+  }
+
+  // Lists all service endpoints.
+  rpc ListServiceEndpoints(ListServiceEndpointsRequest)
+      returns (ListServiceEndpointsResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{parent=projects/*/locations/*/registries/*/services/*}/endpoints"
+    };
+  }
+
+  // Returns a Service Endpoint.
+  rpc GetServiceEndpoint(GetServiceEndpointRequest) returns (ServiceEndpoint) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*/endpoints/*}"
+    };
+  }
+
+  // Deletes a Service Endpoint.
+  rpc DeleteServiceEndpoint(DeleteServiceEndpointRequest)
+      returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*/endpoints/*}"
+    };
+  }
+
+  // Updates keys in Service Endpoint metadata. Only the provided keys are
+  // added/updated (PATCH semantics).
+  rpc UpdateServiceEndpointMetadata(UpdateServiceEndpointMetadataRequest)
+      returns (ServiceEndpoint) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*/endpoints/*}:updatemetadata"
+      body: "metadata"
+    };
+  }
+
+  // Removes keys in Service Endpoint metadata.
+  rpc RemoveServiceEndpointMetadata(RemoveServiceEndpointMetadataRequest)
+      returns (ServiceEndpoint) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*/endpoints/*}:deletemetadata"
+      body: "keys"
+    };
+  }
+
+  // Gets the IAM Policy for a resource (registry or service only).
+  rpc GetIamPolicy(google.iam.v1.GetIamPolicyRequest)
+      returns (google.iam.v1.Policy) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{resource=projects/*/locations/*/registries/*}:getIamPolicy"
+      body: "*"
+    };
+  }
+
+  // Sets the IAM Policy for a resource (registry or service only).
+  rpc SetIamPolicy(google.iam.v1.SetIamPolicyRequest)
+      returns (google.iam.v1.Policy) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{resource=projects/*/locations/*/registries/*}:setIamPolicy"
+      body: "*"
+    };
+  }
+
+  // Tests IAM permissions for a resource (registry or service only).
+  rpc TestIamPermissions(google.iam.v1.TestIamPermissionsRequest)
+      returns (google.iam.v1.TestIamPermissionsResponse) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{resource=projects/*/locations/*/registries/*}:testIamPermissions"
+      body: "*"
+    };
+  }
+}
+
+// A request to create a Service Registry.
+message CreateServiceRegistryRequest {
+  // Required. The resource name of the location associated with the
+  // service registry. Only global locations are currently supported.
+  string parent = 1;
+
+  // Required. It must be unique within a location and match the
+  // regular expression `[a-zA-Z][a-zA-Z0-9_-]{0,62}`
+  string service_registry_id = 2;
+
+  // Required. A Service registry with initial fields set.
+  ServiceRegistry service_registry = 3;
+}
+
+// A request to list service registries.
+message ListServiceRegistriesRequest {
+  // Required. The resource name of the location associated with the
+  // service registry. Only global locations are currently supported.
+  string parent = 1;
+}
+
+// A response that contains the given list of service registries.
+message ListServiceRegistriesResponse {
+  // The list of service registries.
+  repeated ServiceRegistry service_registries = 1;
+}
+
+// The request to get a Service Registry.
+message GetServiceRegistryRequest {
+  // Required. The name of the service registry to return.
+  string name = 1;
+}
+
+// The request to delete a Service Registry.
+message DeleteServiceRegistryRequest {
+  // Required. The name of the service registry to delete.
+  string name = 1;
+}
+
+// The request to create a Service.
+message CreateServiceRequest {
+  // Required. The resource name of the registry this service will belong to.
+  string parent = 1;
+
+  // Required. The name of the service. Must be unique within a registry and
+  // match regular expression `[a-zA-Z][a-zA-Z0-9_-]{0,62}`
+  string service_name = 2;
+
+  // Required. A Service  with initial fields set.
+  Service service = 3;
+}
+
+// A request to list all services.
+message ListServicesRequest {
+  // Required. The name of the service registry.
+  string parent = 1;
+}
+
+// A response that contains all services.
+message ListServicesResponse {
+  // The list of services.
+  repeated Service services = 1;
+}
+
+// A request to get a service. This should not be used for looking
+// up a service. Rather the `discover` method should be used as it
+// will contain all metadata for both the service and endpoints.
+message GetServiceRequest {
+  // Required. The name of the service to return.
+  string name = 1;
+}
+
+// A request to delete a service.
+message DeleteServiceRequest {
+  // Required. The name of the service to delete.
+  string name = 1;
+}
+
+// Key/Value metadata that exists on both Services and Endpoints.
+message Metadata {
+  // Required. Key/Value metadata for the service or endpoint. This data can
+  // be consumed by service clients.
+  map<string, string> metadata = 1;
+}
+
+// A request to update Service metadata.
+message UpdateServiceMetadataRequest {
+  // Required. The name of the service to update.
+  string name = 1;
+
+  // Required. The metadata to use to update.
+  Metadata metadata = 2;
+}
+
+// Keys to metadata already associated with a Service or Endpoint.
+message MetadataKeys {
+  // Required. List of keys.
+  repeated string keys = 1;
+}
+
+// A request to remove metadata from a Service.
+message RemoveServiceMetadataRequest {
+  // Required. The name of the service to update.
+  string name = 1;
+
+  // Required. The keys to delete.
+  MetadataKeys keys = 2;
+}
+
+// A request to create a Service Endpoint.
+message CreateServiceEndpointRequest {
+  // Required. The resource name of the service this endpoint will provide.
+  string parent = 1;
+
+  // Required. A ServiceEndpoint with initial fields set.
+  ServiceEndpoint service_endpoint = 2;
+}
+
+// A request to list Service Endpoints.
+message ListServiceEndpointsRequest {
+  // Required. The resource name of the service.
+  string parent = 1;
+}
+
+// A response that contains a list of service endpoints.
+message ListServiceEndpointsResponse {
+  // The list of service endpoints.
+  repeated ServiceEndpoint service_endpoints = 1;
+}
+
+// A request to get a service endpoint. This should not be used to lookup
+// services endpoints at runtime. Instead, the `discover` method should be
+// used.
+message GetServiceEndpointRequest {
+  // Required. The name of the service endpoint to return.
+  string name = 1;
+}
+
+// A request to delete a service endpoint.
+message DeleteServiceEndpointRequest {
+  // Required. The name of the service endpoint to delete.
+  string name = 1;
+}
+
+// A request to update a Service Endpoint's metadata.
+message UpdateServiceEndpointMetadataRequest {
+  // Required. The name of the endpoint to update.
+  string name = 1;
+
+  // Required. The metadata to use to update.
+  Metadata metadata = 2;
+}
+
+// A request to remove a Service Endpoint's metadata.
+message RemoveServiceEndpointMetadataRequest {
+  // Required. The name of the service to update.
+  string name = 1;
+
+  // Required. The keys to delete.
+  MetadataKeys keys = 2;
+}
