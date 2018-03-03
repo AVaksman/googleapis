@@ -9,6 +9,17 @@ apis:
 documentation:
   summary: The public Cloud Security Command Center API.
 
+backend:
+  rules:
+  - selector: google.cloud.securitycenter.v1alpha2.SecurityCenter.ListAssets
+    deadline: 60.0
+  - selector: google.cloud.securitycenter.v1alpha3.SecurityCenter.SearchAssets
+    deadline: 60.0
+  - selector: google.cloud.securitycenter.v1alpha3.SecurityCenter.ModifyAsset
+    deadline: 60.0
+  - selector: google.cloud.securitycenter.v1alpha3.SecurityCenter.SearchFindings
+    deadline: 60.0
+
 authentication:
   rules:
   - selector: '*'
