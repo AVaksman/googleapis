@@ -4,6 +4,7 @@ common:
   organization_name: google-cloud
   proto_deps:
     - name: google-common-protos
+    - name: google-iam-v1
   src_proto_paths:
   - v1alpha1
   service_yaml: servicediscovery_v1alpha1.yaml
@@ -12,7 +13,7 @@ artifacts:
 - name: gapic_config
   type: GAPIC_CONFIG
 - name: java_gapic
-  type: GAPIC_ONLY
+  type: GAPIC
   language: JAVA
   publish_targets:
   - name: staging

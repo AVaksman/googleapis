@@ -168,6 +168,10 @@ service RegistrationService {
     option (google.api.http) = {
       post: "/v1alpha1/{resource=projects/*/locations/*/registries/*}:getIamPolicy"
       body: "*"
+      additional_bindings {
+        post: "/v1alpha1/{resource=projects/*/locations/*/registries/*/services/*}:getIamPolicy"
+        body: "*"
+      }
     };
   }
 
@@ -177,6 +181,10 @@ service RegistrationService {
     option (google.api.http) = {
       post: "/v1alpha1/{resource=projects/*/locations/*/registries/*}:setIamPolicy"
       body: "*"
+      additional_bindings {
+        post: "/v1alpha1/{resource=projects/*/locations/*/registries/*/services/*}:setIamPolicy"
+        body: "*"
+      }
     };
   }
 
@@ -186,6 +194,10 @@ service RegistrationService {
     option (google.api.http) = {
       post: "/v1alpha1/{resource=projects/*/locations/*/registries/*}:testIamPermissions"
       body: "*"
+      additional_bindings {
+        post: "/v1alpha1/{resource=projects/*/locations/*/registries/*/services/*}:testIamPermissions"
+        body: "*"
+      }
     };
   }
 }
