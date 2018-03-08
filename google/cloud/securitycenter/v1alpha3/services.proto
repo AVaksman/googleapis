@@ -28,12 +28,18 @@ option java_package = "com.google.cloud.securitycenter.v1alpha3";
 service SecurityCenter {
   // Search assets within an organization.
   rpc SearchAssets(SearchAssetsRequest) returns (SearchAssetsResponse) {
-    option (google.api.http) = { post: "/v1alpha3/{org_name=organizations/*}/assets:search" body: "*" };
+    option (google.api.http) = {
+      post: "/v1alpha3/{org_name=organizations/*}/assets:search"
+      body: "*"
+    };
   }
 
   // Modifies the marks on the specified asset.
   rpc ModifyAsset(ModifyAssetRequest) returns (Asset) {
-    option (google.api.http) = { post: "/v1alpha3/{org_name=organizations/*}/assets/{id}:modify" body: "*" };
+    option (google.api.http) = {
+      post: "/v1alpha3/{org_name=organizations/*}/assets/{id}:modify"
+      body: "*"
+    };
   }
 
   // Search findings within an organization.
