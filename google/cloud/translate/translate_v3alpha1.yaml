@@ -1,0 +1,36 @@
+type: google.api.Service
+config_version: 3
+name: translate.googleapis.com
+title: Google Cloud Translation API
+
+apis:
+- name: google.cloud.translation.v3alpha1.TranslationService
+
+documentation:
+  summary: |-
+    The Google Cloud Translation API lets websites and programs integrate with
+    Google Translate programmatically.
+
+http:
+  rules:
+  - selector: google.longrunning.Operations.ListOperations
+    get: '/v1/projects/*/operations'
+
+  - selector: google.longrunning.Operations.GetOperation
+    get: '/v1/projects/*/operations/{name=*}'
+
+  - selector: google.longrunning.Operations.DeleteOperation
+    delete: '/v1/projects/*/operations/{name=*}'
+
+  - selector: google.longrunning.Operations.CancelOperation
+    post: '/v1/projects/*/operations/{name=*}:cancel'
+    body: '*'
+
+
+authentication:
+  rules:
+  - selector: '*'
+    oauth:
+      canonical_scopes: |-
+        https://www.googleapis.com/auth/cloud-platform,
+        https://www.googleapis.com/auth/cloud-translation

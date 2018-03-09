@@ -1,0 +1,675 @@
+// Copyright 2018 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package google.cloud.translation.v3alpha1;
+
+import "google/api/annotations.proto";
+import "google/longrunning/operations.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/rpc/status.proto";
+
+option cc_enable_arenas = true;
+option csharp_namespace = "Google.Cloud.Translation.V3Alpha1";
+option go_package = "google.golang.org/genproto/googleapis/cloud/translation/v3alpha1;translation";
+option java_multiple_files = true;
+option java_outer_classname = "TranslationServiceProto";
+option java_package = "com.google.cloud.translation.v3alpha1";
+
+// Proto file for the Cloud Translation API (v3alpha1).
+
+// Provides natural language translation operations.
+service TranslationService {
+  // Translates input text, returning translated text.
+  rpc TranslateText(TranslateTextRequest) returns (TranslateTextResponse) {
+    option (google.api.http) = {
+      post: "/v3alpha1/documents:translate"
+      body: "*"
+      additional_bindings {
+        post: "/v3alpha1/{model=projects/*/models/*}:translate"
+        body: "*"
+      }
+    };
+  }
+
+  // Same as above but for translating multiple texts in asynchronous batch
+  // mode.
+  rpc BatchTranslateText(BatchTranslateTextRequest)
+      returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      post: "/v3alpha1/documents:batchTranslate"
+      body: "*"
+      additional_bindings {
+        post: "/v3alpha1/{model=projects/*/models/*}:batchTranslate"
+        body: "*"
+      }
+    };
+  }
+
+  // Detects the language of text within a request.
+  rpc DetectLanguage(DetectLanguageRequest) returns (DetectLanguageResponse) {
+    option (google.api.http) = {
+      post: "/v3alpha1/documents:detectLanguage"
+      body: "*"
+    };
+  }
+
+  // Returns a list of supported languages for translation.
+  rpc ListSupportedLanguages(ListSupportedLanguagesRequest)
+      returns (ListSupportedLanguagesResponse) {
+    option (google.api.http) = {
+      get: "/v3alpha1/supportedLanguages"
+    };
+  }
+
+  // Creates a custom model, and returns the long running operation.
+  rpc CreateModel(CreateModelRequest) returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      post: "/v3alpha1/{parent=projects/*}/models"
+      body: "model"
+    };
+  }
+
+  // Lists models in a project. The order is unspecified but
+  // deterministic. Newly created models will not necessarily be added to
+  // the end of this list. Returns NOT_FOUND if the projects does not exist.
+  rpc ListModels(ListModelsRequest) returns (ListModelsResponse) {
+    option (google.api.http) = {
+      get: "/v3alpha1/{parent=projects/*}/models"
+    };
+  }
+
+  // Gets a model. Returns NOT_FOUND if the model does not exist.
+  rpc GetModel(GetModelRequest) returns (Model) {
+    option (google.api.http) = {
+      get: "/v3alpha1/{name=projects/*/models/*}"
+    };
+  }
+
+  // Loads a custom model for serving. Returns NOT_FOUND if the model does
+  // not exist. For duplicate calls to LoadModel, the response contains
+  // `load_time` when the model was first loaded.
+  rpc LoadModel(LoadModelRequest) returns (LoadModelResponse) {
+    option (google.api.http) = {
+      post: "/v3alpha1/{name=projects/*/models/*}:load"
+      body: "*"
+    };
+  }
+
+  // Unloads a model from memory if it was loaded.
+  // Returns NOT_FOUND if the model name doesn't exist.
+  // Returns FAILED_PRECONDITION if the model is not loaded.
+  rpc UnloadModel(UnloadModelRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v3alpha1/{name=projects/*/models/*}:unload"
+      body: "*"
+    };
+  }
+
+  // Deletes a model, or cancels training if the model isn't created yet.
+  // If the model is loaded, unloads it.
+  // Returns NOT_FOUND if the model name doesn't exist.
+  rpc DeleteModel(DeleteModelRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v3alpha1/{name=projects/*/models/*}"
+    };
+  }
+}
+
+// The main translation request message for the Cloud Translation API.
+message TranslateTextRequest {
+  // The source of the document to translate: a string containing the content or
+  // a Google Cloud Storage URI.
+  oneof source {
+    // The content of the input in string format.
+    string content = 1;
+
+    // The Google Cloud Storage URI where the file content is located.
+    // This URI must be of the form: gs://bucket_name/object_name. For more
+    // details, see https://cloud.google.com/storage/docs/reference-uris.
+    // NOTE: Cloud Storage object versioning is not supported.
+    string content_uri = 2;
+  }
+
+  // The format of the source text e.g., "text/html", "text/plain".
+  // If left blank, the MIME type is assumed to be "text/html" for inline
+  // requests, or will be automatically determined from the uploaded content's
+  // MIME type.
+  string mime_type = 3;
+
+  // The BCP-47 language code of the input document or text if known,
+  // e.g. "en-US" or "sr-Latn". Supported language codes listed in Language
+  // Support. If the source language is not specified, the API will attempt to
+  // identify the source language automatically and return it within
+  // the response.
+  string source_language_code = 4;
+
+  // The BCP-47 language codes to use for translation of the input text, set to
+  // one of the language codes listed in Language Support. Repeat if input must
+  // be translated to multiple languages.
+  repeated string target_language_codes = 5;
+
+  // The `model` type requested for this translation. Valid values are
+  // listed in public documentation. It's either one of pre-defined values
+  // like 'nmt' or 'base', or a name of a model.
+  // The format of the custom model name is
+  // /projects/<project-id>/models/<model-name>.
+  string model = 6;
+}
+
+// The main language translation response message.
+message TranslateTextResponse {
+  // Text translation responses keyed by target language.
+  map<string, Translation> translations = 1;
+
+  // The BCP-47 language code of source text in the initial request, detected
+  // automatically, if no source language was passed within the initial
+  // request. If the source language was passed, auto-detection of the language
+  // will not occur and this field will be empty.
+  string detected_language_code = 2;
+}
+
+// A single translation response corresponds to translation of one
+// query (q) from a translation request.
+message Translation {
+  // Text translated into the target language.
+  string translated_text = 1;
+
+  // The `model` type used for this translation. Valid values are
+  // listed in public documentation. Can be different from requested `model`.
+  // Present only if specific model type was explicitly requested.
+  // If a custom model was used for this translation then the format is.
+  // /projects/<project-id>/models/<model-name>.
+  string model = 2;
+}
+
+// The request message for language detection.
+message DetectLanguageRequest {
+  // The source of the document to detect language of: a string containing
+  // the content or a Google Cloud Storage URI.
+  oneof source {
+    // The content of the input in string format.
+    string content = 1;
+
+    // The Google Cloud Storage URI where the file content is located.
+    // This URI must be of the form: gs://bucket_name/object_name. For more
+    // details, see https://cloud.google.com/storage/docs/reference-uris.
+    // NOTE: Cloud Storage object versioning is not supported.
+    string content_uri = 2;
+  }
+
+  // The format of the source text e.g., "text/html", "text/plain".
+  // If left blank, the MIME type is assumed to be "text/html" for inline
+  // requests, or will be automatically determined from the uploaded content's
+  // MIME type.
+  string mime_type = 3;
+}
+
+// The response message for language detection.
+message DetectedLanguage {
+  // The BCP-47 language code of source content in the request, detected
+  // automatically.
+  string language_code = 1;
+
+  // The confidence of the detection result for this language.
+  float confidence = 2;
+}
+
+// The response message for language detection.
+message DetectLanguageResponse {
+  // A list of detected languages sorted by detection confidence in descending
+  // order. The most probable language first.
+  repeated DetectedLanguage languages = 1;
+}
+
+// The request message for discovering supported languages.
+message ListSupportedLanguagesRequest {
+  // The language to use to return localized, human readable names of supported
+  // languages.
+  string display_language_code = 1;
+
+  // The `model` type for which supported languages should be returned. Refer to
+  // the Cloud Translation API documentation for a list of language pairs
+  // that are supported for a given `model` value.
+  string model = 2;
+}
+
+// The response message for discovering supported languages.
+message ListSupportedLanguagesResponse {
+  // A list of supported language responses. This list will contain an entry
+  // for each language supported by the Translation API.
+  repeated SupportedLanguage languages = 1;
+}
+
+// A single supported language response corresponds to information related
+// to one supported language.
+message SupportedLanguage {
+  // Supported language code, generally consisting of its ISO 639-1
+  // identifier e.g., 'en', 'ja'. In certain cases, BCP-47 codes including
+  // language + region identifiers are returned (e.g. 'zh-TW' and 'zh-CH')
+  string language_code = 1;
+
+  // Human readable name of the language localized in the display language
+  // specified in the request.
+  string display_name = 2;
+}
+
+// The Google Cloud Storage location for the input content.
+message GcsSource {
+  // Google Cloud Storage paths to files e.g.,  gs://my_bucket//data-*.tmx.
+  // Wildcards are allowed and will be expanded into all matching files. File
+  // format is determined based on file name extensions. API returns
+  // [google.rpc.Code.INVALID_ARGUMENT] for unsupported URI-s and file formats.
+  repeated string input_url_patterns = 1;
+
+  // Sampling probabilities for file patterns. If empty, assumes uniform
+  // distribution. Otherwise, the size should be equal to the size of
+  // input_url_patterns.
+  repeated double input_url_probabilities = 2;
+}
+
+// ParallelDataInputConfig is a set of files, containing examples, or
+// pointers to examples, for use during ML training or testing. Currently, only
+// TSV with one example per line is supported.
+message ParallelDataInputConfig {
+  // Name of this dataset.  Will be used when summarizing model performance.
+  string name = 1;
+
+  // Required. Google Cloud Storage location where input data is located.
+  GcsSource gcs_source = 2;
+}
+
+// Translation evaluation metrics computed on a particular dataset.
+message DatasetTranslationEvaluationMetrics {
+  // Name of the dataset. Matches the name in ParallelDataInputConfig.
+  string name = 1;
+
+  // BLEU score.
+  double bleu_score = 2;
+
+  // GLEU score.
+  double gleu_score = 3;
+
+  // Log perplexity.
+  double log_perplexity = 4;
+}
+
+// Evaluation metrics computed on both datasets.
+message TranslationEvaluationMetrics {
+  // Metrics computed on training data.
+  DatasetTranslationEvaluationMetrics training_dataset_metrics = 1;
+
+  // Metrics computed on validation data.
+  DatasetTranslationEvaluationMetrics validation_dataset_metrics = 2;
+
+  // Metrics computed on test data.
+  repeated DatasetTranslationEvaluationMetrics test_datasets_metrics = 3;
+
+  // Metrics computed on miscellaneous other built-in datasets that may be used
+  // by Cloud Translation API to evaluate this model. Can be empty.
+  map<string, DatasetTranslationEvaluationMetrics> alternative_dataset_metrics =
+      4;
+}
+
+// Flags used for internal testing.
+message InternalTrainingFlags {
+  // For simplicity, only have LOW/HIGH for now.
+  enum CreateModelPriority {
+    CREATE_MODEL_PRIORITY_UNSPECIFIED = 0;
+
+    LOW = 1;
+
+    HIGH = 2;
+  }
+
+  // Can be fake/real training.
+  enum TrainingStrategy {
+    TRAINING_STRATEGY_UNSPECIFIED = 0;
+
+    FAKE = 1;
+
+    REAL = 2;
+  }
+
+  // The priority for the request.
+  CreateModelPriority priority = 3;
+
+  // The cell used for training.
+  string cell = 4;
+
+  // The cell used for data.
+  // Note that eval will happen in this cell.
+  string data_cell = 5;
+
+  // If unset, use the same training strategy as set by the server.
+  // If set to REAL, use real training;
+  // If set to FAKE, use fake training.
+  // If this field is set to FAKE, make sure other flags in the
+  // InternalTrainingFlags are unset.
+  TrainingStrategy training_strategy = 6;
+
+  // Flags to override training configs.
+  // Currently supports:
+  // * rpc_layer       : Can be bamm or rpc2. Default to rpc2
+  // * charged_user    : Default to cloud-ml-translate-backend-prod
+  // * mpm_version     : MPM version of customization training pipeline.
+  //                     Default to the same version as specified by the server
+  // * ps_replicas     : Default to 17
+  // * worker_replicas : Default to 20
+  // * worker_gpu      : Default to 2
+  map<string, string> flags = 7;
+
+  // The name prefix to be added to jobs' names.
+  string name_prefix = 8;
+}
+
+// Represents a model trained on user provided data.
+message Model {
+  // *Required* The resource name of the model.  Model names have the form
+  // `projects/{project_id}/models/{name}`.
+  // This field is ignored when creating a model. To specify a model
+  // name when creating a model, use [CreateModelRequest.name][].
+  string name = 1;
+
+  // *Optional* The model that should be used as a baseline to train the custom
+  // model.
+  //
+  // Unset: We will use default base model provided by google translate.
+  // domainModel/<model-name>: We will use our pretrained domain model.
+  // (Currently unsupported).
+  // projects/<project_id>/models/<model-name>: We will use the custom
+  // models trained by customers.
+  string base_model = 2;
+
+  // *Required* The BCP-47 language code(s) of the input text. For example,
+  // "en-US". Can contain multiple items for multilingual models.
+  repeated string source_language_codes = 3;
+
+  // *Required* The BCP-47 language code for translation output. For example,
+  // "zh-CN". Can contain multiple items for multilingual models.
+  repeated string target_language_codes = 4;
+
+  // *Required* Provides examples to train the model with.
+  ParallelDataInputConfig training_dataset = 5;
+
+  // *Optional* Provides examples to evaluate model performance during training
+  // and for hyper-parameters tuning. If not provided, then validation dataset
+  // will be automatically created by randomly selecting examples from
+  // training dataset. The selected examples will be removed from training
+  // dataset in this case.
+  ParallelDataInputConfig validation_dataset = 6;
+
+  // *Optional* Provides examples to evaluate final model performance at
+  // the end of training. If multiple test datasets are provided then evaluation
+  // metrics will be computed for each dataset separately. If not provided,
+  // then test dataset will be automatically created by randomly selecting
+  // examples from training dataset. The selected examples will be removed
+  // from training dataset in this case.
+  repeated ParallelDataInputConfig test_datasets = 7;
+
+  // *Optional* Google Cloud Storage location where the final model training
+  // status, evaluation metrics, and other meta information should be written
+  // to. The model artifacts like checkpoints or Tensorflow graph will not be
+  // written to this location. Model creation will fail if this location is not
+  // writable, or not empty. For Google Cloud Storage, the path should start
+  // with 'gs://'.
+  string output_path = 8;
+
+  // User-defined key-value pairs associated with this model object.
+  // May be used as a filter in a ListModelsRequest.
+  // For example “author”: “jdoe” or “dataset_desc”: “property_reviews”
+  //
+  // The following terms are reserved and auto-populated:
+  //   "name"
+  //   "model_name"
+  //   "project_name"
+  //   "start_time",
+  //   "end_time"
+  map<string, string> tags = 9;
+
+  // *Optional* Basic controls for model training as specified in
+  // CreateModelRequest.
+  ModelTrainingConstraints training_constraints = 10;
+
+  // Output only. When CreateModel was called.
+  google.protobuf.Timestamp create_time = 11;
+
+  // Output only. When the model training was started.
+  google.protobuf.Timestamp training_start_time = 12;
+
+  // Output only. When the model training was finished.
+  google.protobuf.Timestamp training_end_time = 13;
+
+  // Output only. Final evaluation metrics computed for the model.
+  TranslationEvaluationMetrics evaluation_metrics = 14;
+
+  // Output only. Total number of model training steps.
+  int64 training_steps = 15;
+
+  // Internal testing only. Used to specify priority and cell to
+  // train the model.
+  InternalTrainingFlags internal_training_flags = 16;
+}
+
+// Stored in the
+// [google.longrunning.Operation.metadata][google.longrunning.Operation.metadata]
+// field returned by CreateModel.
+message CreateModelMetadata {
+  // Enumerates the possible states that the creation request can be in.
+  enum State {
+    // Invalid.
+    STATE_UNSPECIFIED = 0;
+
+    // Request is submitted, but initialization or training has not started .
+    // The operation can remain in this state until there is enough capacity
+    // to start training.
+    SUBMITTED = 1;
+
+    // Request is being prepared for distributed processing.
+    INITIALIZING = 2;
+
+    // Custom model is training.
+    TRAINING = 3;
+
+    // Model is in the process of being deleted (or cancelled if the model
+    // was not successfully created).  This is the expected state immediately
+    // after calling DeleteModel on the model name.
+    DELETING = 4;
+
+    // The model has been created.
+    SUCCESSFUL = 5;
+
+    // The model could not be created.
+    FAILED = 6;
+
+    // Cancelled.
+    CANCELLED = 7;
+  }
+
+  // The current state of the training operation.
+  State state = 1;
+
+  // If state is `FAILED`, represents the error message.
+  google.rpc.Status status = 2;
+
+  // The time when the batch request was submitted to the server.
+  google.protobuf.Timestamp submit_time = 3;
+
+  // The time when the batch request is finished and
+  // [google.longrunning.Operation.done][google.longrunning.Operation.done] is
+  // set to true.
+  google.protobuf.Timestamp end_time = 4;
+
+  // Evaluation metrics computed for the model.
+  TranslationEvaluationMetrics evaluation_metrics = 5;
+
+  // Number of completed training steps so far.
+  int64 completed_training_steps = 6;
+}
+
+// Constraints for custom model training. Can be used to limit costs, or
+// to set basic pre-conditions that must be verified before starting a
+// training job.
+message ModelTrainingConstraints {
+  // Maximum number of training steps.
+  int64 max_steps = 1;
+
+  // Maximum duration to run the training job for. Starts from the moment that
+  // the model job begins. This excludes the time that it takes to schedule
+  // the training job.
+  google.protobuf.Duration max_training_duration = 2;
+
+  // Minimum number of valid training examples that must be present in the
+  // training dataset. Typically, each training sample is a sentence pair.
+  int64 min_training_samples = 3;
+}
+
+// Request message for CreateModel.
+message CreateModelRequest {
+  // Required. The project name.
+  string parent = 1;
+
+  // The model to create.
+  Model model = 2;
+}
+
+// Request message for ListModels.
+message ListModelsRequest {
+  // The name of the project to list all of the models from.
+  string parent = 1;
+
+  // Requested page size. The server may return fewer models than requested.
+  // If unspecified, the server will pick an appropriate default.
+  int32 page_size = 2;
+
+  // A token identifying a page of results the server should return. Typically,
+  // this is the value of [ListModelsResponse.next_page_token] returned
+  // from the previous call to `ListModels` method.
+  string page_token = 3;
+
+  // Filter specifying constraints of a list operation.
+  // For example, `tags.model_name="cats*"`.
+  string filter = 4;
+}
+
+// Response message for ListModels.
+message ListModelsResponse {
+  // The list of models for a project.
+  repeated Model models = 1;
+
+  // A token to retrieve a page of results. Pass this value in the
+  // [ListModelsRequest.page_token] field in the subsequent call to
+  // `ListModels` method to retrieve the next page of results.
+  string next_page_token = 2;
+}
+
+// Request message for GetModel.
+message GetModelRequest {
+  // The name of the model to retrieve.
+  string name = 1;
+}
+
+// Request message for LoadModel.
+message LoadModelRequest {
+  // The name of the model to load.
+  string name = 1;
+
+  // Optional. The time when the model can be automatically unloaded.
+  google.protobuf.Timestamp expire_time = 2;
+
+  // Optional. Estimated peak translation bandwidth. Can be used to determine
+  // how many model replicas to load.
+  int64 characters_per_second = 3;
+}
+
+// Response message for LoadModel.
+message LoadModelResponse {
+  // The time the model loaded at.
+  google.protobuf.Timestamp load_time = 1;
+
+  // Optional. The effective time when model can be automatically unloaded.
+  google.protobuf.Timestamp expire_time = 2;
+}
+
+// Request message for UnloadModel.
+message UnloadModelRequest {
+  // The name of the model to unload.
+  string name = 1;
+}
+
+// Request message for DeleteModel.
+message DeleteModelRequest {
+  // The name of the model to delete.
+  string name = 1;
+}
+
+// Format for batch translate input records.
+message TranslateInputRecord {
+  // Identifies the translate request.  Can be used to join a response to a
+  // given request.
+  string id = 1;
+
+  // The actual translation request.
+  TranslateTextRequest request = 2;
+}
+
+// Inline source for the batch translation input.
+message InlineSource {
+  // Request texts to translate encoded as `TranslateInputRecord`.
+  repeated TranslateInputRecord records = 1;
+}
+
+// Input configuration.
+message InputConfig {
+  // Mime type of the input.  This can be overridden on a per-record basis.
+  string mime_type = 1;
+
+  // Specify the input.  This will be be contained in a oneof field as more
+  // input methods are supported.
+  InlineSource inline_source = 2;
+}
+
+// Specification of where to place the output translations.
+message GcsDestination {
+  // Destination gs:// file uri - all translation responses are written to the
+  // same file using the `TranslateOutputRecord` encoded as JSON.
+  string uri = 1;
+}
+
+// Specification of how to return results from the batch translation.
+message OutputConfig {
+  // For now, only writing to Google Cloud Storage is supported.
+  GcsDestination gcs_destination = 2;
+}
+
+// The batch translation request.
+message BatchTranslateTextRequest {
+  // Source language - can be overridden on a per record basis.
+  string source_language_code = 4;
+
+  // Target languages - can be overridden on a per record basis.
+  repeated string target_language_codes = 5;
+
+  // The model to use for translation.
+  string model = 6;
+
+  // Input configuration.
+  InputConfig input_config = 7;
+
+  // Output configuration.
+  OutputConfig output_config = 8;
+}
