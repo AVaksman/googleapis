@@ -66,35 +66,35 @@ documentation:
 backend:
   rules:
   - selector: google.longrunning.Operations.GetOperation
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.Agents.GetAgent
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.Agents.SearchAgents
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.Agents.TrainAgent
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.Agents.ExportAgent
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.Agents.ImportAgent
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.Agents.RestoreAgent
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.Contexts.ListContexts
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.Contexts.GetContext
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.Contexts.CreateContext
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.Contexts.UpdateContext
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.Contexts.DeleteContext
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.Contexts.DeleteAllContexts
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.EntityTypes.ListEntityTypes
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.EntityTypes.GetEntityType
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.EntityTypes.CreateEntityType
     deadline: 60.0
   - selector: google.cloud.dialogflow.v2.EntityTypes.UpdateEntityType
@@ -112,9 +112,9 @@ backend:
   - selector: google.cloud.dialogflow.v2.EntityTypes.BatchDeleteEntities
     deadline: 60.0
   - selector: google.cloud.dialogflow.v2.Intents.ListIntents
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.Intents.GetIntent
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.Intents.CreateIntent
     deadline: 60.0
   - selector: google.cloud.dialogflow.v2.Intents.UpdateIntent
@@ -122,19 +122,19 @@ backend:
   - selector: google.cloud.dialogflow.v2.Intents.DeleteIntent
     deadline: 60.0
   - selector: google.cloud.dialogflow.v2.Intents.BatchUpdateIntents
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.Intents.BatchDeleteIntents
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.SessionEntityTypes.ListSessionEntityTypes
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.SessionEntityTypes.GetSessionEntityType
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.SessionEntityTypes.CreateSessionEntityType
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.SessionEntityTypes.UpdateSessionEntityType
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.SessionEntityTypes.DeleteSessionEntityType
-    deadline: 20.0
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2.Sessions.DetectIntent
     deadline: 230.0
   - selector: google.cloud.dialogflow.v2.Sessions.StreamingDetectIntent
