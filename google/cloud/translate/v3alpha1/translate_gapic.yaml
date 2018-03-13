@@ -172,15 +172,13 @@ interfaces:
         - parent
         - model
     required_fields:
-    - parent
     - model
     request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     resource_name_treatment: STATIC_TYPES
     field_name_patterns:
-      parent: project
-      model: model
+      model.name: model
     timeout_millis: 180000
     long_running:
       return_type: google.longrunning.Operation
@@ -284,8 +282,7 @@ resource_name_generation:
     model: model
 - message_name: CreateModelRequest
   field_entity_map:
-    parent: project
-    model: model
+    model.name: model
 - message_name: ListModelsRequest
   field_entity_map:
     parent: project
