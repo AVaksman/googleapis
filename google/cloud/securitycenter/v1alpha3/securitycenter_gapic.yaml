@@ -3,17 +3,17 @@ config_schema_version: 1.0.0
 # The settings of generated code in a specific language.
 language_settings:
   java:
-    package_name: com.google.cloud.securitycenter.spi.v1alpha3
+    package_name: com.google.cloud.securitycenter.v1alpha3
   python:
     package_name: google.cloud.securitycenter_v1alpha3.gapic
   go:
     package_name: cloud.google.com/go/cloud/securitycenter/apiv1alpha3
   csharp:
-    package_name: Google.Cloud.SecurityCenter.V1Alpha3
+    package_name: Google.Cloud.Securitycenter.V1alpha3
   ruby:
-    package_name: Google::Cloud::SecurityCenter::V1Alpha3
+    package_name: Google::Cloud::Securitycenter::V1alpha3
   php:
-    package_name: Google\Cloud\SecurityCenter\V1Alpha3
+    package_name: Google\Cloud\Securitycenter\V1alpha3
   nodejs:
     package_name: securitycenter.v1alpha3
 # The configuration for the license header to put on generated files.
@@ -142,7 +142,7 @@ interfaces:
     - org_name
     - id
     request_object_method: true
-    retry_codes_name: non_idempotent
+    retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
       org_name: organization
@@ -158,6 +158,36 @@ interfaces:
       response:
         token_field: next_page_token
         resources_field: findings
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      org_name: organization
+    timeout_millis: 60000
+  - name: CreateFinding
+    flattening:
+      groups:
+      - parameters:
+        - org_name
+        - source_finding
+    required_fields:
+    - org_name
+    - source_finding
+    request_object_method: true
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      org_name: organization
+    timeout_millis: 60000
+  - name: ModifyFinding
+    flattening:
+      groups:
+      - parameters:
+        - org_name
+        - id
+    required_fields:
+    - org_name
+    - id
+    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:

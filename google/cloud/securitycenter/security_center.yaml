@@ -19,6 +19,10 @@ backend:
     deadline: 60.0
   - selector: google.cloud.securitycenter.v1alpha3.SecurityCenter.SearchFindings
     deadline: 60.0
+  - selector: google.cloud.securitycenter.v1alpha3.SecurityCenter.CreateFinding
+    deadline: 60.0
+  - selector: google.cloud.securitycenter.v1alpha3.SecurityCenter.ModifyFinding
+    deadline: 60.0
 
 authentication:
   rules:
