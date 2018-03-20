@@ -10,7 +10,7 @@ common:
   - name: google-common-protos
 artifacts:
 - name: java_gapic
-  type: GAPIC_ONLY
+  type: GAPIC
   language: JAVA
   publish_targets:
   - name: staging
@@ -24,7 +24,7 @@ artifacts:
     directory_mappings:
     - dest: google-cloud-datastore
 - name: python_gapic
-  type: GAPIC_ONLY
+  type: GAPIC
   language: PYTHON
   release_level: BETA
   package_version:
@@ -50,7 +50,7 @@ artifacts:
     - name: grpc
       dest: generated/python/proto-google-cloud-datastore-v1
 - name: php_gapic
-  type: GAPIC_ONLY
+  type: GAPIC
   language: PHP
   publish_targets:
   - name: staging
@@ -61,7 +61,7 @@ artifacts:
     - name: grpc
       dest: generated/php/google-cloud-datastore-v1/proto
 - name: ruby_gapic
-  type: GAPIC_ONLY
+  type: GAPIC
   language: RUBY
   publish_targets:
   - name: ruby
@@ -76,7 +76,7 @@ artifacts:
     directory_mappings:
     - dest: generated/ruby/google-cloud-ruby/google-cloud-datastore
 - name: go_gapic
-  type: GAPIC_ONLY
+  type: GAPIC
   language: GO
   publish_targets:
   - name: staging
@@ -90,10 +90,10 @@ artifacts:
     directory_mappings:
     - dest: datastore/apiv1
 - name: csharp_gapic
-  type: GAPIC_ONLY
+  type: GAPIC
   language: CSHARP
 - name: nodejs_gapic
-  type: GAPIC_ONLY
+  type: GAPIC
   language: NODEJS
   publish_targets:
   - name: nodejs

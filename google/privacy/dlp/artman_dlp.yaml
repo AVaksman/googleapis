@@ -10,7 +10,7 @@ common:
   - name: google-common-protos
 artifacts:
 - name: java_gapic
-  type: GAPIC_ONLY
+  type: GAPIC
   language: JAVA
   publish_targets:
   - name: java
@@ -26,7 +26,7 @@ artifacts:
     - name: proto
       dest: generated/java/proto-google-cloud-dlp-v2beta1
 - name: python_gapic
-  type: GAPIC_ONLY
+  type: GAPIC
   language: PYTHON
   publish_targets:
   - name: python
@@ -44,7 +44,7 @@ artifacts:
     type: GITHUB
     location: git@github.com:googleapis/api-client-staging.git
 - name: php_gapic
-  type: GAPIC_ONLY
+  type: GAPIC
   language: PHP
   publish_targets:
   - name: staging
@@ -55,7 +55,7 @@ artifacts:
     - name: grpc
       dest: generated/php/google-cloud-dlp-v2beta1/proto
 - name: ruby_gapic
-  type: GAPIC_ONLY
+  type: GAPIC
   language: RUBY
   package_version:
     grpc_dep_lower_bound: 0.20.0
@@ -74,7 +74,7 @@ artifacts:
     directory_mappings:
     - dest: generated/ruby/google-cloud-ruby/google-cloud-dlp
 - name: go_gapic
-  type: GAPIC_ONLY
+  type: GAPIC
   language: GO
   publish_targets:
   - name: staging
@@ -88,7 +88,7 @@ artifacts:
     directory_mappings:
     - dest: dlp/apiv2beta1
 - name: nodejs_gapic
-  type: GAPIC_ONLY
+  type: GAPIC
   language: NODEJS
   package_version:
     grpc_dep_lower_bound: 0.0.0
