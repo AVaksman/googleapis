@@ -30,11 +30,11 @@ option java_multiple_files = true;
 option java_outer_classname = "RegistrationServiceProto";
 option java_package = "com.google.cloud.servicediscovery.v1alpha1";
 
+
 // Service Discovery API for Registering Services.
 service RegistrationService {
   // Creates a new Service Registry.
-  rpc CreateServiceRegistry(CreateServiceRegistryRequest)
-      returns (ServiceRegistry) {
+  rpc CreateServiceRegistry(CreateServiceRegistryRequest) returns (ServiceRegistry) {
     option (google.api.http) = {
       post: "/v1alpha1/{parent=projects/*/locations/*}/registries"
       body: "service_registry"
@@ -42,8 +42,7 @@ service RegistrationService {
   }
 
   // Lists all service registries.
-  rpc ListServiceRegistries(ListServiceRegistriesRequest)
-      returns (ListServiceRegistriesResponse) {
+  rpc ListServiceRegistries(ListServiceRegistriesRequest) returns (ListServiceRegistriesResponse) {
     option (google.api.http) = {
       get: "/v1alpha1/{parent=projects/*/locations/*}/registries"
     };
@@ -57,8 +56,7 @@ service RegistrationService {
   }
 
   // Deletes a Service Registry. This will delete all services and endpoints.
-  rpc DeleteServiceRegistry(DeleteServiceRegistryRequest)
-      returns (google.protobuf.Empty) {
+  rpc DeleteServiceRegistry(DeleteServiceRegistryRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1alpha1/{name=projects/*/locations/*/registries/*}"
     };
@@ -112,8 +110,7 @@ service RegistrationService {
   }
 
   // Creates a new Service Endpoint.
-  rpc CreateServiceEndpoint(CreateServiceEndpointRequest)
-      returns (ServiceEndpoint) {
+  rpc CreateServiceEndpoint(CreateServiceEndpointRequest) returns (ServiceEndpoint) {
     option (google.api.http) = {
       post: "/v1alpha1/{parent=projects/*/locations/*/registries/*/services/*}/endpoints"
       body: "service_endpoint"
@@ -121,8 +118,7 @@ service RegistrationService {
   }
 
   // Lists all service endpoints.
-  rpc ListServiceEndpoints(ListServiceEndpointsRequest)
-      returns (ListServiceEndpointsResponse) {
+  rpc ListServiceEndpoints(ListServiceEndpointsRequest) returns (ListServiceEndpointsResponse) {
     option (google.api.http) = {
       get: "/v1alpha1/{parent=projects/*/locations/*/registries/*/services/*}/endpoints"
     };
@@ -136,17 +132,24 @@ service RegistrationService {
   }
 
   // Deletes a Service Endpoint.
-  rpc DeleteServiceEndpoint(DeleteServiceEndpointRequest)
-      returns (google.protobuf.Empty) {
+  rpc DeleteServiceEndpoint(DeleteServiceEndpointRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*/endpoints/*}"
     };
   }
 
+  // Set the endpoints and metadata for a service,
+  // which completely replace any original metadata or endpoints.
+  rpc SetService(SetServiceRequest) returns (SetServiceResponse) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*}:setservice"
+      body: "*"
+    };
+  }
+
   // Updates keys in Service Endpoint metadata. Only the provided keys are
   // added/updated (PATCH semantics).
-  rpc UpdateServiceEndpointMetadata(UpdateServiceEndpointMetadataRequest)
-      returns (ServiceEndpoint) {
+  rpc UpdateServiceEndpointMetadata(UpdateServiceEndpointMetadataRequest) returns (ServiceEndpoint) {
     option (google.api.http) = {
       post: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*/endpoints/*}:updatemetadata"
       body: "metadata"
@@ -154,8 +157,7 @@ service RegistrationService {
   }
 
   // Removes keys in Service Endpoint metadata.
-  rpc RemoveServiceEndpointMetadata(RemoveServiceEndpointMetadataRequest)
-      returns (ServiceEndpoint) {
+  rpc RemoveServiceEndpointMetadata(RemoveServiceEndpointMetadataRequest) returns (ServiceEndpoint) {
     option (google.api.http) = {
       post: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*/endpoints/*}:deletemetadata"
       body: "keys"
@@ -163,8 +165,7 @@ service RegistrationService {
   }
 
   // Gets the IAM Policy for a resource (registry or service only).
-  rpc GetIamPolicy(google.iam.v1.GetIamPolicyRequest)
-      returns (google.iam.v1.Policy) {
+  rpc GetIamPolicy(google.iam.v1.GetIamPolicyRequest) returns (google.iam.v1.Policy) {
     option (google.api.http) = {
       post: "/v1alpha1/{resource=projects/*/locations/*/registries/*}:getIamPolicy"
       body: "*"
@@ -176,8 +177,7 @@ service RegistrationService {
   }
 
   // Sets the IAM Policy for a resource (registry or service only).
-  rpc SetIamPolicy(google.iam.v1.SetIamPolicyRequest)
-      returns (google.iam.v1.Policy) {
+  rpc SetIamPolicy(google.iam.v1.SetIamPolicyRequest) returns (google.iam.v1.Policy) {
     option (google.api.http) = {
       post: "/v1alpha1/{resource=projects/*/locations/*/registries/*}:setIamPolicy"
       body: "*"
@@ -189,8 +189,7 @@ service RegistrationService {
   }
 
   // Tests IAM permissions for a resource (registry or service only).
-  rpc TestIamPermissions(google.iam.v1.TestIamPermissionsRequest)
-      returns (google.iam.v1.TestIamPermissionsResponse) {
+  rpc TestIamPermissions(google.iam.v1.TestIamPermissionsRequest) returns (google.iam.v1.TestIamPermissionsResponse) {
     option (google.api.http) = {
       post: "/v1alpha1/{resource=projects/*/locations/*/registries/*}:testIamPermissions"
       body: "*"
@@ -285,6 +284,28 @@ message Metadata {
   // Required. Key/Value metadata for the service or endpoint. This data can
   // be consumed by service clients.
   map<string, string> metadata = 1;
+}
+
+// A request to set a Service's metadata and endpoints.
+message SetServiceRequest {
+  // Required. The name of the Service to set.
+  string name = 1;
+
+  // Required. Holds the metadata to set for the Service.
+  Service service = 2;
+
+  // Required. A list of endpoints with initial fields set.
+  repeated ServiceEndpoint service_endpoints = 3;
+}
+
+// A response that contains the Service.
+// with the updated metadata and the new list of Service Endpoints.
+message SetServiceResponse {
+  // the service with the reset metadata.
+  Service service = 1;
+
+  // The list of reset Service Endpoints.
+  repeated ServiceEndpoint service_endpoints = 2;
 }
 
 // A request to update Service metadata.
