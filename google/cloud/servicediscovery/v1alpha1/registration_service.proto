@@ -31,9 +31,23 @@ option java_outer_classname = "RegistrationServiceProto";
 option java_package = "com.google.cloud.servicediscovery.v1alpha1";
 
 
-// Service Discovery API for Registering Services.
+// Service Discovery API for registering services. It defines the following
+// resource model:
+//
+// - The API has a collection of
+// [ServiceRegistry][google.cloud.servicediscovery.v1alpha1.ServiceRegistry]
+// resources, named `projects/*/locations/*/registries/*`.
+//
+// - Each ServiceRegistry has a collection of
+// [Service][google.cloud.servicediscovery.v1alpha1.Service] resources, named
+// `projects/*/locations/*/registries/*/services/*`.
+//
+// - Each Service has a collection of
+// [ServiceEndpoint][google.cloud.servicediscovery.v1alpha1.ServiceEndpoint]
+// resources, named
+// `projects/*/locations/*/registries/*/services/*/endpoints/*`.
 service RegistrationService {
-  // Creates a new Service Registry.
+  // Creates a service registry, and returns the new ServiceRegistry.
   rpc CreateServiceRegistry(CreateServiceRegistryRequest) returns (ServiceRegistry) {
     option (google.api.http) = {
       post: "/v1alpha1/{parent=projects/*/locations/*}/registries"
@@ -48,21 +62,22 @@ service RegistrationService {
     };
   }
 
-  // Returns a Service Registry.
+  // Gets a service registry.
   rpc GetServiceRegistry(GetServiceRegistryRequest) returns (ServiceRegistry) {
     option (google.api.http) = {
       get: "/v1alpha1/{name=projects/*/locations/*/registries/*}"
     };
   }
 
-  // Deletes a Service Registry. This will delete all services and endpoints.
+  // Deletes a service registry. This also deletes all services and endpoints in
+  // the registry.
   rpc DeleteServiceRegistry(DeleteServiceRegistryRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1alpha1/{name=projects/*/locations/*/registries/*}"
     };
   }
 
-  // Creates a new Service.
+  // Creates a service, and returns the new Service.
   rpc CreateService(CreateServiceRequest) returns (Service) {
     option (google.api.http) = {
       post: "/v1alpha1/{parent=projects/*/locations/*/registries/*}/services"
@@ -77,22 +92,31 @@ service RegistrationService {
     };
   }
 
-  // Returns a Service.
+  // Gets a service.
   rpc GetService(GetServiceRequest) returns (Service) {
     option (google.api.http) = {
       get: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*}"
     };
   }
 
-  // Deletes a Service. This deletes all Service Endpoints associated with
-  // this service.
+  // Deletes a service. This also deletes all service endpoints associated with
+  // the service.
   rpc DeleteService(DeleteServiceRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*}"
     };
   }
 
-  // Updates keys in Service metadata. Only the provided keys are
+  // Sets the metadata and endpoints for a service, which will completely
+  // replace its original metadata and endpoints.
+  rpc SetService(SetServiceRequest) returns (SetServiceResponse) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*}:setservice"
+      body: "*"
+    };
+  }
+
+  // Updates keys in a service's metadata. Only the provided keys are
   // added/updated (PATCH semantics).
   rpc UpdateServiceMetadata(UpdateServiceMetadataRequest) returns (Service) {
     option (google.api.http) = {
@@ -101,7 +125,7 @@ service RegistrationService {
     };
   }
 
-  // Removes keys in Service metadata.
+  // Removes keys in a service's metadata.
   rpc RemoveServiceMetadata(RemoveServiceMetadataRequest) returns (Service) {
     option (google.api.http) = {
       post: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*}:deletemetadata"
@@ -109,7 +133,7 @@ service RegistrationService {
     };
   }
 
-  // Creates a new Service Endpoint.
+  // Creates a service endpoint, and returns the new ServiceEndpoint.
   rpc CreateServiceEndpoint(CreateServiceEndpointRequest) returns (ServiceEndpoint) {
     option (google.api.http) = {
       post: "/v1alpha1/{parent=projects/*/locations/*/registries/*/services/*}/endpoints"
@@ -124,30 +148,21 @@ service RegistrationService {
     };
   }
 
-  // Returns a Service Endpoint.
+  // Gets a service endpoint.
   rpc GetServiceEndpoint(GetServiceEndpointRequest) returns (ServiceEndpoint) {
     option (google.api.http) = {
       get: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*/endpoints/*}"
     };
   }
 
-  // Deletes a Service Endpoint.
+  // Deletes a service endpoint.
   rpc DeleteServiceEndpoint(DeleteServiceEndpointRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*/endpoints/*}"
     };
   }
 
-  // Set the endpoints and metadata for a service,
-  // which completely replace any original metadata or endpoints.
-  rpc SetService(SetServiceRequest) returns (SetServiceResponse) {
-    option (google.api.http) = {
-      post: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*}:setservice"
-      body: "*"
-    };
-  }
-
-  // Updates keys in Service Endpoint metadata. Only the provided keys are
+  // Updates keys in a service endpoint's metadata. Only the provided keys are
   // added/updated (PATCH semantics).
   rpc UpdateServiceEndpointMetadata(UpdateServiceEndpointMetadataRequest) returns (ServiceEndpoint) {
     option (google.api.http) = {
@@ -156,7 +171,7 @@ service RegistrationService {
     };
   }
 
-  // Removes keys in Service Endpoint metadata.
+  // Removes keys in the service endpoint's metadata.
   rpc RemoveServiceEndpointMetadata(RemoveServiceEndpointMetadataRequest) returns (ServiceEndpoint) {
     option (google.api.http) = {
       post: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*/endpoints/*}:deletemetadata"
@@ -201,46 +216,46 @@ service RegistrationService {
   }
 }
 
-// A request to create a Service Registry.
+// The request message for [RegistrationService.CreateServiceRegistry][google.cloud.servicediscovery.v1alpha1.RegistrationService.CreateServiceRegistry].
 message CreateServiceRegistryRequest {
-  // Required. The resource name of the location associated with the
-  // service registry. Only global locations are currently supported.
+  // Required. The resource name of the project and location the service
+  // registry will be created in.
   string parent = 1;
 
-  // Required. It must be unique within a location and match the
-  // regular expression `[a-zA-Z][a-zA-Z0-9_-]{0,62}`
+  // Required. It must be unique within a location and match the regular
+  // expression `[a-zA-Z][a-zA-Z0-9_-]{0,62}`
   string service_registry_id = 2;
 
-  // Required. A Service registry with initial fields set.
+  // Required. A service registry with initial fields set.
   ServiceRegistry service_registry = 3;
 }
 
-// A request to list service registries.
+// The request message for [RegistrationService.ListServiceRegistries][google.cloud.servicediscovery.v1alpha1.RegistrationService.ListServiceRegistries].
 message ListServiceRegistriesRequest {
-  // Required. The resource name of the location associated with the
-  // service registry. Only global locations are currently supported.
+  // Required. The resource name of the project and location whose service
+  // registries we'd like to list.
   string parent = 1;
 }
 
-// A response that contains the given list of service registries.
+// The response message for [RegistrationService.ListServiceRegistries][google.cloud.servicediscovery.v1alpha1.RegistrationService.ListServiceRegistries].
 message ListServiceRegistriesResponse {
   // The list of service registries.
   repeated ServiceRegistry service_registries = 1;
 }
 
-// The request to get a Service Registry.
+// The request message for [RegistrationService.GetServiceRegistry][google.cloud.servicediscovery.v1alpha1.RegistrationService.GetServiceRegistry].
 message GetServiceRegistryRequest {
-  // Required. The name of the service registry to return.
+  // Required. The name of the service registry to retrieve.
   string name = 1;
 }
 
-// The request to delete a Service Registry.
+// The request message for [RegistrationService.DeleteServiceRegistry][google.cloud.servicediscovery.v1alpha1.RegistrationService.DeleteServiceRegistry].
 message DeleteServiceRegistryRequest {
   // Required. The name of the service registry to delete.
   string name = 1;
 }
 
-// The request to create a Service.
+// The request message for [RegistrationService.CreateService][google.cloud.servicediscovery.v1alpha1.RegistrationService.CreateService].
 message CreateServiceRequest {
   // Required. The resource name of the registry this service will belong to.
   string parent = 1;
@@ -249,136 +264,139 @@ message CreateServiceRequest {
   // match regular expression `[a-zA-Z][a-zA-Z0-9_-]{0,62}`
   string service_name = 2;
 
-  // Required. A Service  with initial fields set.
+  // Required. A service  with initial fields set.
   Service service = 3;
 }
 
-// A request to list all services.
+// The request message for [RegistrationService.ListServices][google.cloud.servicediscovery.v1alpha1.RegistrationService.ListServices].
 message ListServicesRequest {
-  // Required. The name of the service registry.
+  // Required. The resource name of the service registry whose services we'd
+  // like to list.
   string parent = 1;
 }
 
-// A response that contains all services.
+// The response message for [RegistrationService.ListServices][google.cloud.servicediscovery.v1alpha1.RegistrationService.ListServices].
 message ListServicesResponse {
   // The list of services.
   repeated Service services = 1;
 }
 
-// A request to get a service. This should not be used for looking
-// up a service. Rather the `discover` method should be used as it
-// will contain all metadata for both the service and endpoints.
+// The request message for [RegistrationService.GetService][google.cloud.servicediscovery.v1alpha1.RegistrationService.GetService].
+// This should not be used for looking up a service. Insead, use the `discover`
+// method as it will contain all endpoints and associated metadata.
 message GetServiceRequest {
-  // Required. The name of the service to return.
+  // Required. The name of the service to get.
   string name = 1;
 }
 
-// A request to delete a service.
+// The request message for [RegistrationService.DeleteService][google.cloud.servicediscovery.v1alpha1.RegistrationService.DeleteService].
 message DeleteServiceRequest {
   // Required. The name of the service to delete.
   string name = 1;
 }
 
-// Key/Value metadata that exists on both Services and Endpoints.
+// Key/value metadata that exists on both services and endpoints.
 message Metadata {
-  // Required. Key/Value metadata for the service or endpoint. This data can
+  // Required. Key/value metadata for the service or endpoint. This data can
   // be consumed by service clients.
   map<string, string> metadata = 1;
 }
 
-// A request to set a Service's metadata and endpoints.
+// The request message for [RegistrationService.SetService][google.cloud.servicediscovery.v1alpha1.RegistrationService.SetService].
 message SetServiceRequest {
-  // Required. The name of the Service to set.
+  // Required. The name of the service to set.
   string name = 1;
 
-  // Required. Holds the metadata to set for the Service.
+  // Required. Holds the metadata to set for the service.
   Service service = 2;
 
   // Required. A list of endpoints with initial fields set.
   repeated ServiceEndpoint service_endpoints = 3;
 }
 
-// A response that contains the Service.
-// with the updated metadata and the new list of Service Endpoints.
+// The response message for [RegistrationService.SetService][google.cloud.servicediscovery.v1alpha1.RegistrationService.SetService].
 message SetServiceResponse {
-  // the service with the reset metadata.
+  // The service with the reset metadata.
   Service service = 1;
 
-  // The list of reset Service Endpoints.
+  // The list of reset service endpoints.
   repeated ServiceEndpoint service_endpoints = 2;
 }
 
-// A request to update Service metadata.
+// The request message for [RegistrationService.UpdateServiceMetadata][google.cloud.servicediscovery.v1alpha1.RegistrationService.UpdateServiceMetadata].
 message UpdateServiceMetadataRequest {
   // Required. The name of the service to update.
   string name = 1;
 
-  // Required. The metadata to use to update.
+  // Required. The updated metadata to apply to the service.
   Metadata metadata = 2;
 }
 
-// Keys to metadata already associated with a Service or Endpoint.
+// Keys to metadata already associated with a service or endpoint.
 message MetadataKeys {
-  // Required. List of keys.
+  // Required. A list of keys.
   repeated string keys = 1;
 }
 
-// A request to remove metadata from a Service.
+// The request message for [RegistrationService.RemoveServiceMetadata][google.cloud.servicediscovery.v1alpha1.RegistrationService.RemoveServiceMetadata].
 message RemoveServiceMetadataRequest {
   // Required. The name of the service to update.
   string name = 1;
 
-  // Required. The keys to delete.
+  // Required. The metadata keys to delete.
   MetadataKeys keys = 2;
 }
 
-// A request to create a Service Endpoint.
+// The request message for [RegistrationService.CreateServiceEndpoint][google.cloud.servicediscovery.v1alpha1.RegistrationService.CreateServiceEndpoint].
 message CreateServiceEndpointRequest {
-  // Required. The resource name of the service this endpoint will provide.
+  // Required. The resource name of the service that this endpoint provides.
   string parent = 1;
 
-  // Required. A ServiceEndpoint with initial fields set.
+  // Required. A service endpoint with initial fields set.
   ServiceEndpoint service_endpoint = 2;
 }
 
-// A request to list Service Endpoints.
+// The request message for [RegistrationService.ListServiceEndpoints][google.cloud.servicediscovery.v1alpha1.RegistrationService.ListServiceEndpoints].
 message ListServiceEndpointsRequest {
-  // Required. The resource name of the service.
+  // Required. The resource name of the service whose endpoints we'd like to
+  // list.
   string parent = 1;
 }
 
-// A response that contains a list of service endpoints.
+// The response message for [RegistrationService.ListServiceEndpoints][google.cloud.servicediscovery.v1alpha1.RegistrationService.ListServiceEndpoints].
 message ListServiceEndpointsResponse {
   // The list of service endpoints.
   repeated ServiceEndpoint service_endpoints = 1;
 }
 
-// A request to get a service endpoint. This should not be used to lookup
-// services endpoints at runtime. Instead, the `discover` method should be
-// used.
+// The request message for [RegistrationService.GetServiceEndpoint][google.cloud.servicediscovery.v1alpha1.RegistrationService.GetServiceEndpoint].
+// This should not be used to lookup service endpoints at runtime. Instead, use
+// the `discover` method.
 message GetServiceEndpointRequest {
-  // Required. The name of the service endpoint to return.
+  // Required. The name of the service endpoint to get.
   string name = 1;
 }
 
-// A request to delete a service endpoint.
+// The request message for [RegistrationService.DeleteServiceEndpoint][google.cloud.servicediscovery.v1alpha1.RegistrationService.DeleteServiceEndpoint].
 message DeleteServiceEndpointRequest {
   // Required. The name of the service endpoint to delete.
   string name = 1;
 }
 
-// A request to update a Service Endpoint's metadata.
+// The request message for
+// [RegistrationService.UpdateServiceEndpointMetadata][google.cloud.servicediscovery.v1alpha1.RegistrationService.UpdateServiceEndpointMetadata].
 message UpdateServiceEndpointMetadataRequest {
-  // Required. The name of the endpoint to update.
+  // Required. The name of the service endpoint to update.
   string name = 1;
 
   // Required. The metadata to use to update.
   Metadata metadata = 2;
 }
 
-// A request to remove a Service Endpoint's metadata.
+// The request message for
+// [RegistrationService.RemoveServiceEndpointMetadata][google.cloud.servicediscovery.v1alpha1.RegistrationService.RemoveServiceEndpointMetadata].
 message RemoveServiceEndpointMetadataRequest {
-  // Required. The name of the service to update.
+  // Required. The name of the service endpoint to update.
   string name = 1;
 
   // Required. The keys to delete.

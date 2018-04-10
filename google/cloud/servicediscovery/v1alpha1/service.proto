@@ -24,11 +24,14 @@ option java_multiple_files = true;
 option java_outer_classname = "ServiceProto";
 option java_package = "com.google.cloud.servicediscovery.v1alpha1";
 
-// An individual service. A Service contains a name and optional metadata.
-// A service must exist before endpoints can be added to it.
+
+// An individual service. A service contains a name and optional metadata.
+// A service must exist before
+// [endpoints][google.cloud.servicediscovery.v1alpha1.ServiceEndpoint] can be
+// added to it.
 message Service {
   // Output only.
-  // The resource name for the Service in the format
+  // The resource name for the service in the format
   // 'projects/*/locations/*/registries/*/services/*'.
   string name = 1;
 
