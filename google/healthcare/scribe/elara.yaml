@@ -1,0 +1,31 @@
+type: google.api.Service
+config_version: 3
+name: elara-healthcarescribe.googleapis.com
+title: Healthcare Scribe API
+
+apis:
+- name: healthcare.scribe.v1alpha.HealthcareScribe
+
+types:
+- name: google.longrunning.Operation
+- name: google.rpc.Status
+- name: healthcare.scribe.v1alpha.TranscriptOperationMetadata
+
+# enums:
+# - name: google.rpc.Code
+
+documentation:
+  summary: Automates the creation of clinical workflow documentation.
+  overview: |-
+    An API to automate the creation of documentation required in the clinical
+    workflow such as transcription using automatic speech recognition, medical
+    terminology and entity extraction, industry-standard annotations, and
+    summarization into clinical notes.
+
+authentication:
+  rules:
+  - selector: '*'
+    oauth:
+      canonical_scopes: |-
+        https://www.googleapis.com/auth/cloud-platform,
+        https://www.googleapis.com/auth/healthcarescribe

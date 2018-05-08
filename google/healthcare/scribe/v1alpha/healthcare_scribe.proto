@@ -1,0 +1,387 @@
+// Copyright 2018 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package healthcare.scribe.v1alpha;
+
+import "google/api/annotations.proto";
+import "google/healthcare/scribe/v1alpha/resources.proto";
+import "google/longrunning/operations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+
+option java_outer_classname = "HealthcareScribeProto";
+option java_package = "com.google.healthcare.scribe.v1alpha";
+
+
+// The Healthcare Scribe API lets you automate the creation of documentation
+// that is required in the clinical workflow. These steps may include:
+//
+// *   using automatic speech recognition,
+// *   medical terminology and entity extraction,
+// *   industry-standard annotations, and
+// *   summarization into clinical notes.
+//
+// It defines the following resource models:
+//
+// *   The API has a collection of
+// [Encounter][healthcare.scribe.v1alpha.Encounter] resources, named
+// `encounters/*`
+//
+// *   Each Encounter has the following collections:
+//     *   [Transcript][healthcare.scribe.v1alpha.Transcript] resources, named
+//     `encounters/*/transcripts/*`
+//     *   [InputNote][healthcare.scribe.v1alpha.InputNote] resources, named
+//     `encounters/*/inputNotes/*`
+service HealthcareScribe {
+  // Creates an encounter.
+  rpc CreateEncounter(CreateEncounterRequest) returns (Encounter) {
+    option (google.api.http) = {
+      post: "/v1alpha/encounters"
+      body: "encounter"
+    };
+  }
+
+  // Gets an encounter.
+  rpc GetEncounter(GetEncounterRequest) returns (Encounter) {
+    option (google.api.http) = {
+      get: "/v1alpha/{name=encounters/*}"
+    };
+  }
+
+  // Updates an encounter.
+  //
+  // Only the fields specified in the
+  // [updateMask][healthcare.scribe.v1alpha.UpdateEncounterRequest.update_mask]
+  // field are used. If `updateMask` is not present, the update applies to all
+  // fields.
+  rpc UpdateEncounter(UpdateEncounterRequest) returns (Encounter) {
+    option (google.api.http) = {
+      patch: "/v1alpha/{encounter.name=encounters/*}"
+      body: "encounter"
+    };
+  }
+
+  // List all encounters owned by the client project in descending order of
+  // creation time.
+  rpc ListEncounters(ListEncountersRequest) returns (ListEncountersResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha/encounters"
+    };
+  }
+
+  // Deletes an encounter, including all the
+  // [Transcripts][healthcare.scribe.v1alpha.Transcript] and
+  // [InputNotes][healthcare.scribe.v1alpha.InputNote] that belong to the
+  // encounter.
+  rpc DeleteEncounter(DeleteEncounterRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1alpha/{name=encounters/*}"
+    };
+  }
+
+  // Creates a transcript in an encounter.
+  rpc CreateTranscript(CreateTranscriptRequest) returns (Transcript) {
+    option (google.api.http) = {
+      post: "/v1alpha/{parent=encounters/*}/transcripts"
+      body: "transcript"
+    };
+  }
+
+  // Gets a transcript.
+  //
+  // This method returns the following error codes:
+  //
+  // * [google.rpc.Code.PERMISSION_DENIED][google.rpc.Code.PERMISSION_DENIED] if the project did not create the
+  // requested [Transcript][healthcare.scribe.v1alpha.Transcript].
+  rpc GetTranscript(GetTranscriptRequest) returns (Transcript) {
+    option (google.api.http) = {
+      get: "/v1alpha/{name=encounters/*/transcripts/*}"
+    };
+  }
+
+  // Lists transcripts for a given encounter.
+  rpc ListTranscripts(ListTranscriptsRequest) returns (ListTranscriptsResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha/{parent=encounters/*}/transcripts"
+    };
+  }
+
+  // Deletes a transcript.
+  rpc DeleteTranscript(DeleteTranscriptRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1alpha/{name=encounters/*/transcripts/*}"
+    };
+  }
+
+  // Generates a [Transcript][healthcare.scribe.v1alpha.Transcript] under the
+  // given encounter parent from a provided audio file asynchronously. This
+  // method returns an [Operation][google.longrunning.Operation] which can be
+  // used through the
+  // [google.longrunning.Operations](/healthcare/scribe/reference/rest/v1beta1/operations#Operation)
+  // interface.
+  //
+  // The operation can be retrieved through the
+  // [google.longrunning.Operations.GetOperation][google.longrunning.Operations.GetOperation] method. While the operation
+  // is being process, the `Operation.done` field is set to `false`. Once the
+  // operation is done processing (whether the process was successful or there
+  // was a failure), the `Operation.done` field is set to `true`.
+  //
+  // If the operation is successful, the
+  // [Transcript][healthcare.scribe.v1alpha.Transcript] becomes
+  // available through the
+  // [healthcare.scribe.v1alpha.HealthcareScribe.GetTranscript][healthcare.scribe.v1alpha.HealthcareScribe.GetTranscript] and
+  // [healthcare.scribe.v1alpha.HealthcareScribe.ListTranscripts][healthcare.scribe.v1alpha.HealthcareScribe.ListTranscripts] methods. If
+  // the operation is not successful or has not finished yet, the operation can
+  // be retrieved through the [google.longrunning.Operations.GetOperation][google.longrunning.Operations.GetOperation] and
+  // [google.longrunning.Operations.ListOperations][google.longrunning.Operations.ListOperations] methods.
+  //
+  // The `name` field of the operation is in the format `operations/*`.
+  //
+  // This method returns the following error codes:
+  //
+  // * [google.rpc.Code.INVALID_ARGUMENT][google.rpc.Code.INVALID_ARGUMENT] if the provided file is not an audio
+  // file.
+  // * [google.rpc.Code.PERMISSION_DENIED][google.rpc.Code.PERMISSION_DENIED] if the project does not have read
+  // permissions on the audio file.
+  // * [google.rpc.Code.NOT_FOUND][google.rpc.Code.NOT_FOUND] if the provided audio file does not exist.
+  rpc RecognizeTranscript(RecognizeTranscriptRequest) returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      post: "/v1alpha/{parent=encounters/*}/transcripts:recognize"
+      body: "*"
+    };
+  }
+
+  // Creates an input note in an encounter.
+  rpc CreateInputNote(CreateInputNoteRequest) returns (InputNote) {
+    option (google.api.http) = {
+      post: "/v1alpha/{parent=encounters/*}/inputNotes"
+      body: "input_note"
+    };
+  }
+
+  // Gets an input note.
+  rpc GetInputNote(GetInputNoteRequest) returns (InputNote) {
+    option (google.api.http) = {
+      get: "/v1alpha/{name=encounters/*/inputNotes/*}"
+    };
+  }
+
+  // List input notes for a given encounter.
+  rpc ListInputNotes(ListInputNotesRequest) returns (ListInputNotesResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha/{parent=encounters/*}/inputNotes"
+    };
+  }
+
+  // Deletes an input note.
+  rpc DeleteInputNote(DeleteInputNoteRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1alpha/{name=encounters/*/inputNotes/*}"
+    };
+  }
+}
+
+// Request to create an [Encounter][healthcare.scribe.v1alpha.Encounter].
+message CreateEncounterRequest {
+  // Required. Encounter to create.
+  Encounter encounter = 1;
+}
+
+// Request to get an [Encounter][healthcare.scribe.v1alpha.Encounter].
+message GetEncounterRequest {
+  // Required. Id of the [Encounter][healthcare.scribe.v1alpha.Encounter].
+  string name = 1;
+}
+
+// Request to update an [Encounter][healthcare.scribe.v1alpha.Encounter].
+message UpdateEncounterRequest {
+  // Required. Encounter resource containing all the new fields to update.
+  Encounter encounter = 1;
+
+  // Mask that identifies fields on the
+  // [Encounter][healthcare.scribe.v1alpha.Encounter] resource to update. If not
+  // present, the old [Encounter][healthcare.scribe.v1alpha.Encounter] resource
+  // will be entirely replaced with the new
+  // [Encounter][healthcare.scribe.v1alpha.Encounter] resource in this request.
+  // The update fails if invalid fields are specified. Multiple fields can be
+  // specified in a comma-delimited list.
+  //
+  //
+  // <aside class="note"><b>Note:</b> Repeated fields in
+  // [updateMask][healthcare.scribe.v1alpha.UpdateEncounterRequest.update_mask]
+  // mean the entire set of repeated values will be replaced with the new
+  // contents. For example, if
+  // [updateMask][healthcare.scribe.v1alpha.UpdateEncounterRequest.update_mask]
+  // contains `audios` and `UpdateEncounterRequest.encounter.audios` is empty,
+  // all audios will be removed. If you want to append an item to
+  // `UpdateEncounterRequest.encounter.audios`, call
+  // [healthcare.scribe.v1alpha.AddAudioToEncounter][] instead.
+  // </aside>
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+// Request to list [Encounter][healthcare.scribe.v1alpha.Encounter]
+// resources.
+message ListEncountersRequest {
+  // The maximum number of encounters to return.
+  // `pageSize` must be non-negative.
+  // The number of encounters returned in the response may be less than
+  // `pageSize` if the number of encounters is less than `pageSize`.
+  int32 page_size = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no more
+  // results in the list.
+  string page_token = 2;
+}
+
+// Response to list [Encounter][healthcare.scribe.v1alpha.Encounter] resources.
+message ListEncountersResponse {
+  // List of encounters. The maximum number of items returned is based on the
+  // [pageSize][healthcare.scribe.v1alpha.ListEncountersRequest.page_size]
+  // field in the request.
+  repeated Encounter encounters = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no more
+  // results in the list.
+  string next_page_token = 2;
+}
+
+// Request to delete an [Encounter][healthcare.scribe.v1alpha.Encounter].
+message DeleteEncounterRequest {
+  // Required. Id of the [Encounter][healthcare.scribe.v1alpha.Encounter].
+  string name = 1;
+}
+
+// Request to create a [Transcript][healthcare.scribe.v1alpha.Transcript].
+message CreateTranscriptRequest {
+  // Required. Id of the encounter in the format of `encounters/*`.
+  string parent = 1;
+
+  // Required. Transcript to create.
+  Transcript transcript = 2;
+}
+
+// Request to create a [Transcript][healthcare.scribe.v1alpha.Transcript] from a
+// given audio file.
+message RecognizeTranscriptRequest {
+  // Required. Id of the encounter in the format of `encounters/*`.
+  string parent = 1;
+
+  // Required. Audio file to recognize.
+  AudioFile audio = 2;
+}
+
+// Request to get an
+// [Transcript][healthcare.scribe.v1alpha.Transcript].
+message GetTranscriptRequest {
+  // Required. Id of the [Transcript][healthcare.scribe.v1alpha.Transcript] in
+  // the format of `encounters/*/transcripts/*`.
+  string name = 1;
+}
+
+// Request to list transcripts that belong to a encounter.
+message ListTranscriptsRequest {
+  // Required. The id of the encounter in the format of `encounters/*`.
+  string parent = 1;
+
+  // The maximum number of transcripts to return.
+  // `pageSize` must be non-negative.
+  // The number of transcripts returned in the response may be less than
+  // `pageSize` if the number of transcripts is less than `pageSize`.
+  int32 page_size = 2;
+
+  // Token to retrieve the next page of results, or empty if there are no more
+  // results in the list.
+  string page_token = 3;
+}
+
+// Response to list [Transcript][healthcare.scribe.v1alpha.Transcript]
+// resources via the [Operation][google.longrunning.Operation] interface.
+message ListTranscriptsResponse {
+  // List of transcripts. The maximum number of items returned is based on the
+  // [pageSize][healthcare.scribe.v1alpha.ListTranscriptsRequest.page_size]
+  // field in the request.
+  repeated Transcript transcripts = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no more
+  // results in the list.
+  string next_page_token = 2;
+}
+
+// Request to delete a [Transcript][healthcare.scribe.v1alpha.Transcript].
+message DeleteTranscriptRequest {
+  // Required. Id of the [Transcript][healthcare.scribe.v1alpha.Transcript] in
+  // the format of `encounters/*/transcripts/*`.
+  string name = 1;
+}
+
+// Request to create an [InputNote][healthcare.scribe.v1alpha.InputNote].
+message CreateInputNoteRequest {
+  // Required. Id of the encounter in the format of `encounters/*`.
+  string parent = 1;
+
+  // Required. Input note to create.
+  InputNote input_note = 2;
+}
+
+// Request to get a [InputNote][healthcare.scribe.v1alpha.InputNote].
+message GetInputNoteRequest {
+  // Required. Id of the [InputNote][healthcare.scribe.v1alpha.InputNote] in the
+  // format of `encounters/*/inputNotes/*`.
+  string name = 1;
+}
+
+// Request to list input notes that belong to an encounter.
+message ListInputNotesRequest {
+  // Required. The id of the encounter in the format of `encounters/*`.
+  string parent = 1;
+
+  // The maximum number of input notes to return.
+  // `pageSize` must be non-negative.
+  // The number of input notes returned in the response may be less than
+  // `pageSize` if the number of input notes is less than `pageSize`.
+  int32 page_size = 2;
+
+  // Token to retrieve the next page of results, or empty if there are no more
+  // results in the list.
+  string page_token = 3;
+}
+
+// Response to list input notes that belong to an encounter.
+message ListInputNotesResponse {
+  // List of input notes. The maximum number of items returned is based on the
+  // [pageSize][healthcare.scribe.v1alpha.ListInputNotesRequest.page_size]
+  // field in the request.
+  repeated InputNote input_notes = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no more
+  // results in the list.
+  string next_page_token = 2;
+}
+
+// Request to delete an [InputNote][healthcare.scribe.v1alpha.InputNote].
+message DeleteInputNoteRequest {
+  // Required. Id of the [InputNote][healthcare.scribe.v1alpha.InputNote] in the
+  // format of `encounters/*/inputNotes/*`.
+  string name = 1;
+}
+
+// Metadata for the [Operation][google.longrunning.Operation] of a
+// [Transcript][healthcare.scribe.v1alpha.Transcript]. This message is set in
+// the `Operation.metadata` field of an `Operation`.
+message TranscriptOperationMetadata {
+
+}
