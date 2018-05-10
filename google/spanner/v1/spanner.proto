@@ -59,39 +59,51 @@ service Spanner {
   // Idle sessions can be kept alive by sending a trivial SQL query
   // periodically, e.g., `"SELECT 1"`.
   rpc CreateSession(CreateSessionRequest) returns (Session) {
-    option (google.api.http) = { post: "/v1/{database=projects/*/instances/*/databases/*}/sessions" body: "*" };
+    option (google.api.http) = {
+      post: "/v1/{database=projects/*/instances/*/databases/*}/sessions"
+      body: "*"
+    };
   }
 
   // Gets a session. Returns `NOT_FOUND` if the session does not exist.
   // This is mainly useful for determining whether a session is still
   // alive.
   rpc GetSession(GetSessionRequest) returns (Session) {
-    option (google.api.http) = { get: "/v1/{name=projects/*/instances/*/databases/*/sessions/*}" };
+    option (google.api.http) = {
+      get: "/v1/{name=projects/*/instances/*/databases/*/sessions/*}"
+    };
   }
 
   // Lists all sessions in a given database.
   rpc ListSessions(ListSessionsRequest) returns (ListSessionsResponse) {
-    option (google.api.http) = { get: "/v1/{database=projects/*/instances/*/databases/*}/sessions" };
+    option (google.api.http) = {
+      get: "/v1/{database=projects/*/instances/*/databases/*}/sessions"
+    };
   }
 
   // Ends a session, releasing server resources associated with it.
   rpc DeleteSession(DeleteSessionRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = { delete: "/v1/{name=projects/*/instances/*/databases/*/sessions/*}" };
+    option (google.api.http) = {
+      delete: "/v1/{name=projects/*/instances/*/databases/*/sessions/*}"
+    };
   }
 
-  // Executes an SQL query, returning all rows in a single reply. This
+  // Executes an SQL statement, returning all results in a single reply. This
   // method cannot be used to return a result set larger than 10 MiB;
   // if the query yields more data than that, the query fails with
   // a `FAILED_PRECONDITION` error.
   //
-  // Queries inside read-write transactions might return `ABORTED`. If
+  // Operations inside read-write transactions might return `ABORTED`. If
   // this occurs, the application should restart the transaction from
   // the beginning. See [Transaction][google.spanner.v1.Transaction] for more details.
   //
   // Larger result sets can be fetched in streaming fashion by calling
   // [ExecuteStreamingSql][google.spanner.v1.Spanner.ExecuteStreamingSql] instead.
   rpc ExecuteSql(ExecuteSqlRequest) returns (ResultSet) {
-    option (google.api.http) = { post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:executeSql" body: "*" };
+    option (google.api.http) = {
+      post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:executeSql"
+      body: "*"
+    };
   }
 
   // Like [ExecuteSql][google.spanner.v1.Spanner.ExecuteSql], except returns the result
@@ -100,7 +112,10 @@ service Spanner {
   // individual row in the result set can exceed 100 MiB, and no
   // column value can exceed 10 MiB.
   rpc ExecuteStreamingSql(ExecuteSqlRequest) returns (stream PartialResultSet) {
-    option (google.api.http) = { post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:executeStreamingSql" body: "*" };
+    option (google.api.http) = {
+      post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:executeStreamingSql"
+      body: "*"
+    };
   }
 
   // Reads rows from the database using key lookups and scans, as a
@@ -117,7 +132,10 @@ service Spanner {
   // Larger result sets can be yielded in streaming fashion by calling
   // [StreamingRead][google.spanner.v1.Spanner.StreamingRead] instead.
   rpc Read(ReadRequest) returns (ResultSet) {
-    option (google.api.http) = { post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:read" body: "*" };
+    option (google.api.http) = {
+      post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:read"
+      body: "*"
+    };
   }
 
   // Like [Read][google.spanner.v1.Spanner.Read], except returns the result set as a
@@ -126,7 +144,10 @@ service Spanner {
   // the result set can exceed 100 MiB, and no column value can exceed
   // 10 MiB.
   rpc StreamingRead(ReadRequest) returns (stream PartialResultSet) {
-    option (google.api.http) = { post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:streamingRead" body: "*" };
+    option (google.api.http) = {
+      post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:streamingRead"
+      body: "*"
+    };
   }
 
   // Begins a new transaction. This step can often be skipped:
@@ -134,7 +155,10 @@ service Spanner {
   // [Commit][google.spanner.v1.Spanner.Commit] can begin a new transaction as a
   // side-effect.
   rpc BeginTransaction(BeginTransactionRequest) returns (Transaction) {
-    option (google.api.http) = { post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:beginTransaction" body: "*" };
+    option (google.api.http) = {
+      post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:beginTransaction"
+      body: "*"
+    };
   }
 
   // Commits a transaction. The request includes the mutations to be
@@ -146,7 +170,10 @@ service Spanner {
   // reasons. If `Commit` returns `ABORTED`, the caller should re-attempt
   // the transaction from the beginning, re-using the same session.
   rpc Commit(CommitRequest) returns (CommitResponse) {
-    option (google.api.http) = { post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:commit" body: "*" };
+    option (google.api.http) = {
+      post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:commit"
+      body: "*"
+    };
   }
 
   // Rolls back a transaction, releasing any locks it holds. It is a good
@@ -158,7 +185,10 @@ service Spanner {
   // transaction was already aborted, or the transaction is not
   // found. `Rollback` never returns `ABORTED`.
   rpc Rollback(RollbackRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = { post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:rollback" body: "*" };
+    option (google.api.http) = {
+      post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:rollback"
+      body: "*"
+    };
   }
 
   // Creates a set of partition tokens that can be used to execute a query
@@ -170,7 +200,10 @@ service Spanner {
   // Partition tokens become invalid when the session used to create them
   // is deleted or begins a new transaction.
   rpc PartitionQuery(PartitionQueryRequest) returns (PartitionResponse) {
-    option (google.api.http) = { post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:partitionQuery" body: "*" };
+    option (google.api.http) = {
+      post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:partitionQuery"
+      body: "*"
+    };
   }
 
   // Creates a set of partition tokens that can be used to execute a read
@@ -182,7 +215,10 @@ service Spanner {
   // Partition tokens become invalid when the session used to create them
   // is deleted or begins a new transaction.
   rpc PartitionRead(PartitionReadRequest) returns (PartitionResponse) {
-    option (google.api.http) = { post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:partitionRead" body: "*" };
+    option (google.api.http) = {
+      post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:partitionRead"
+      body: "*"
+    };
   }
 }
 
@@ -273,18 +309,17 @@ message DeleteSessionRequest {
 // The request for [ExecuteSql][google.spanner.v1.Spanner.ExecuteSql] and
 // [ExecuteStreamingSql][google.spanner.v1.Spanner.ExecuteStreamingSql].
 message ExecuteSqlRequest {
-  // Mode in which the query must be processed.
+  // Mode in which the statement must be processed.
   enum QueryMode {
-    // The default mode where only the query result, without any information
-    // about the query plan is returned.
+    // The default mode. Only the statement results are returned.
     NORMAL = 0;
 
-    // This mode returns only the query plan, without any result rows or
+    // This mode returns only the query plan, without any results or
     // execution statistics information.
     PLAN = 1;
 
     // This mode returns both the query plan and the execution statistics along
-    // with the result rows.
+    // with the results.
     PROFILE = 2;
   }
 
@@ -293,12 +328,22 @@ message ExecuteSqlRequest {
 
   // The transaction to use. If none is provided, the default is a
   // temporary read-only transaction with strong concurrency.
+  // The transaction to use.
+  //
+  // For queries, if none is provided, the default is a temporary read-only
+  // transaction with strong concurrency.
+  //
+  // Standard DML statements require a ReadWrite transaction. Single-use
+  // transactions are not supported (to avoid replay).  The caller must
+  // either supply an existing transaction ID or begin a new transaction.
+  //
+  // Partitioned DML requires an existing PartitionedDml transaction ID.
   TransactionSelector transaction = 2;
 
-  // Required. The SQL query string.
+  // Required. The SQL string.
   string sql = 3;
 
-  // The SQL query string can contain parameter placeholders. A parameter
+  // The SQL string can contain parameter placeholders. A parameter
   // placeholder consists of `'@'` followed by the parameter
   // name. Parameter names consist of any combination of letters,
   // numbers, and underscores.
@@ -307,7 +352,7 @@ message ExecuteSqlRequest {
   // parameter name can be used more than once, for example:
   //   `"WHERE id > @msg_id AND id < @msg_id + 100"`
   //
-  // It is an error to execute an SQL query with unbound parameters.
+  // It is an error to execute an SQL statement with unbound parameters.
   //
   // Parameter values are specified using `params`, which is a JSON
   // object whose keys are parameter names, and whose values are the
@@ -319,15 +364,15 @@ message ExecuteSqlRequest {
   // of type `STRING` both appear in [params][google.spanner.v1.ExecuteSqlRequest.params] as JSON strings.
   //
   // In these cases, `param_types` can be used to specify the exact
-  // SQL type for some or all of the SQL query parameters. See the
+  // SQL type for some or all of the SQL statement parameters. See the
   // definition of [Type][google.spanner.v1.Type] for more information
   // about SQL types.
   map<string, Type> param_types = 5;
 
-  // If this request is resuming a previously interrupted SQL query
+  // If this request is resuming a previously interrupted SQL statement
   // execution, `resume_token` should be copied from the last
   // [PartialResultSet][google.spanner.v1.PartialResultSet] yielded before the interruption. Doing this
-  // enables the new SQL query execution to resume where the last one left
+  // enables the new SQL statement execution to resume where the last one left
   // off. The rest of the request parameters must exactly match the
   // request that yielded this token.
   bytes resume_token = 6;
@@ -342,16 +387,34 @@ message ExecuteSqlRequest {
   // match for the values of fields common to this message and the
   // PartitionQueryRequest message used to create this partition_token.
   bytes partition_token = 8;
+
+  // A per-transaction sequence number used to identify this request. This
+  // makes each request idempotent such that if the request is received multiple
+  // times, at most one will succeed.
+  //
+  // The sequence number must be monotonically increasing within the
+  // transaction. If a request arrives for the first time with an out-of-order
+  // sequence number, the transaction may be aborted. Replays of previously
+  // handled requests will yield the same response as the first execution.
+  //
+  // Required for DML statements. Ignored for queries.
+  int64 seqno = 9;
 }
 
 // Options for a PartitionQueryRequest and
 // PartitionReadRequest.
 message PartitionOptions {
+  // **Note:** This hint is currently ignored by PartitionQuery and
+  // PartitionRead requests.
+  //
   // The desired data size for each partition generated.  The default for this
   // option is currently 1 GiB.  This is only a hint. The actual size of each
   // partition may be smaller or larger than this size request.
   int64 partition_size_bytes = 1;
 
+  // **Note:** This hint is currently ignored by PartitionQuery and
+  // PartitionRead requests.
+  //
   // The desired maximum number of partitions to return.  For example, this may
   // be set to the number of workers available.  The default for this option
   // is currently 10,000. The maximum value is currently 200,000.  This is only
@@ -375,6 +438,10 @@ message PartitionQueryRequest {
   // union operator conceptually divides one or more tables into multiple
   // splits, remotely evaluates a subquery independently on each split, and
   // then unions all results.
+  //
+  // This must not contain DML commands, such as INSERT, UPDATE, or
+  // DELETE. Use [ExecuteStreamingSql][Spanner.ExecuteStreamingSql] with a
+  // PartitionedDml transaction for large, partition-friendly DML operations.
   string sql = 3;
 
   // The SQL query string can contain parameter placeholders. A parameter
