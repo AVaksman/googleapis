@@ -1,4 +1,4 @@
-// Copyright 2016 Google Inc.
+// Copyright 2018 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +36,8 @@ message Date {
   // a year.
   int32 year = 1;
 
-  // Month of year. Must be from 1 to 12.
+  // Month of year. Must be from 1 to 12, or 0 if specifying a date without a
+  // month.
   int32 month = 2;
 
   // Day of month. Must be from 1 to 31 and valid for the year and month, or 0
