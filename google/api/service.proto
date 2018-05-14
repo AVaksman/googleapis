@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc.
+// Copyright 2018 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import "google/api/control.proto";
 import "google/api/documentation.proto";
 import "google/api/endpoint.proto";
 import "google/api/experimental/experimental.proto";
+import "google/api/filtering.proto";
 import "google/api/http.proto";
 import "google/api/label.proto";
 import "google/api/log.proto";
@@ -33,6 +34,7 @@ import "google/api/metric.proto";
 import "google/api/monitored_resource.proto";
 import "google/api/monitoring.proto";
 import "google/api/quota.proto";
+import "google/api/slo.proto";
 import "google/api/source_info.proto";
 import "google/api/system_parameter.proto";
 import "google/api/usage.proto";

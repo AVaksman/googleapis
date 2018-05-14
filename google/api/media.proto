@@ -16,25 +16,10 @@ syntax = "proto3";
 
 package google.api;
 
-option go_package = "google.golang.org/genproto/googleapis/api;api";
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/api/annotations;annotations";
 option java_multiple_files = true;
-option java_outer_classname = "AuthorizationConfigProto";
+option java_outer_classname = "MediaProto";
 option java_package = "com.google.api";
 option objc_class_prefix = "GAPI";
 
-
-// Configuration of authorization.
-//
-// This section determines the authorization provider, if unspecified, then no
-// authorization check will be done.
-//
-// Example:
-//
-//     experimental:
-//       authorization:
-//         provider: firebaserules.googleapis.com
-message AuthorizationConfig {
-  // The name of the authorization provider, such as
-  // firebaserules.googleapis.com.
-  string provider = 1;
-}
