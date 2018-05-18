@@ -22,6 +22,12 @@ documentation:
     terminology and entity extraction, industry-standard annotations, and
     summarization into clinical notes.
 
+http:
+  rules:
+  - selector: google.longrunning.Operations.ListOperations
+    get: '/v1/{name=encounters/*}/operations'
+
+
 authentication:
   rules:
   - selector: '*'

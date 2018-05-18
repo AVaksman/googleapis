@@ -302,15 +302,28 @@ message SpeakerTurnAlternative {
   // The text of this portion of the transcript.
   string recognized_text = 1;
 
+  // Information about the speaker who uttered this portion of the transcript.
+  Speaker speaker = 4;
+
+  // A list of word-specific information for each recognized word.
+  repeated WordInfo words = 3;
+}
+
+// Information about a speaker who uttered some portion of audio.
+message Speaker {
   // A unique identifier within this encounter for the current speaker.
   // The identifier is arbitrary but consistent for a given speaker within the
   // encounter. If the same speaker appears in a different
   // [Encounter][healthcare.scribe.v1alpha.Encounter], their `speaker_id` may be
   // different for that encounter.
-  string speaker_id = 2;
+  string speaker_id = 1;
 
-  // A list of word-specific information for each recognized word.
-  repeated WordInfo words = 3;
+  // The confidence estimate between 0.0 and 1.0. A higher number
+  // indicates an estimated greater likelihood that the speaker was correctly
+  // identified. This field is not guaranteed to be accurate and users should
+  // not rely on it to be always provided.
+  // The default of 0.0 is a sentinel value indicating `confidence` was not set.
+  float confidence = 2;
 }
 
 // Word-specific information for recognized words.
