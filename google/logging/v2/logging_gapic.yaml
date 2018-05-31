@@ -27,6 +27,7 @@ license_header:
 collections:
 - name_pattern: projects/{project}
   entity_name: project
+  # C#: Already GA, do not use common resource name for 'project'
 - name_pattern: projects/{project}/logs/{log}
   entity_name: log
 - name_pattern: projects/{project}/sinks/{sink}
@@ -92,6 +93,7 @@ interfaces:
   collections:
   - name_pattern: projects/{project}
     entity_name: project
+    # C#: Already GA, do not use common resource name for 'project'
   - name_pattern: projects/{project}/sinks/{sink}
     entity_name: sink
   - name_pattern: projects/{project}/exclusions/{exclusion}
@@ -290,6 +292,7 @@ interfaces:
   collections:
   - name_pattern: projects/{project}
     entity_name: project
+    # C#: Already GA, do not use common resource name for 'project'
   - name_pattern: projects/{project}/metrics/{metric}
     entity_name: metric
   retry_codes_def:
@@ -401,6 +404,7 @@ interfaces:
   collections:
   - name_pattern: projects/{project}
     entity_name: project
+    # C#: Already GA, do not use common resource name for 'project'
   - name_pattern: projects/{project}/logs/{log}
     entity_name: log
   retry_codes_def:
