@@ -6,8 +6,10 @@ title: Dialogflow API
 apis:
 - name: google.cloud.dialogflow.v2beta1.Agents
 - name: google.cloud.dialogflow.v2beta1.Contexts
+- name: google.cloud.dialogflow.v2beta1.Documents
 - name: google.cloud.dialogflow.v2beta1.EntityTypes
 - name: google.cloud.dialogflow.v2beta1.Intents
+- name: google.cloud.dialogflow.v2beta1.KnowledgeBases
 - name: google.cloud.dialogflow.v2beta1.SessionEntityTypes
 - name: google.cloud.dialogflow.v2beta1.Sessions
 
@@ -15,6 +17,7 @@ types:
 - name: google.cloud.dialogflow.v2beta1.ExportAgentResponse
 - name: google.cloud.dialogflow.v2beta1.BatchUpdateEntityTypesResponse
 - name: google.cloud.dialogflow.v2beta1.BatchUpdateIntentsResponse
+- name: google.cloud.dialogflow.v2beta1.KnowledgeOperationMetadata
 - name: google.cloud.dialogflow.v2beta1.OriginalDetectIntentRequest
 - name: google.cloud.dialogflow.v2beta1.WebhookRequest
 - name: google.cloud.dialogflow.v2beta1.WebhookResponse
@@ -67,6 +70,18 @@ backend:
   rules:
   - selector: google.longrunning.Operations.GetOperation
     deadline: 60.0
+  - selector: google.cloud.dialogflow.v2beta1.Environments.ListEnvironments
+    deadline: 60.0
+  - selector: google.cloud.dialogflow.v2beta1.Environments.GetEnvironment
+    deadline: 60.0
+  - selector: google.cloud.dialogflow.v2beta1.Environments.CreateEnvironment
+    deadline: 60.0
+  - selector: google.cloud.dialogflow.v2beta1.Environments.UpdateEnvironment
+    deadline: 60.0
+  - selector: google.cloud.dialogflow.v2beta1.Environments.DeleteEnvironment
+    deadline: 60.0
+  - selector: google.cloud.dialogflow.v2beta1.Environments.GetEnvironmentHistory
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2beta1.Agents.GetAgent
     deadline: 60.0
   - selector: google.cloud.dialogflow.v2beta1.Agents.SearchAgents
@@ -90,6 +105,14 @@ backend:
   - selector: google.cloud.dialogflow.v2beta1.Contexts.DeleteContext
     deadline: 60.0
   - selector: google.cloud.dialogflow.v2beta1.Contexts.DeleteAllContexts
+    deadline: 60.0
+  - selector: google.cloud.dialogflow.v2beta1.Documents.ListDocuments
+    deadline: 60.0
+  - selector: google.cloud.dialogflow.v2beta1.Documents.GetDocument
+    deadline: 60.0
+  - selector: google.cloud.dialogflow.v2beta1.Documents.CreateDocument
+    deadline: 60.0
+  - selector: google.cloud.dialogflow.v2beta1.Documents.DeleteDocument
     deadline: 60.0
   - selector: google.cloud.dialogflow.v2beta1.EntityTypes.ListEntityTypes
     deadline: 60.0
@@ -125,6 +148,14 @@ backend:
     deadline: 60.0
   - selector: google.cloud.dialogflow.v2beta1.Intents.BatchDeleteIntents
     deadline: 60.0
+  - selector: google.cloud.dialogflow.v2beta1.KnowledgeBases.ListKnowledgeBases
+    deadline: 60.0
+  - selector: google.cloud.dialogflow.v2beta1.KnowledgeBases.GetKnowledgeBase
+    deadline: 60.0
+  - selector: google.cloud.dialogflow.v2beta1.KnowledgeBases.CreateKnowledgeBase
+    deadline: 60.0
+  - selector: google.cloud.dialogflow.v2beta1.KnowledgeBases.DeleteKnowledgeBase
+    deadline: 60.0
   - selector: google.cloud.dialogflow.v2beta1.SessionEntityTypes.ListSessionEntityTypes
     deadline: 60.0
   - selector: google.cloud.dialogflow.v2beta1.SessionEntityTypes.GetSessionEntityType
@@ -139,6 +170,16 @@ backend:
     deadline: 230.0
   - selector: google.cloud.dialogflow.v2beta1.Sessions.StreamingDetectIntent
     deadline: 230.0
+  - selector: google.cloud.dialogflow.v2beta1.Versions.ListVersions
+    deadline: 60.0
+  - selector: google.cloud.dialogflow.v2beta1.Versions.GetVersion
+    deadline: 60.0
+  - selector: google.cloud.dialogflow.v2beta1.Versions.CreateVersion
+    deadline: 60.0
+  - selector: google.cloud.dialogflow.v2beta1.Versions.UpdateVersion
+    deadline: 60.0
+  - selector: google.cloud.dialogflow.v2beta1.Versions.DeleteVersion
+    deadline: 60.0
 
 http:
   rules:

@@ -17,6 +17,7 @@ syntax = "proto3";
 package google.cloud.dialogflow.v2beta1;
 
 import "google/api/annotations.proto";
+import "google/cloud/dialogflow/v2beta1/audio_config.proto";
 import "google/cloud/dialogflow/v2beta1/context.proto";
 import "google/cloud/dialogflow/v2beta1/intent.proto";
 import "google/cloud/dialogflow/v2beta1/session_entity_type.proto";
@@ -47,7 +48,7 @@ service Sessions {
       post: "/v2beta1/{session=projects/*/agent/sessions/*}:detectIntent"
       body: "*"
       additional_bindings {
-        post: "/v2beta1/{session=projects/*/agent/runtimes/*/sessions/*}:detectIntent"
+        post: "/v2beta1/{session=projects/*/agent/environments/*/users/*/sessions/*}:detectIntent"
         body: "*"
       }
     };
@@ -63,12 +64,14 @@ service Sessions {
 message DetectIntentRequest {
   // Required. The name of the session this query is sent to. Format:
   // `projects/<Project ID>/agent/sessions/<Session ID>`, or
-  // `projects/<Project ID>/agent/runtimes/<Runtime ID>/sessions/<Session ID>`.
-  // Note: Runtimes are under construction and will be available soon.
-  // If <Runtime ID> is not specified, we assume default 'sandbox' runtime.
-  // It's up to the API caller to choose an appropriate session ID. It can be
-  // a random number or some type of user identifier (preferably hashed).
-  // The length of the session ID must not exceed 36 bytes.
+  // `projects/<Project ID>/agent/environments/<Environment ID>/users/<User
+  // ID>/sessions/<Session ID>`. Note: Environments and users are under
+  // construction and will be available soon. If <Environment ID> is not
+  // specified, we assume default 'draft' environment. If <User ID> is not
+  // specified, we are using "-". It’s up to the API caller to choose an
+  // appropriate <Session ID>. and <User Id>. They can be a random numbers or
+  // some type of user and session identifiers (preferably hashed). The length
+  // of the <Session ID> and <User ID> must not exceed 36 characters.
   string session = 1;
 
   // Optional. The parameters of this query.
@@ -83,6 +86,11 @@ message DetectIntentRequest {
   //
   // 3.  an event that specifies which intent to trigger.
   QueryInput query_input = 3;
+
+  // Optional. Instructs the speech synthesizer how to generate the output
+  // audio. If this field is not set and agent-level speech synthesizer is not
+  // configured, no output audio is generated.
+  OutputAudioConfig output_audio_config = 4;
 
   // Optional. The natural language speech audio to be processed. This field
   // should be populated iff `query_input` is set to an input audio config.
@@ -99,9 +107,22 @@ message DetectIntentResponse {
   // The results of the conversational query or event processing.
   QueryResult query_result = 2;
 
+  // Alternative results ordered by their `intent_detection_confidence`. These
+  // can, for example, come from the KnowledgeService.
+  //
+  repeated QueryResult alternative_query_results = 5;
+
   // Specifies the status of the webhook request. `webhook_status`
   // is never populated in webhook requests.
   google.rpc.Status webhook_status = 3;
+
+  // The audio data bytes encoded as specified in the request.
+  bytes output_audio = 4;
+
+  // Instructs the speech synthesizer how to generate the output audio. This
+  // field is populated from the agent-level speech synthesizer configuration,
+  // if enabled.
+  OutputAudioConfig output_audio_config = 6;
 }
 
 // Represents the parameters of the conversational query.
@@ -131,6 +152,26 @@ message QueryParameters {
   // Optional. This field can be used to pass custom data into the webhook
   // associated with the agent. Arbitrary JSON objects are supported.
   google.protobuf.Struct payload = 6;
+
+  // The new field is populated only by Bots Proxy and AoG Proxy. It is used by
+  // Webhook logic to populate the corresponding field in webhook request.
+  string source = 7;
+
+  // Optional. Knowledge base to get alternative results from. If empty, or
+  // omitted, doesn't query the KnowledgeService for additional results.
+  //
+  // Format:  `projects/<Project ID>/agent/knowledgeBases/<Knowledge Base ID>`.
+  string knowledge_base_name = 8;
+
+  // Optional. Maximum number of alternative results to return. If there are
+  // more alternative results than this limit, we return the results with
+  // highest `intent_detection_confidence`. If `0` or omitted, defaults to not
+  // returning any alternative results.
+  int32 max_alternative_results = 9;
+
+  // Optional. Configures the type of sentiment analysis to perform. If not
+  // provided, sentiment analysis is not performed.
+  SentimentAnalysisRequestConfig sentiment_analysis_request_config = 10;
 }
 
 // Represents the query input. It can contain either:
@@ -176,10 +217,10 @@ message QueryResult {
   // correct. The default of 0.0 is a sentinel value indicating that confidence
   // was not set.
   //
-  // You should not rely on this field as it isn't guaranteed to be accurate, or
-  // even set. In particular this field isn't set in Webhook calls and for
-  // StreamingDetectIntent since the streaming endpoint has separate confidence
-  // estimates per portion of the audio in StreamingRecognitionResult.
+  // This field is not guaranteed to be accurate or set. In particular this
+  // field isn't set for StreamingDetectIntent since the streaming endpoint has
+  // separate confidence estimates per portion of the audio in
+  // StreamingRecognitionResult.
   float speech_recognition_confidence = 2;
 
   // The action name from the matched intent.
@@ -227,6 +268,10 @@ message QueryResult {
   // The free-form diagnostic info. For example, this field
   // could contain webhook call latency.
   google.protobuf.Struct diagnostic_info = 14;
+
+  // The sentiment analysis result, which depends on the
+  // `sentiment_analysis_request_config` specified in the request.
+  SentimentAnalysisResult sentiment_analysis_result = 17;
 }
 
 // The top-level message sent by the client to the
@@ -244,12 +289,14 @@ message StreamingDetectIntentRequest {
   // Required. The name of the session the query is sent to.
   // Format of the session name:
   // `projects/<Project ID>/agent/sessions/<Session ID>`, or
-  // `projects/<Project ID>/agent/runtimes/<Runtime ID>/sessions/<Session ID>`.
-  // Note: Runtimes are under construction and will be available soon.
-  // If <Runtime ID> is not specified, we assume default 'sandbox' runtime.
-  // It’s up to the API caller to choose an appropriate <Session ID>. It can be
-  // a random number or some type of user identifier (preferably hashed).
-  // The length of the session ID must not exceed 36 characters.
+  // `projects/<Project ID>/agent/environments/<Environment ID>/users/<User
+  // ID>/sessions/<Session ID>`. Note: Environments and users are under
+  // construction and will be available soon. If <Environment ID> is not
+  // specified, we assume default 'draft' environment. If <User ID> is not
+  // specified, we are using "-". It’s up to the API caller to choose an
+  // appropriate <Session ID>. and <User Id>. They can be a random numbers or
+  // some type of user and session identifiers (preferably hashed). The length
+  // of the <Session ID> and <User ID> must not exceed 36 characters.
   string session = 1;
 
   // Optional. The parameters of this query.
@@ -274,6 +321,11 @@ message StreamingDetectIntentRequest {
   // needed.
   // This setting is ignored when `query_input` is a piece of text or an event.
   bool single_utterance = 4;
+
+  // Optional. Instructs the speech synthesizer how to generate the output
+  // audio. If this field is not set and agent-level speech synthesizer is not
+  // configured, no output audio is generated.
+  OutputAudioConfig output_audio_config = 5;
 
   // Optional. The input audio content to be recognized. Must be sent if
   // `query_input` was set to a streaming input audio config. The complete audio
@@ -306,6 +358,14 @@ message StreamingDetectIntentResponse {
 
   // Specifies the status of the webhook request.
   google.rpc.Status webhook_status = 4;
+
+  // The audio data bytes encoded as specified in the request.
+  bytes output_audio = 5;
+
+  // Instructs the speech synthesizer how to generate the output audio. This
+  // field is populated from the agent-level speech synthesizer configuration,
+  // if enabled.
+  OutputAudioConfig output_audio_config = 6;
 }
 
 // Contains a speech recognition result corresponding to a portion of the audio
@@ -390,8 +450,10 @@ message InputAudioConfig {
   AudioEncoding audio_encoding = 1;
 
   // Required. Sample rate (in Hertz) of the audio content sent in the query.
-  // Refer to [Cloud Speech API documentation](/speech/docs/basics) for more
-  // details.
+  // Refer to
+  // [Cloud Speech API
+  // documentation](https://cloud.google.com/speech-to-text/docs/basics) for
+  // more details.
   int32 sample_rate_hertz = 2;
 
   // Required. The language of the supplied audio. Dialogflow does not do
@@ -403,7 +465,9 @@ message InputAudioConfig {
 
   // Optional. The collection of phrase hints which are used to boost accuracy
   // of speech recognition.
-  // Refer to [Cloud Speech API documentation](/speech/docs/basics#phrase-hints)
+  // Refer to
+  // [Cloud Speech API
+  // documentation](https://cloud.google.com/speech-to-text/docs/basics#phrase-hints)
   // for more details.
   repeated string phrase_hints = 4;
 }
@@ -440,8 +504,51 @@ message EventInput {
   string language_code = 3;
 }
 
+// Configures the types of sentiment analysis to perform.
+message SentimentAnalysisRequestConfig {
+  // Optional. Instructs the service to perform sentiment analysis on
+  // `query_text`. If not provided, sentiment analysis is not performed on
+  // `query_text`.
+  bool analyze_query_text_sentiment = 1;
+
+  // Optional. Instructs the service to perform sentiment analysis on the
+  // conversation. If not provided, sentiment analysis is not performed
+  // on the conversation.
+  //
+  // The conversation is the history of queries for the current session, except
+  // that if more than 10 minutes have elapsed between queries, the older
+  // queries are discarded.
+  bool analyze_conversation_text_sentiment = 2;
+}
+
+// The result of sentiment analysis as configured by
+// `sentiment_analysis_request_config`.
+message SentimentAnalysisResult {
+  // The sentiment analysis result for `query_text`.
+  Sentiment query_text_sentiment = 1;
+
+  // The sentiment analysis result for the conversation. See
+  // the documentation for `analyze_conversation_text_sentiment` for the
+  // definition of conversation.
+  Sentiment conversation_text_sentiment = 2;
+}
+
+// The sentiment, such as positive/negative feeling or association, for a unit
+// of analysis, such as the query text.
+message Sentiment {
+  // Sentiment score between -1.0 (negative sentiment) and 1.0 (positive
+  // sentiment).
+  float score = 1;
+
+  // A non-negative number in the [0, +inf) range, which represents the absolute
+  // magnitude of sentiment, regardless of score (positive or negative).
+  float magnitude = 2;
+}
+
 // Audio encoding of the audio content sent in the conversational query request.
-// Refer to the [Cloud Speech API documentation](/speech/docs/basics) for more
+// Refer to the
+// [Cloud Speech API
+// documentation](https://cloud.google.com/speech-to-text/docs/basics) for more
 // details.
 enum AudioEncoding {
   // Not specified.

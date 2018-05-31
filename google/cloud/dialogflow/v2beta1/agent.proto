@@ -43,7 +43,8 @@ option objc_class_prefix = "DF";
 //
 // You can create an agent using both Dialogflow Standard Edition and
 // Dialogflow Enterprise Edition. For details, see
-// [Dialogflow Editions](/dialogflow-enterprise/docs/editions).
+// [Dialogflow
+// Editions](https://cloud.google.com/dialogflow-enterprise/docs/editions).
 //
 // You can save your agent for backup or versioning by exporting the agent by
 // using the [ExportAgent][google.cloud.dialogflow.v2beta1.Agents.ExportAgent] method. You can import a saved
@@ -176,7 +177,7 @@ message Agent {
   string description = 6;
 
   // Optional. The URI of the agent's avatar.
-  // Avatars are used throughout API.AI console and in the self-hosted
+  // Avatars are used throughout the Dialogflow console and in the self-hosted
   // [Web Demo](https://dialogflow.com/docs/integrations/web-demo) integration.
   string avatar_uri = 7;
 
@@ -241,9 +242,11 @@ message ExportAgentRequest {
   // Format: `projects/<Project ID>`.
   string parent = 1;
 
-  // Optional. The Google Cloud Storage URI to export the agent to.
-  // Note: The URI must start with
-  // "gs://". If left unspecified, the serialized agent is returned inline.
+  // Optional. The
+  // [Google Cloud Storage](https://cloud.google.com/storage/docs/)
+  // URI to export the agent to.
+  // The format of this URI must be `gs://<bucket-name>/<object-name>`.
+  // If left unspecified, the serialized agent is returned inline.
   string agent_uri = 2;
 }
 
