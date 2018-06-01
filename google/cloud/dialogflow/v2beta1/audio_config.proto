@@ -64,6 +64,11 @@ message SynthesizeSpeechConfig {
   // any value greater than that.
   double volume_gain_db = 3;
 
+  // Optional. An identifier which selects 'audio effects' profiles that are
+  // applied on (post synthesized) text to speech. Effects are applied on top of
+  // each other in the order they are given.
+  repeated string effects_profile_id = 5;
+
   // Optional. The desired voice of the synthesized audio.
   VoiceSelectionParams voice = 4;
 }
