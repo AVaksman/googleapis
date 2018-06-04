@@ -29,7 +29,7 @@ message Row {
 
     // Optionally populated to transfer data in custom serialized formats (e.g.
     // CSV).
-    string serialized_value = 3;
+    bytes serialized_value = 3;
   }
 }
 
