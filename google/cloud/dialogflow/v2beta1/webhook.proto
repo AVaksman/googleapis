@@ -99,6 +99,12 @@ message WebhookResponse {
   // Optional. Makes the platform immediately invoke another `DetectIntent` call
   // internally with the specified event as input.
   EventInput followup_event_input = 6;
+
+  // Triggers Human Intervention.
+  bool trigger_human_intervention = 7;
+
+  // Triggers end of conversation.
+  bool trigger_end_of_conversation = 8;
 }
 
 // Represents the contents of the original request that was passed to

@@ -69,7 +69,7 @@ message DetectIntentRequest {
   // construction and will be available soon. If <Environment ID> is not
   // specified, we assume default 'draft' environment. If <User ID> is not
   // specified, we are using "-". It’s up to the API caller to choose an
-  // appropriate <Session ID>. and <User Id>. They can be a random numbers or
+  // appropriate <Session ID> and <User Id>. They can be a random numbers or
   // some type of user and session identifiers (preferably hashed). The length
   // of the <Session ID> and <User ID> must not exceed 36 characters.
   string session = 1;
@@ -272,6 +272,65 @@ message QueryResult {
   // The sentiment analysis result, which depends on the
   // `sentiment_analysis_request_config` specified in the request.
   SentimentAnalysisResult sentiment_analysis_result = 17;
+
+  // The result from Knowledge Connector (if any), `fulfillment_text` will be
+  // set to the `answer` of the first `KnowledgeAnswer` when this is present.
+  KnowledgeAnswers knowledge_answers = 18;
+}
+
+// Represents the result of querying a Knowledge base.
+message KnowledgeAnswers {
+  // An answer from Knowledge Connector.
+  message Answer {
+    // Represents the system's confidence that this knowledge answer is a good
+    // match for this conversational query.
+    enum MatchConfidenceLevel {
+      // Not specified.
+      MATCH_CONFIDENCE_LEVEL_UNSPECIFIED = 0;
+
+      // Indicates that the confidence is low.
+      LOW = 1;
+
+      // Indicates our confidence is medium.
+      MEDIUM = 2;
+
+      // Indicates our confidence is high.
+      HIGH = 3;
+    }
+
+    // Indicates which Knowledge Document this answer was extracted from.
+    // Format: `projects/<Project ID>/agent/knowledgeBases/<Knowledge Base
+    // ID>/documents/<Document ID>`.
+    string source = 1;
+
+    // The corresponding FAQ question if the answer was extracted from a FAQ
+    // Document, empty otherwise.
+    string faq_question = 2;
+
+    // The piece of text from the `source` knowledge base document that answers
+    // this conversational query.
+    string answer = 3;
+
+    // The system's confidence level that this knowledge answer is a good match
+    // for this conversational query.
+    // NOTE: The confidence level for a given <query, answer> pair may change
+    // without notice, as it depends on models that are constantly being
+    // improved. However, it will change less frequently than the confidence
+    // score below, and should be preferred for referencing the quality of an
+    // answer.
+    MatchConfidenceLevel match_confidence_level = 4;
+
+    // The system's confidence score that this Knowledge answer is a good match
+    // for this converstational query, range from 0.0 to 1.0.
+    // Note: The confidence score is likely to vary somewhat (possibly even for
+    // identical requests), as the underlying model is under constant
+    // improvement, we may deprecate it in the future. We recommend using
+    // `match_confidence_level` which should be generally more stable.
+    float match_confidence = 5;
+  }
+
+  // A list of answers from Knowledge Connector.
+  repeated Answer answers = 1;
 }
 
 // The top-level message sent by the client to the
@@ -294,7 +353,7 @@ message StreamingDetectIntentRequest {
   // construction and will be available soon. If <Environment ID> is not
   // specified, we assume default 'draft' environment. If <User ID> is not
   // specified, we are using "-". It’s up to the API caller to choose an
-  // appropriate <Session ID>. and <User Id>. They can be a random numbers or
+  // appropriate <Session ID> and <User Id>. They can be a random numbers or
   // some type of user and session identifiers (preferably hashed). The length
   // of the <Session ID> and <User ID> must not exceed 36 characters.
   string session = 1;

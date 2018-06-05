@@ -454,11 +454,6 @@ message Intent {
 
     }
 
-    // Human Intervention involved
-    message HumanIntervention {
-
-    }
-
     // Represents different platforms that a rich message can be intended for.
     enum Platform {
       // Not specified.
@@ -603,9 +598,6 @@ message Intent {
 
       // Terminates the call in Telephony Gateway.
       TelephonyTerminateCall telephony_terminate_call = 16;
-
-      // Triggers human intervention.
-      HumanIntervention human_intervention = 17;
     }
 
     // Optional. The platform that this message is intended for.
@@ -673,6 +665,12 @@ message Intent {
   // taken into account during inference in `ML ONLY` match mode. Also,
   // auto-markup in the UI is turned off.
   bool ml_disabled = 19;
+
+  // Triggers Human Intervention for this intent.
+  bool trigger_human_intervention = 20;
+
+  // Triggers end of conversation for this intent.
+  bool trigger_end_of_conversation = 21;
 
   // Optional. The list of context names required for this intent to be
   // triggered.
