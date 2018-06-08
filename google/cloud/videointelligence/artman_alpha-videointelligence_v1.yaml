@@ -1,11 +1,11 @@
 common:
-  api_name: video-intelligence
-  api_version: v1beta1
+  api_name: alpha_videointelligence
+  api_version: v1
   organization_name: google-cloud
-  service_yaml: videointelligence.yaml
-  gapic_yaml: v1beta1/videointelligence_gapic.yaml
+  service_yaml: alpha-videointelligence_v1.yaml
+  gapic_yaml: v1/videointelligence_gapic.yaml
   src_proto_paths:
-  - v1beta1
+  - v1
   proto_deps:
   - name: google-common-protos
 artifacts:
@@ -22,11 +22,11 @@ artifacts:
     type: GITHUB
     location: git@github.com:googleapis/api-client-staging.git
     directory_mappings:
-    - dest: generated/java/gapic-google-cloud-video-intelligence-v1beta1
+    - dest: generated/java/gapic-google-cloud-video-intelligence-v1
     - name: grpc
-      dest: generated/java/grpc-google-cloud-video-intelligence-v1beta1
+      dest: generated/java/grpc-google-cloud-video-intelligence-v1
     - name: proto
-      dest: generated/java/proto-google-cloud-video-intelligence-v1beta1
+      dest: generated/java/proto-google-cloud-video-intelligence-v1
 - name: python_gapic
   type: GAPIC
   language: PYTHON
@@ -35,16 +35,16 @@ artifacts:
     type: GITHUB
     location: git@github.com:googleapis/api-client-staging.git
     directory_mappings:
-    - dest: generated/python/gapic-google-cloud-video-intelligence-v1beta1
+    - dest: generated/python/gapic-google-cloud-video-intelligence-v1
     - name: grpc
-      dest: generated/python/proto-google-cloud-video-intelligence-v1beta1
+      dest: generated/python/proto-google-cloud-video-intelligence-v1
   - name: python
     type: GITHUB
     location: git@github.com:GoogleCloudPlatform/google-cloud-python.git
     directory_mappings:
     - src: google/cloud/gapic
       dest: videointelligence/google/cloud/gapic
-    - src: test/google/cloud/gapic/videointelligence/v1beta1
+    - src: tests/unit/gapic/v1
       dest: videointelligence/tests/gapic
     - name: grpc
       src: google/cloud/proto
@@ -57,9 +57,9 @@ artifacts:
     type: GITHUB
     location: git@github.com:googleapis/api-client-staging.git
     directory_mappings:
-    - dest: generated/php/google-cloud-video-intelligence-v1beta1
+    - dest: generated/php/google-cloud-video-intelligence-v1
     - name: grpc
-      dest: generated/php/google-cloud-video-intelligence-v1beta1/proto
+      dest: generated/php/google-cloud-video-intelligence-v1/proto
 - name: ruby_gapic
   type: GAPIC
   language: RUBY
@@ -68,8 +68,8 @@ artifacts:
     type: GITHUB
     location: git@github.com:GoogleCloudPlatform/google-cloud-ruby.git
     directory_mappings:
-    - src: lib/google/cloud/video_intelligence/v1beta1
-      dest: google-cloud-video_intelligence/lib/google/cloud/video_intelligence/v1beta1
+    - src: lib/google/cloud/video_intelligence/v1
+      dest: google-cloud-video_intelligence/lib/google/cloud/video_intelligence/v1
   - name: staging
     type: GITHUB
     location: git@github.com:googleapis/api-client-staging.git
@@ -79,16 +79,16 @@ artifacts:
   type: GAPIC
   language: GO
   publish_targets:
-  - name: staging
-    type: GITHUB
-    location: git@github.com:googleapis/api-client-staging.git
-    directory_mappings:
-    - dest: generated/go/vendor/cloud.google.com/go/google-cloud-videointelligence-v1beta1/vendor
   - name: go
     type: GITHUB
     location: git@github.com:GoogleCloudPlatform/google-cloud-go.git
     directory_mappings:
-    - dest: video-intelligence/apiv1beta1
+    - dest: video-intelligence/apiv1
+  - name: staging
+    type: GITHUB
+    location: git@github.com:googleapis/api-client-staging.git
+    directory_mappings:
+    - dest: generated/go/vendor/cloud.google.com/go/google-cloud-videointelligence-v1/vendor
 - name: csharp_gapic
   type: GAPIC
   language: CSHARP
@@ -96,17 +96,15 @@ artifacts:
   type: GAPIC
   language: NODEJS
   release_level: BETA
-  package_version:
-    grpc_dep_lower_bound: 0.1.0
   publish_targets:
   - name: nodejs
     type: GITHUB
     location: git@github.com:GoogleCloudPlatform/google-cloud-node.git
     directory_mappings:
-    - src: src/v1beta1
-      dest: packages/videointelligence/src/v1beta1
-    - src: test/test.js
-      dest: packages/videointelligence/test/gapic-v1beta1.js
+    - src: src/v1
+      dest: packages/video-intelligence/src/v1
+    - src: test/gapic-v1.js
+      dest: packages/video-intelligence/test/gapic-v1.js
   - name: staging
     type: GITHUB
     location: git@github.com:googleapis/api-client-staging.git
