@@ -31,7 +31,7 @@ option java_package = "com.google.cloud.automl.v1beta1";
 message Model {
   // Deployment state of the model.
   enum DeploymentState {
-    // Not specified.
+    // Should not be used, an un-set enum has this value by default.
     DEPLOYMENT_STATE_UNSPECIFIED = 0;
 
     // Model is deployed.
@@ -42,8 +42,8 @@ message Model {
   }
 
   // Required.
-  // Problem type specific model metadata.
-  // This has to match the problem type of the dataset used to train the model.
+  // The model metadata that is specific to the problem type.
+  // Must match the metadata type of the dataset used to train the model.
   oneof model_metadata {
     // Metadata for image classification models.
     ImageClassificationModelMetadata image_classification_model_metadata = 13;
@@ -57,16 +57,18 @@ message Model {
 
   // Output only.
   // Resource name of the model.
-  // Format: "projects/{project_id}/locations/{location_id}/models/{model_id}"
+  // Format: `projects/{project_id}/locations/{location_id}/models/{model_id}`
   string name = 1;
 
-  // Required. Interface visible name of the model, up to 32 characters
-  // long and can consist only of ASCII Latin letters A-Z and a-z, an underscore
+  // Required. The name of the model to show in the interface. The name can be
+  // up to 32 characters
+  // long and can consist only of ASCII Latin letters A-Z and a-z, underscores
   // (_), and ASCII digits 0-9.
   string display_name = 2;
 
   // Required.
-  // Resource ID of the dataset used to create the model, which comes from the
+  // The resource ID of the dataset used to create the model. The dataset must
+  // come from the
   // same ancestor project and location.
   string dataset_id = 3;
 

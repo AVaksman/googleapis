@@ -31,7 +31,6 @@ option java_package = "com.google.cloud.automl.v1beta1";
 
 // A workspace for solving a single, particular machine learning (ML) problem.
 // A workspace contains examples that may be annotated.
-// (- Next ID: 27 -)
 message Dataset {
   // Required.
   // The dataset metadata that is specific to the problem type.
@@ -61,4 +60,19 @@ message Dataset {
 
   // Output only. Timestamp when this dataset was created.
   google.protobuf.Timestamp create_time = 14;
+}
+
+// A definition of an annotation.
+message AnnotationSpec {
+  // Output only. Resource name of the annotation spec.
+  // Form:
+  // 'projects/{project_id}/locations/{location_id}/datasets/{dataset_id}/annotationSpecs/{annotation_spec_id}'
+  string name = 1;
+
+  // Output only .
+  // The name of the annotation spec to show in the interface. The name can be
+  // up to 32 characters long and can consist only of ASCII Latin letters A-Z
+  // and a-z, underscores
+  // (_), and ASCII digits 0-9.
+  string display_name = 2;
 }

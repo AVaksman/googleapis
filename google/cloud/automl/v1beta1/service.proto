@@ -95,6 +95,13 @@ service AutoMl {
     };
   }
 
+  // Gets an annotation spec.
+  rpc GetAnnotationSpec(GetAnnotationSpecRequest) returns (AnnotationSpec) {
+    option (google.api.http) = {
+      get: "/v1beta1/{name=projects/*/locations/*/datasets/*/annotationSpecs/*}"
+    };
+  }
+
   // Creates a model.
   // Returns a Model in the [response][google.longrunning.Operation.response]
   // field when it completes.
@@ -190,7 +197,14 @@ message ListDatasetsRequest {
   // The resource name of the project from which to list datasets.
   string parent = 1;
 
-  // Filter expression, see go/filtering.
+  // An expression for filtering the results of the request.
+  //
+  //   * `dataset_metadata` - for existence of the case.
+  //
+  // An example of using the filter is:
+  //
+  //   * `translation_dataset_metadata:*` --> The dataset has
+  //                                          translation_dataset_metadata.
   string filter = 3;
 
   // Requested page size. Server may return fewer results than requested.
@@ -239,6 +253,12 @@ message ExportDataRequest {
   OutputConfig output_config = 3;
 }
 
+// Request message for [AutoMl.GetAnnotationSpec][google.cloud.automl.v1beta1.AutoMl.GetAnnotationSpec].
+message GetAnnotationSpecRequest {
+  // The resource name of the annotation spec to retrieve.
+  string name = 1;
+}
+
 // Request message for [AutoMl.CreateModel][google.cloud.automl.v1beta1.AutoMl.CreateModel].
 message CreateModelRequest {
   // Resource name of the parent project where the model is being created.
@@ -259,7 +279,17 @@ message ListModelsRequest {
   // Resource name of the project, from which to list the models.
   string parent = 1;
 
-  // Filter expression, see go/filtering.
+  // An expression for filtering the results of the request.
+  //
+  //   * `model_metadata` - for existence of the case.
+  //   * `dataset_id` - for = or !=.
+  //
+  // Some examples of using the filter are:
+  //
+  //   * `image_classification_model_metadata:*` --> The model has
+  //                                        image_classification_model_metadata.
+  //   * `dataset_id=5` --> The model was created from a sibling dataset with
+  //                    ID 5.
   string filter = 3;
 
   // Requested page size.
@@ -313,7 +343,17 @@ message ListModelEvaluationsRequest {
   // models of the parent location.
   string parent = 1;
 
-  // Filter expression, see go/filtering.
+  // An expression for filtering the results of the request.
+  //
+  //   * `annotation_spec_id` - for =, !=  or existence. See example below for
+  //                          the last.
+  //
+  // Some examples of using the filter are:
+  //
+  //   * `annotation_spec_id!=4` --> The model evaluation was done for
+  //                             annotation spec with ID different than 4.
+  //   * `NOT annotation_spec_id:*` --> The model evaluation was done for
+  //                                aggregate of all annotation specs.
   string filter = 3;
 
   // Requested page size.

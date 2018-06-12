@@ -25,7 +25,7 @@ option java_package = "com.google.cloud.automl.v1beta1";
 
 // Input configuration.
 message InputConfig {
-  // The source of the input.
+  // Required. The source of the input.
   oneof source {
     // The GCS location for the input content.
     GcsSource gcs_source = 1;
@@ -34,7 +34,7 @@ message InputConfig {
 
 // Output configuration.
 message OutputConfig {
-  // The destination of the output.
+  // Required. The destination of the output.
   oneof destination {
     // The GCS location where the output must be written to.
     GcsDestination gcs_destination = 1;
@@ -43,16 +43,16 @@ message OutputConfig {
 
 // The GCS location for the input content.
 message GcsSource {
-  // Google Cloud Storage URIs to input files, up to 2000 characters long.
-  // Accepted forms:
+  // Required. Google Cloud Storage URIs to input files, up to 2000 characters
+  // long. Accepted forms:
   // * Full object path: gs://bucket/directory/object.csv
   repeated string input_uris = 1;
 }
 
 // The GCS location where the output must be written to
 message GcsDestination {
-  // Google Cloud Storage URI to output directory, up to 2000 characters
-  // long.
+  // Required. Google Cloud Storage URI to output directory, up to 2000
+  // characters long.
   // Accepted forms:
   // * Prefix path: gs://bucket/directory
   // The requesting user must have write permission to the bucket.

@@ -36,10 +36,10 @@ message TranslationDatasetMetadata {
 
 // Evaluation metrics for the dataset.
 message TranslationEvaluationMetrics {
-  // BLEU score.
+  // Output only. BLEU score.
   double bleu_score = 1;
 
-  // BLEU score for base model.
+  // Output only. BLEU score for base model.
   double base_bleu_score = 2;
 }
 

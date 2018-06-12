@@ -17,6 +17,7 @@ syntax = "proto3";
 package google.cloud.automl.v1beta1;
 
 import "google/api/annotations.proto";
+import "google/cloud/automl/v1beta1/classification.proto";
 import "google/cloud/automl/v1beta1/translation.proto";
 import "google/protobuf/timestamp.proto";
 
@@ -26,15 +27,14 @@ option java_package = "com.google.cloud.automl.v1beta1";
 
 
 // Evaluation results of a model.
-// (- Next ID: 8 -)
 message ModelEvaluation {
   // Output only. Problem type specific evaluation metrics.
   oneof metrics {
-    // Evaluation metrics for models on classification problems.
-    ClassificationMetrics classification_metrics = 3;
+    // Evaluation metrics for models on classification problems models.
+    ClassificationEvaluationMetrics classification_evaluation_metrics = 8;
 
-    // Evaluation metrics for models on translation.
-    TranslationEvaluationMetrics translation_metrics = 4;
+    // Evaluation metrics for models on translation models.
+    TranslationEvaluationMetrics translation_evaluation_metrics = 9;
   }
 
   // Output only.
@@ -53,75 +53,6 @@ message ModelEvaluation {
   // Timestamp when this model evaluation was created.
   google.protobuf.Timestamp create_time = 5;
 
-  // The number of examples used for model evaluation.
+  // Output only. The number of examples used for model evaluation.
   int32 evaluated_example_count = 6;
-}
-
-// Model evaluation metrics for classification problems.
-message ClassificationMetrics {
-  // Metrics for a single confidence threshold.
-  message ConfidenceMetricsEntry {
-    // The confidence threshold value used to compute the metrics.
-    float confidence_threshold = 1;
-
-    // Recall under the given confidence threshold.
-    float recall = 2;
-
-    // Precision under the given confidence threshold.
-    float precision = 3;
-
-    // The harmonic mean of recall and precision.
-    float f1_score = 4;
-
-    // The recall when only considering the label that has the highest
-    // prediction score and not below the confidence threshold for each example.
-    float recall_at1 = 5;
-
-    // The precision when only considering the label that has the highest
-    // prediction score and not below the confidence threshold for each example.
-    float precision_at1 = 6;
-
-    // The harmonic mean of [recall_at1][google.cloud.automl.v1beta1.ClassificationMetrics.ConfidenceMetricsEntry.recall_at1] and [precision_at1][google.cloud.automl.v1beta1.ClassificationMetrics.ConfidenceMetricsEntry.precision_at1].
-    float f1_score_at1 = 7;
-  }
-
-  // Confusion matrix of the model running the classification.
-  message ConfusionMatrix {
-    // A row in the confusion matrix.
-    message Row {
-      // Value of the specific cell in the confusion matrix.
-      // The number of values each row is equal to the size of
-      // annotatin_spec_id.
-      repeated int32 example_count = 1;
-    }
-
-    // IDs of the annotation specs used in the confusion matrix.
-    repeated string annotation_spec_id = 1;
-
-    // Rows in the confusion matrix. The number of rows is equal to the size
-    // of `annotation_spec_id`.
-    // `row[i].value[j]` is the number of examples that have ground truth of the
-    // `annotation_spec_id[i]` and are predicted as `annotation_spec_id[j]` by
-    // the model being evaluated.
-    repeated Row row = 2;
-  }
-
-  // The Area under precision recall curve metric.
-  float au_prc = 1;
-
-  // The Area under precision recall curve metric based on priors.
-  float base_au_prc = 2;
-
-  // Metrics that have confidence thresholds.
-  // Precision-recall curve can be derived from it.
-  repeated ConfidenceMetricsEntry confidence_metrics_entry = 4;
-
-  // Confusion matrix of the evaluation.
-  // Only set for MULTICLASS classification problems where number
-  // of labels is no more than 10.
-  // Only set for model level evaluation, not for evaluation per label.
-  ConfusionMatrix confusion_matrix = 5;
-
-  // The annotation spec ids used for this evaluation.
-  repeated string annotation_spec_id = 6;
 }

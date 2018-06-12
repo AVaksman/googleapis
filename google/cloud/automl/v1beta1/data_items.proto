@@ -62,7 +62,7 @@ message TextSnippet {
 
 // Example data used for training or prediction.
 message ExamplePayload {
-  // Input only . The example data.
+  // Required. Input only. The example data.
   oneof payload {
     // An example image.
     Image image = 1;
