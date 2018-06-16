@@ -60,6 +60,7 @@ interfaces:
     - product_set
     - product_set_id
     request_object_method: true
+    resource_name_treatment: STATIC_TYPES
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -73,6 +74,7 @@ interfaces:
     required_fields:
     - parent
     request_object_method: true
+    resource_name_treatment: STATIC_TYPES
     page_streaming:
       request:
         page_size_field: page_size
@@ -93,6 +95,7 @@ interfaces:
     required_fields:
     - name
     request_object_method: false
+    resource_name_treatment: STATIC_TYPES
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -108,6 +111,7 @@ interfaces:
     - product_set
     - update_mask
     request_object_method: true
+    resource_name_treatment: STATIC_TYPES
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -121,6 +125,7 @@ interfaces:
     required_fields:
     - name
     request_object_method: false
+    resource_name_treatment: STATIC_TYPES
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -138,6 +143,7 @@ interfaces:
     - product
     - product_id
     request_object_method: true
+    resource_name_treatment: STATIC_TYPES
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -151,6 +157,7 @@ interfaces:
     required_fields:
     - parent
     request_object_method: true
+    resource_name_treatment: STATIC_TYPES
     page_streaming:
       request:
         page_size_field: page_size
@@ -171,6 +178,7 @@ interfaces:
     required_fields:
     - name
     request_object_method: false
+    resource_name_treatment: STATIC_TYPES
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -186,6 +194,7 @@ interfaces:
     - product
     - update_mask
     request_object_method: true
+    resource_name_treatment: STATIC_TYPES
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -199,6 +208,7 @@ interfaces:
     required_fields:
     - name
     request_object_method: false
+    resource_name_treatment: STATIC_TYPES
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -216,6 +226,7 @@ interfaces:
     - reference_image
     - reference_image_id
     request_object_method: true
+    resource_name_treatment: STATIC_TYPES
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -229,6 +240,7 @@ interfaces:
     required_fields:
     - name
     request_object_method: false
+    resource_name_treatment: STATIC_TYPES
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -242,6 +254,7 @@ interfaces:
     required_fields:
     - parent
     request_object_method: true
+    resource_name_treatment: STATIC_TYPES
     page_streaming:
       request:
         page_size_field: page_size
@@ -262,6 +275,7 @@ interfaces:
     required_fields:
     - name
     request_object_method: false
+    resource_name_treatment: STATIC_TYPES
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -277,6 +291,7 @@ interfaces:
     - name
     - product
     request_object_method: true
+    resource_name_treatment: STATIC_TYPES
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -292,6 +307,7 @@ interfaces:
     - name
     - product
     request_object_method: true
+    resource_name_treatment: STATIC_TYPES
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -305,6 +321,7 @@ interfaces:
     required_fields:
     - name
     request_object_method: true
+    resource_name_treatment: STATIC_TYPES
     page_streaming:
       request:
         page_size_field: page_size
@@ -327,6 +344,7 @@ interfaces:
     - parent
     - input_config
     request_object_method: true
+    resource_name_treatment: STATIC_TYPES
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -378,3 +396,58 @@ interfaces:
     retry_codes_name: non_idempotent
     retry_params_name: default
     timeout_millis: 60000
+resource_name_generation:
+- message_name: CreateProductSetRequest
+  field_entity_map:
+    parent: location
+- message_name: ListProductSetsRequest
+  field_entity_map:
+    parent: location
+- message_name: GetProductSetRequest
+  field_entity_map:
+    name: product_set
+- message_name: UpdateProductSetRequest
+  field_entity_map:
+    product_set.name: product_set
+- message_name: DeleteProductSetRequest
+  field_entity_map:
+    name: product_set
+- message_name: CreateProductRequest
+  field_entity_map:
+    parent: location
+- message_name: ListProductsRequest
+  field_entity_map:
+    parent: location
+- message_name: GetProductRequest
+  field_entity_map:
+    name: product
+- message_name: UpdateProductRequest
+  field_entity_map:
+    product.name: product
+- message_name: DeleteProductRequest
+  field_entity_map:
+    name: product
+- message_name: CreateReferenceImageRequest
+  field_entity_map:
+    parent: product
+- message_name: DeleteReferenceImageRequest
+  field_entity_map:
+    name: reference_image
+- message_name: ListReferenceImagesRequest
+  field_entity_map:
+    parent: product
+- message_name: GetReferenceImageRequest
+  field_entity_map:
+    name: reference_image
+- message_name: AddProductToProductSetRequest
+  field_entity_map:
+    name: product_set
+- message_name: RemoveProductFromProductSetRequest
+  field_entity_map:
+    name: product_set
+- message_name: ListProductsInProductSetRequest
+  field_entity_map:
+    name: product_set
+- message_name: ImportProductSetsRequest
+  field_entity_map:
+    parent: location
