@@ -20,7 +20,6 @@ import "google/api/annotations.proto";
 import "google/longrunning/operations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/field_mask.proto";
-import "google/protobuf/struct.proto";
 
 option cc_enable_arenas = true;
 option csharp_namespace = "Google.Cloud.Dialogflow.V2beta1";
@@ -261,9 +260,8 @@ message ExportAgentResponse {
     // The exported agent.
     //
     // Example for how to export an agent to a zip file via a command line:
-    //
-    // curl \
-    //   'https://dialogflow.googleapis.com/v2beta1/projects/<project_name>/agent:export'\
+    // <pre>curl \
+    //   'https://dialogflow.googleapis.com/v2beta1/projects/&lt;project_name&gt;/agent:export'\
     //   -X POST \
     //   -H 'Authorization: Bearer '$(gcloud auth print-access-token) \
     //   -H 'Accept: application/json' \
@@ -271,7 +269,7 @@ message ExportAgentResponse {
     //   --compressed \
     //   --data-binary '{}' \
     // | grep agentContent | sed -e 's/.*"agentContent": "\([^"]*\)".*/\1/' \
-    // | base64 --decode > <agent zip file>
+    // | base64 --decode > &lt;agent zip file&gt;</pre>
     bytes agent_content = 2;
   }
 }
@@ -291,17 +289,16 @@ message ImportAgentRequest {
     // The agent to import.
     //
     // Example for how to import an agent via the command line:
-    //
-    // curl \
-    //   'https://dialogflow.googleapis.com/v2beta1/projects/<project_name>/agent:import\
+    // <pre>curl \
+    //   'https://dialogflow.googleapis.com/v2beta1/projects/&lt;project_name&gt;/agent:import\
     //    -X POST \
     //    -H 'Authorization: Bearer '$(gcloud auth print-access-token) \
     //    -H 'Accept: application/json' \
     //    -H 'Content-Type: application/json' \
     //    --compressed \
     //    --data-binary "{
-    //       'agentContent': '$(cat <agent zip file> | base64 -w 0)'
-    //    }"
+    //       'agentContent': '$(cat &lt;agent zip file&gt; | base64 -w 0)'
+    //    }"</pre>
     bytes agent_content = 3;
   }
 }
@@ -321,17 +318,16 @@ message RestoreAgentRequest {
     // The agent to restore.
     //
     // Example for how to restore an agent via the command line:
-    //
-    // curl \
-    //   'https://dialogflow.googleapis.com/v2beta1/projects/<project_name>/agent:restore\
+    // <pre>curl \
+    //   'https://dialogflow.googleapis.com/v2beta1/projects/&lt;project_name&gt;/agent:restore\
     //    -X POST \
     //    -H 'Authorization: Bearer '$(gcloud auth print-access-token) \
     //    -H 'Accept: application/json' \
     //    -H 'Content-Type: application/json' \
     //    --compressed \
     //    --data-binary "{
-    //        'agentContent': '$(cat <agent zip file> | base64 -w 0)'
-    //    }" \
+    //        'agentContent': '$(cat &lt;agent zip file&gt; | base64 -w 0)'
+    //    }"</pre>
     bytes agent_content = 3;
   }
 }

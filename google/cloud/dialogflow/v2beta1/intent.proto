@@ -449,11 +449,6 @@ message Intent {
       string phone_number = 1;
     }
 
-    // Terminates the call in Telephony Gateway.
-    message TelephonyTerminateCall {
-
-    }
-
     // Represents different platforms that a rich message can be intended for.
     enum Platform {
       // Not specified.
@@ -548,6 +543,9 @@ message Intent {
 
       // Telephony Gateway.
       TELEPHONY = 10;
+
+      // Google Hangouts.
+      GOOGLE_HANGOUTS = 11;
     }
 
     // Required. The rich response message.
@@ -595,9 +593,6 @@ message Intent {
 
       // Transfers the call in Telephony Gateway.
       TelephonyTransferCall telephony_transfer_call = 15;
-
-      // Terminates the call in Telephony Gateway.
-      TelephonyTerminateCall telephony_terminate_call = 16;
     }
 
     // Optional. The platform that this message is intended for.
@@ -666,11 +661,16 @@ message Intent {
   // auto-markup in the UI is turned off.
   bool ml_disabled = 19;
 
-  // Triggers Human Intervention for this intent.
-  bool trigger_human_intervention = 20;
+  // Optional. Indicates that a live agent should be brought in to handle the
+  // interaction with the user. In most cases, when you set this flag to true,
+  // you would also want to set end_interaction to true as well. Default is
+  // false.
+  bool live_agent_handoff = 20;
 
-  // Triggers end of conversation for this intent.
-  bool trigger_end_of_conversation = 21;
+  // Optional. Indicates that this intent ends an interaction. Some integrations
+  // (e.g., Actions on Google or Dialogflow phone gateway) use this information
+  // to close interaction with an end user. Default is false.
+  bool end_interaction = 21;
 
   // Optional. The list of context names required for this intent to be
   // triggered.
