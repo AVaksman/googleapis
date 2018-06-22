@@ -489,6 +489,19 @@ message RecognitionMetadata {
 // Provides "hints" to the speech recognizer to favor specific words and phrases
 // in the results.
 message SpeechContext {
+  enum Strength {
+    STRENGTH_UNSPECIFIED = 0;
+
+    // Low strength
+    LOW = 1;
+
+    // Medium strength
+    MEDIUM = 2;
+
+    // High strength
+    HIGH = 3;
+  }
+
   // *Optional* A list of strings containing words and phrases "hints" so that
   // the speech recognition is more likely to recognize them. This can be used
   // to improve the accuracy for specific words and phrases, for example, if
@@ -496,6 +509,13 @@ message SpeechContext {
   // to add additional words to the vocabulary of the recognizer. See
   // [usage limits](https://cloud.google.com/speech/limits#content).
   repeated string phrases = 1;
+
+  // Hint strength to use (high, medium or low). If you use a high strength then
+  // you are more likely to see those phrases in the results. If strength is not
+  // specified then by default medium strength will be used. If you'd like
+  // different phrases to have different strengths, you can specify multiple
+  // speech_contexts.
+  Strength strength = 2;
 }
 
 // Contains audio data in the encoding specified in the `RecognitionConfig`.
