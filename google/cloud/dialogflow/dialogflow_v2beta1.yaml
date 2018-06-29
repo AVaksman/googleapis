@@ -70,18 +70,6 @@ backend:
   rules:
   - selector: google.longrunning.Operations.GetOperation
     deadline: 60.0
-  - selector: google.cloud.dialogflow.v2beta1.Environments.ListEnvironments
-    deadline: 60.0
-  - selector: google.cloud.dialogflow.v2beta1.Environments.GetEnvironment
-    deadline: 60.0
-  - selector: google.cloud.dialogflow.v2beta1.Environments.CreateEnvironment
-    deadline: 60.0
-  - selector: google.cloud.dialogflow.v2beta1.Environments.UpdateEnvironment
-    deadline: 60.0
-  - selector: google.cloud.dialogflow.v2beta1.Environments.DeleteEnvironment
-    deadline: 60.0
-  - selector: google.cloud.dialogflow.v2beta1.Environments.GetEnvironmentHistory
-    deadline: 60.0
   - selector: google.cloud.dialogflow.v2beta1.Agents.GetAgent
     deadline: 60.0
   - selector: google.cloud.dialogflow.v2beta1.Agents.SearchAgents
@@ -170,16 +158,6 @@ backend:
     deadline: 230.0
   - selector: google.cloud.dialogflow.v2beta1.Sessions.StreamingDetectIntent
     deadline: 230.0
-  - selector: google.cloud.dialogflow.v2beta1.Versions.ListVersions
-    deadline: 60.0
-  - selector: google.cloud.dialogflow.v2beta1.Versions.GetVersion
-    deadline: 60.0
-  - selector: google.cloud.dialogflow.v2beta1.Versions.CreateVersion
-    deadline: 60.0
-  - selector: google.cloud.dialogflow.v2beta1.Versions.UpdateVersion
-    deadline: 60.0
-  - selector: google.cloud.dialogflow.v2beta1.Versions.DeleteVersion
-    deadline: 60.0
 
 http:
   rules:

@@ -94,12 +94,10 @@ message ListKnowledgeBasesRequest {
   // Format: `projects/<Project ID>/agent`.
   string parent = 1;
 
-  // Note: the pagination for ListKnowledgeBases is not implemented yet.
   // Optional. The maximum number of items to return in a single page. By
   // default 10 and at most 100.
   int32 page_size = 2;
 
-  // Note: the pagination for ListKnowledgeBases is not implemented yet.
   // Optional. The next_page_token value returned from a previous list request.
   string page_token = 3;
 }

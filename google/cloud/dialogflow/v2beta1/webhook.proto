@@ -99,12 +99,6 @@ message WebhookResponse {
   // Optional. Makes the platform immediately invoke another `DetectIntent` call
   // internally with the specified event as input.
   EventInput followup_event_input = 6;
-
-  // Triggers Human Intervention.
-  bool trigger_human_intervention = 7;
-
-  // Triggers end of conversation.
-  bool trigger_end_of_conversation = 8;
 }
 
 // Represents the contents of the original request that was passed to
@@ -113,6 +107,10 @@ message OriginalDetectIntentRequest {
   // The source of this request, e.g., `google`, `facebook`, `slack`. It is set
   // by Dialogflow-owned servers.
   string source = 1;
+
+  // Optional. The version of the protocol used for this request.
+  // This field is AoG-specific.
+  string version = 2;
 
   // Optional. This field is set to the value of `QueryParameters.payload` field
   // passed in the request.

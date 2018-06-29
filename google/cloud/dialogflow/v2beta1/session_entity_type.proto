@@ -128,10 +128,8 @@ message SessionEntityType {
   // `projects/<Project ID>/agent/sessions/<Session ID>/entityTypes/<Entity Type
   // Display Name>`, or
   // `projects/<Project ID>/agent/environments/<Environment ID>/users/<User
-  // ID>/sessions
-  // /<Session ID>/entityTypes/<Entity Type Display Name>`.
-  // Note: Environments and users are under construction and will be available
-  // soon. If `Environment ID` is not specified, we assume default 'draft'
+  // ID>/sessions/<Session ID>/entityTypes/<Entity Type Display Name>`.
+  // If `Environment ID` is not specified, we assume default 'draft'
   // environment. If `User ID` is not specified, we assume default '-' user.
   string name = 1;
 
@@ -150,8 +148,7 @@ message ListSessionEntityTypesRequest {
   // Format: `projects/<Project ID>/agent/sessions/<Session ID>` or
   // `projects/<Project ID>/agent/environments/<Environment ID>/users/<User ID>/
   // sessions/<Session ID>`.
-  // Note: Environments and users are under construction and will be available
-  // soon. If `Environment ID` is not specified, we assume default 'draft'
+  // If `Environment ID` is not specified, we assume default 'draft'
   // environment. If `User ID` is not specified, we assume default '-' user.
   string parent = 1;
 
@@ -179,10 +176,8 @@ message GetSessionEntityTypeRequest {
   // Required. The name of the session entity type. Format:
   // `projects/<Project ID>/agent/sessions/<Session ID>/entityTypes/<Entity Type
   // Display Name>` or `projects/<Project ID>/agent/environments/<Environment
-  // ID>/users/<User ID>/sessions/<Session ID>/
-  // entityTypes/<Entity Type Display Name>`.
-  // Note: Environments and users re under construction and will be available
-  // soon. If `Environment ID` is not specified, we assume default 'draft'
+  // ID>/users/<User ID>/sessions/<Session ID>/entityTypes/<Entity Type Display
+  // Name>`. If `Environment ID` is not specified, we assume default 'draft'
   // environment. If `User ID` is not specified, we assume default '-' user.
   string name = 1;
 }
@@ -192,10 +187,9 @@ message CreateSessionEntityTypeRequest {
   // Required. The session to create a session entity type for.
   // Format: `projects/<Project ID>/agent/sessions/<Session ID>` or
   // `projects/<Project ID>/agent/environments/<Environment ID>/users/<User ID>/
-  // sessions/<Session ID>`.
-  // Note: Environments and users are under construction and will be available
-  // soon. If `Environment ID` is not specified, we assume default 'draft'
-  // environment. If `User ID` is not specified, we assume default '-' user.
+  // sessions/<Session ID>`. If `Environment ID` is not specified, we assume
+  // default 'draft' environment. If `User ID` is not specified, we assume
+  // default '-' user.
   string parent = 1;
 
   // Required. The session entity type to create.
@@ -208,9 +202,7 @@ message UpdateSessionEntityTypeRequest {
   // `projects/<Project ID>/agent/sessions/<Session ID>/entityTypes/<Entity Type
   // Display Name>` or `projects/<Project ID>/agent/environments/<Environment
   // ID>/users/<User ID>/sessions/<Session ID>/entityTypes/<Entity Type Display
-  // Name>`.
-  // Note: Environments and users are under construction and will be available
-  // soon. If `Environment ID` is not specified, we assume default 'draft'
+  // Name>`. If `Environment ID` is not specified, we assume default 'draft'
   // environment. If `User ID` is not specified, we assume default '-' user.
   SessionEntityType session_entity_type = 1;
 
@@ -224,9 +216,7 @@ message DeleteSessionEntityTypeRequest {
   // `projects/<Project ID>/agent/sessions/<Session ID>/entityTypes/<Entity Type
   // Display Name>` or `projects/<Project ID>/agent/environments/<Environment
   // ID>/users/<User ID>/sessions/<Session ID>/entityTypes/<Entity Type Display
-  // Name>`.
-  // Note: Environments and users are under construction and will be available
-  // soon. If `Environment ID` is not specified, we assume default 'draft'
+  // Name>`. If `Environment ID` is not specified, we assume default 'draft'
   // environment. If `User ID` is not specified, we assume default '-' user.
   string name = 1;
 }

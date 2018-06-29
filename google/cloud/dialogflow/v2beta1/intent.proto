@@ -538,14 +538,8 @@ message Intent {
       // }</pre>
       ACTIONS_ON_GOOGLE = 8;
 
-      // Alexa.
-      AMAZON_ALEXA = 9;
-
       // Telephony Gateway.
       TELEPHONY = 10;
-
-      // Google Hangouts.
-      GOOGLE_HANGOUTS = 11;
     }
 
     // Required. The rich response message.
@@ -653,19 +647,13 @@ message Intent {
   //   ml_enabled = false / ml_disabled = true.
   // - After April 15th, 2018 the default is:
   //   ml_enabled = true / ml_disabled = false.
-  bool ml_enabled = 5;
+  bool ml_enabled = 5 [deprecated = true];
 
   // Optional. Indicates whether Machine Learning is disabled for the intent.
   // Note: If `ml_disabled` setting is set to true, then this intent is not
   // taken into account during inference in `ML ONLY` match mode. Also,
   // auto-markup in the UI is turned off.
   bool ml_disabled = 19;
-
-  // Optional. Indicates that a live agent should be brought in to handle the
-  // interaction with the user. In most cases, when you set this flag to true,
-  // you would also want to set end_interaction to true as well. Default is
-  // false.
-  bool live_agent_handoff = 20;
 
   // Optional. Indicates that this intent ends an interaction. Some integrations
   // (e.g., Actions on Google or Dialogflow phone gateway) use this information

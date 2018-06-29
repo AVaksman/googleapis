@@ -57,7 +57,8 @@ service Sessions {
   // Processes a natural language query in audio format in a streaming fashion
   // and returns structured, actionable data as a result. This method is only
   // available via the gRPC API (not REST).
-  rpc StreamingDetectIntent(stream StreamingDetectIntentRequest) returns (stream StreamingDetectIntentResponse);
+  rpc StreamingDetectIntent(stream StreamingDetectIntentRequest) returns (stream StreamingDetectIntentResponse) {
+  }
 }
 
 // The request to detect user's intent.
@@ -65,13 +66,12 @@ message DetectIntentRequest {
   // Required. The name of the session this query is sent to. Format:
   // `projects/<Project ID>/agent/sessions/<Session ID>`, or
   // `projects/<Project ID>/agent/environments/<Environment ID>/users/<User
-  // ID>/sessions/<Session ID>`. Note: Environments and users are under
-  // construction and will be available soon. If `Environment ID` is not
-  // specified, we assume default 'draft' environment. If `User ID` is not
-  // specified, we are using "-". It’s up to the API caller to choose an
-  // appropriate `Session ID` and `User Id`. They can be a random numbers or
-  // some type of user and session identifiers (preferably hashed). The length
-  // of the `Session ID` and `User ID` must not exceed 36 characters.
+  // ID>/sessions/<Session ID>`. If `Environment ID` is not specified, we assume
+  // default 'draft' environment. If `User ID` is not specified, we are using
+  // "-". It’s up to the API caller to choose an appropriate `Session ID` and
+  // `User Id`. They can be a random numbers or some type of user and session
+  // identifiers (preferably hashed). The length of the `Session ID` and
+  // `User ID` must not exceed 36 characters.
   string session = 1;
 
   // Optional. The parameters of this query.
@@ -104,12 +104,14 @@ message DetectIntentResponse {
   // locate a response in the training example set or for reporting issues.
   string response_id = 1;
 
-  // The results of the conversational query or event processing.
+  // The selected results of the conversational query or event processing.
+  // See `alternative_query_results` for additional potential results.
   QueryResult query_result = 2;
 
-  // Alternative results ordered by their `intent_detection_confidence`. These
-  // can, for example, come from the KnowledgeService.
-  //
+  // The alternative results of the conversational query or event processing,
+  // ordered by decreasing `QueryResult.intent_detection_confidence`. This may
+  // contain Knowledge Connector results that were not selected as the primary
+  // results in `query_result`.
   repeated QueryResult alternative_query_results = 5;
 
   // Specifies the status of the webhook request. `webhook_status`
@@ -159,25 +161,12 @@ message QueryParameters {
 
   // Optional. KnowledgeBases to get alternative results from. If not set, the
   // KnowledgeBases enabled in the agent (through UI) will be used.
-  // Format:  `projects/<Project ID>/agent/knowledgeBases/<Knowledge Base ID>`.
+  // Format:  `projects/<Project ID>/knowledgeBases/<Knowledge Base ID>`.
   //
   // Note: This field is `repeated` for forward compatibility, currently only
   // the first one is supported, we may return an error if multiple
   // KnowledgeBases are specified.
   repeated string knowledge_base_names = 12;
-
-  // DEPRECATED. Please use knowledge_base_names instead.
-  // Optional. Knowledge base to get alternative results from. If not set, the
-  // default one selected in the agent (through UI) will be used.
-  //
-  // Format:  `projects/<Project ID>/agent/knowledgeBases/<Knowledge Base ID>`.
-  string knowledge_base_name = 8;
-
-  // Optional. Maximum number of alternative results to return. If there are
-  // more alternative results than this limit, we return the results with
-  // highest `intent_detection_confidence`. If `0` or omitted, default number
-  // will be used.
-  int32 max_alternative_results = 9;
 
   // Optional. Configures the type of sentiment analysis to perform. If not
   // provided, sentiment analysis is not performed.
@@ -309,7 +298,7 @@ message KnowledgeAnswers {
     }
 
     // Indicates which Knowledge Document this answer was extracted from.
-    // Format: `projects/<Project ID>/agent/knowledgeBases/<Knowledge Base
+    // Format: `projects/<Project ID>/knowledgeBases/<Knowledge Base
     // ID>/documents/<Document ID>`.
     string source = 1;
 
@@ -349,7 +338,9 @@ message KnowledgeAnswers {
 // Multiple request messages should be sent in order:
 //
 // 1.  The first message must contain `session`, `query_input` plus optionally
-//     `query_params` and/or `single_utterance`. The message must not contain `input_audio`.
+//     `query_params` and/or `single_utterance`. If the client wants to receive
+//     an audio response, it should also contain `output_audio_config`.
+//     The message must not contain `input_audio`.
 //
 // 2.  If `query_input` was set to a streaming input audio config,
 //     all subsequent messages must contain only `input_audio`.
@@ -359,13 +350,12 @@ message StreamingDetectIntentRequest {
   // Format of the session name:
   // `projects/<Project ID>/agent/sessions/<Session ID>`, or
   // `projects/<Project ID>/agent/environments/<Environment ID>/users/<User
-  // ID>/sessions/<Session ID>`. Note: Environments and users are under
-  // construction and will be available soon. If `Environment ID` is not
-  // specified, we assume default 'draft' environment. If `User ID` is not
-  // specified, we are using "-". It’s up to the API caller to choose an
-  // appropriate `Session ID` and `User Id`. They can be a random numbers or
-  // some type of user and session identifiers (preferably hashed). The length
-  // of the `Session ID` and `User ID` must not exceed 36 characters.
+  // ID>/sessions/<Session ID>`. If `Environment ID` is not specified, we assume
+  // default 'draft' environment. If `User ID` is not specified, we are using
+  // "-". It’s up to the API caller to choose an appropriate `Session ID` and
+  // `User Id`. They can be a random numbers or some type of user and session
+  // identifiers (preferably hashed). The length of the `Session ID` and
+  // `User ID` must not exceed 36 characters.
   string session = 1;
 
   // Optional. The parameters of this query.
@@ -412,8 +402,13 @@ message StreamingDetectIntentRequest {
 //     complete transcript of what the user said. The last `recognition_result`
 //     has `is_final` set to `true`.
 //
-// 2.  The next message contains `response_id`, `query_result`
-//     and optionally `webhook_status` if a WebHook was called.
+// 2.  The next message contains `response_id`, `query_result`,
+//     `alternative_query_results` and optionally `webhook_status` if a WebHook
+//     was called.
+//
+// 3.  If `output_audio_config` was specified in the request or agent-level
+//     speech synthesizer is configured, all subsequent messages contain
+//     `output_audio`.
 message StreamingDetectIntentResponse {
   // The unique identifier of the response. It can be used to
   // locate a response in the training example set or for reporting issues.
@@ -422,8 +417,15 @@ message StreamingDetectIntentResponse {
   // The result of speech recognition.
   StreamingRecognitionResult recognition_result = 2;
 
-  // The result of the conversational query or event processing.
+  // The selected results of the conversational query or event processing.
+  // See `alternative_query_results` for additional potential results.
   QueryResult query_result = 3;
+
+  // The alternative results of the conversational query or event processing,
+  // ordered by decreasing `QueryResult.intent_detection_confidence`. This may
+  // contain Knowledge Connector results that were not selected as the primary
+  // results in `query_result`.
+  repeated QueryResult alternative_query_results = 7;
 
   // Specifies the status of the webhook request.
   google.rpc.Status webhook_status = 4;
@@ -592,15 +594,6 @@ message SentimentAnalysisRequestConfig {
   // `query_text`. If not provided, sentiment analysis is not performed on
   // `query_text`.
   bool analyze_query_text_sentiment = 1;
-
-  // Optional. Instructs the service to perform sentiment analysis on the
-  // conversation. If not provided, sentiment analysis is not performed
-  // on the conversation.
-  //
-  // The conversation is the history of queries for the current session, except
-  // that if more than 10 minutes have elapsed between queries, the older
-  // queries are discarded.
-  bool analyze_conversation_text_sentiment = 2;
 }
 
 // The result of sentiment analysis as configured by
@@ -608,11 +601,6 @@ message SentimentAnalysisRequestConfig {
 message SentimentAnalysisResult {
   // The sentiment analysis result for `query_text`.
   Sentiment query_text_sentiment = 1;
-
-  // The sentiment analysis result for the conversation. See
-  // the documentation for `analyze_conversation_text_sentiment` for the
-  // definition of conversation.
-  Sentiment conversation_text_sentiment = 2;
 }
 
 // The sentiment, such as positive/negative feeling or association, for a unit

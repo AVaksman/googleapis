@@ -1165,9 +1165,9 @@ interfaces:
   # The entity_name is the name to be used as a basis for generated methods and
   # classes.
   collections:
-  - name_pattern: projects/{project}/agent
-    entity_name: project_agent
-  - name_pattern: projects/{project}/agent/knowledgeBases/{knowledge_base}
+  - name_pattern: projects/{project}
+    entity_name: project
+  - name_pattern: projects/{project}/knowledgeBases/{knowledge_base}
     entity_name: knowledge_base
   # Definition for retryable codes.
   retry_codes_def:
@@ -1264,7 +1264,7 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
-      parent: project_agent
+      parent: project
     timeout_millis: 60000
     resource_name_treatment: STATIC_TYPES
   - name: GetKnowledgeBase
@@ -1294,7 +1294,7 @@ interfaces:
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
-      parent: project_agent
+      parent: project
     timeout_millis: 60000
     resource_name_treatment: STATIC_TYPES
   - name: DeleteKnowledgeBase
@@ -1324,9 +1324,9 @@ interfaces:
   # The entity_name is the name to be used as a basis for generated methods and
   # classes.
   collections:
-  - name_pattern: projects/{project}/agent/knowledgeBases/{knowledge_base}
+  - name_pattern: projects/{project}/knowledgeBases/{knowledge_base}
     entity_name: knowledge_base
-  - name_pattern: projects/{project}/agent/knowledgeBases/{knowledge_base}/documents/{document}
+  - name_pattern: projects/{project}/knowledgeBases/{knowledge_base}/documents/{document}
     entity_name: document
   # Definition for retryable codes.
   retry_codes_def:
@@ -1598,13 +1598,13 @@ resource_name_generation:
     session: session
 - message_name: ListKnowledgeBasesRequest
   field_entity_map:
-    parent: project_agent
+    parent: project
 - message_name: GetKnowledgeBaseRequest
   field_entity_map:
     name: knowledge_base
 - message_name: CreateKnowledgeBaseRequest
   field_entity_map:
-    parent: project_agent
+    parent: project
 - message_name: KnowledgeBase
   field_entity_map:
     name: knowledge_base
