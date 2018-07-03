@@ -4,6 +4,8 @@ config_schema_version: 1.0.0
 language_settings:
   java:
     package_name: com.google.cloud.bigquery.storage.v1alpha1
+    interface_names:
+      google.cloud.bigquery.storage.v1alpha1.BigQueryStorage: BaseBigQueryStorage
   python:
     package_name: google.cloud.bigquery.storage_v1alpha1.gapic
   go:
