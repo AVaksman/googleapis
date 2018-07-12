@@ -1457,7 +1457,7 @@ interfaces:
     timeout_millis: 60000
     long_running:
       return_type: google.cloud.dialogflow.v2beta1.Document
-      metadata_type: google.protobuf.Struct
+      metadata_type: google.cloud.dialogflow.v2beta1.KnowledgeOperationMetadata
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
@@ -1478,7 +1478,7 @@ interfaces:
     timeout_millis: 60000
     long_running:
       return_type: google.protobuf.Empty
-      metadata_type: google.protobuf.Struct
+      metadata_type: google.cloud.dialogflow.v2beta1.KnowledgeOperationMetadata
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
