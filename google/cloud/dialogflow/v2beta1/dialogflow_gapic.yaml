@@ -9,7 +9,7 @@ language_settings:
   go:
     package_name: cloud.google.com/go/cloud/dialogflow/apiv2beta1
   csharp:
-    package_name: Google.Cloud.Dialogflow.V2beta1
+    package_name: Google.Cloud.Dialogflow.V2Beta1
   ruby:
     package_name: Google::Cloud::Dialogflow::V2beta1
   php:
@@ -113,6 +113,7 @@ interfaces:
     field_name_patterns:
       parent: project
     timeout_millis: 60000
+    resource_name_treatment: STATIC_TYPES
   - name: SearchAgents
     flattening:
       groups:
@@ -237,7 +238,7 @@ interfaces:
     entity_name: environment_session
   - name_pattern: projects/{project}/agent/sessions/{session}/contexts/{context}
     entity_name: context
-  - name_pattern: projects/{project}/agent/sessions/{environment}/users/{user}/{session}/contexts/{context}
+  - name_pattern: projects/{project}/agent/environments/{environment}/users/{user}/sessions/{session}/contexts/{context}
     entity_name: environment_context
   # Definition for retryable codes.
   retry_codes_def:
@@ -1058,6 +1059,7 @@ interfaces:
     field_name_patterns:
       session_entity_type.name: session_entity_type
     timeout_millis: 60000
+    resource_name_treatment: STATIC_TYPES
   - name: DeleteSessionEntityType
     flattening:
       groups:
