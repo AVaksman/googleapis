@@ -27,7 +27,6 @@ option java_multiple_files = true;
 option java_package = "com.google.cloudbuild.v1";
 option objc_class_prefix = "GCB";
 
-
 // Manages container image build requests in the cloud.
 //
 // The main concept used by this API is a Build, which describes the location of
@@ -44,7 +43,10 @@ service CloudBuild {
   // the build, which can be passed to GetBuild to determine its status (e.g.,
   // success or failure).
   rpc CreateBuild(CreateBuildRequest) returns (google.longrunning.Operation) {
-    option (google.api.http) = { post: "/v1/projects/{project_id}/builds" body: "build" };
+    option (google.api.http) = {
+      post: "/v1/projects/{project_id}/builds"
+      body: "build"
+    };
   }
 
   // Returns information about a previously requested build.
@@ -52,7 +54,9 @@ service CloudBuild {
   // The Build that is returned includes its status (e.g., success or failure,
   // or in-progress), and timing information.
   rpc GetBuild(GetBuildRequest) returns (Build) {
-    option (google.api.http) = { get: "/v1/projects/{project_id}/builds/{id}" };
+    option (google.api.http) = {
+      get: "/v1/projects/{project_id}/builds/{id}"
+    };
   }
 
   // Lists previously requested builds.
@@ -60,47 +64,66 @@ service CloudBuild {
   // Previously requested builds may still be in-progress, or may have finished
   // successfully or unsuccessfully.
   rpc ListBuilds(ListBuildsRequest) returns (ListBuildsResponse) {
-    option (google.api.http) = { get: "/v1/projects/{project_id}/builds" };
+    option (google.api.http) = {
+      get: "/v1/projects/{project_id}/builds"
+    };
   }
 
   // Cancels a requested build in progress.
   rpc CancelBuild(CancelBuildRequest) returns (Build) {
-    option (google.api.http) = { post: "/v1/projects/{project_id}/builds/{id}:cancel" body: "*" };
+    option (google.api.http) = {
+      post: "/v1/projects/{project_id}/builds/{id}:cancel"
+      body: "*"
+    };
   }
 
   // Creates a new BuildTrigger.
   //
   // This API is experimental.
   rpc CreateBuildTrigger(CreateBuildTriggerRequest) returns (BuildTrigger) {
-    option (google.api.http) = { post: "/v1/projects/{project_id}/triggers" body: "trigger" };
+    option (google.api.http) = {
+      post: "/v1/projects/{project_id}/triggers"
+      body: "trigger"
+    };
   }
 
   // Gets information about a BuildTrigger.
   //
   // This API is experimental.
   rpc GetBuildTrigger(GetBuildTriggerRequest) returns (BuildTrigger) {
-    option (google.api.http) = { get: "/v1/projects/{project_id}/triggers/{trigger_id}" };
+    option (google.api.http) = {
+      get: "/v1/projects/{project_id}/triggers/{trigger_id}"
+    };
   }
 
   // Lists existing BuildTrigger.
   //
   // This API is experimental.
-  rpc ListBuildTriggers(ListBuildTriggersRequest) returns (ListBuildTriggersResponse) {
-    option (google.api.http) = { get: "/v1/projects/{project_id}/triggers" };
+  rpc ListBuildTriggers(ListBuildTriggersRequest)
+      returns (ListBuildTriggersResponse) {
+    option (google.api.http) = {
+      get: "/v1/projects/{project_id}/triggers"
+    };
   }
 
   // Deletes an BuildTrigger by its project ID and trigger ID.
   //
   // This API is experimental.
-  rpc DeleteBuildTrigger(DeleteBuildTriggerRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = { delete: "/v1/projects/{project_id}/triggers/{trigger_id}" };
+  rpc DeleteBuildTrigger(DeleteBuildTriggerRequest)
+      returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/projects/{project_id}/triggers/{trigger_id}"
+    };
   }
 
   // Updates an BuildTrigger by its project ID and trigger ID.
   //
   // This API is experimental.
   rpc UpdateBuildTrigger(UpdateBuildTriggerRequest) returns (BuildTrigger) {
-    option (google.api.http) = { patch: "/v1/projects/{project_id}/triggers/{trigger_id}" body: "trigger" };
+    option (google.api.http) = {
+      patch: "/v1/projects/{project_id}/triggers/{trigger_id}"
+      body: "trigger"
+    };
   }
 }
 
@@ -234,7 +257,7 @@ message Results {
   repeated string build_step_images = 3;
 }
 
-// A build resource in the Container Builder API.
+// A build resource in the Cloud Build API.
 //
 // At a high level, a Build describes where to find source code, how to build
 // it (for example, the builder image to run on the source), and what tag to
