@@ -41,23 +41,15 @@ http:
   rules:
   - selector: google.longrunning.Operations.ListOperations
     get: '/v1/{name=projects/*/locations/*}/operations'
-    additional_bindings:
-    - get: '/v1beta1/{name=projects/*/locations/*}/operations'
 
   - selector: google.longrunning.Operations.GetOperation
     get: '/v1/{name=projects/*/locations/*/operations/*}'
-    additional_bindings:
-    - get: '/v1beta1/{name=projects/*/locations/*/operations/*}'
 
   - selector: google.longrunning.Operations.DeleteOperation
     delete: '/v1/{name=projects/*/locations/*/operations/*}'
-    additional_bindings:
-    - delete: '/v1beta1/{name=projects/*/locations/*/operations/*}'
 
   - selector: google.longrunning.Operations.CancelOperation
     post: '/v1/{name=projects/*/locations/*/operations/*}:cancel'
-    additional_bindings:
-    - post: '/v1beta1/{name=projects/*/locations/*/operations/*}:cancel'
 
 authentication:
   rules:
