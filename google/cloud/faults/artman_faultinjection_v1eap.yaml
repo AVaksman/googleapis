@@ -1,0 +1,19 @@
+common:
+  api_name: faultinjection
+  api_version: v1eap
+  organization_name: google-cloud
+  proto_deps:
+    - name: google-common-protos
+  src_proto_paths:
+  - v1eap
+  service_yaml: faults_v1eap.yaml
+  gapic_yaml: v1eap/faultinjection_gapic.yaml
+artifacts:
+- name: gapic_config
+  type: GAPIC_CONFIG
+- name: python_gapic
+  type: GAPIC
+  language: PYTHON
+- name: go_gapic
+  type: GAPIC
+  language: GO

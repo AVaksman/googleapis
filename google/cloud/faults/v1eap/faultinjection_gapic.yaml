@@ -1,0 +1,111 @@
+type: com.google.api.codegen.ConfigProto
+config_schema_version: 1.0.0
+language_settings:
+  java:
+    package_name: com.google.cloud.faults.v1eap
+  python:
+    package_name: google.cloud.faults.v1eap.gapic
+  go:
+    package_name: cloud.google.com/go/faults/apiv1eap
+  csharp:
+    package_name: Google.Cloud.Faults.V1eap
+  ruby:
+    package_name: Google::Cloud::Faults::V1eap
+  php:
+    package_name: Google\Cloud\Faults\V1eap
+  nodejs:
+    package_name: faults.v1eap
+license_header:
+  copyright_file: copyright-google.txt
+  license_file: license-header-apache-2.0.txt
+interfaces:
+- name: google.cloud.faults.v1eap.FaultInjectionService
+  collections:
+  - name_pattern: projects/{project}
+    entity_name: project
+  - name_pattern: tasks/{task}
+    entity_name: task
+  retry_codes_def:
+  - name: idempotent
+    retry_codes:
+    - UNAVAILABLE
+    - DEADLINE_EXCEEDED
+  - name: non_idempotent
+    retry_codes: []
+  retry_params_def:
+  - name: default
+    initial_retry_delay_millis: 100
+    retry_delay_multiplier: 1.3
+    max_retry_delay_millis: 60000
+    initial_rpc_timeout_millis: 20000
+    rpc_timeout_multiplier: 1
+    max_rpc_timeout_millis: 20000
+    total_timeout_millis: 600000
+  methods:
+  - name: ListTasks
+    flattening:
+      groups:
+      - parameters:
+        - parent
+    required_fields:
+    - parent
+    request_object_method: true
+    page_streaming:
+      request:
+        page_size_field: page_size
+        token_field: page_token
+      response:
+        token_field: next_page_token
+        resources_field: tasks
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: project
+    timeout_millis: 30000
+  - name: CreateTask
+    flattening:
+      groups:
+      - parameters:
+        - parent
+        - task
+    required_fields:
+    - parent
+    - task
+    request_object_method: true
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: project
+    timeout_millis: 30000
+  - name: GetTask
+    flattening:
+      groups:
+      - parameters:
+        - parent
+        - name
+    required_fields:
+    - parent
+    - name
+    request_object_method: true
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: project
+      name: task
+    timeout_millis: 30000
+  - name: CancelTask
+    flattening:
+      groups:
+      - parameters:
+        - parent
+        - name
+    required_fields:
+    - parent
+    - name
+    request_object_method: true
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: project
+      name: task
+    timeout_millis: 30000
