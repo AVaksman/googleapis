@@ -23,7 +23,7 @@ interfaces:
   collections:
   - name_pattern: projects/{project}
     entity_name: project
-  - name_pattern: tasks/{task}
+  - name_pattern: projects/{project}/tasks/{task}
     entity_name: task
   retry_codes_def:
   - name: idempotent
@@ -81,31 +81,25 @@ interfaces:
     flattening:
       groups:
       - parameters:
-        - parent
         - name
     required_fields:
-    - parent
     - name
     request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
-      parent: project
       name: task
     timeout_millis: 30000
   - name: CancelTask
     flattening:
       groups:
       - parameters:
-        - parent
         - name
     required_fields:
-    - parent
     - name
     request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
-      parent: project
       name: task
     timeout_millis: 30000

@@ -49,14 +49,14 @@ service FaultInjectionService {
   // Gets a Task with task name. Returns empty if the Task does not exist.
   rpc GetTask(GetTaskRequest) returns (Task) {
     option (google.api.http) = {
-      get: "/v1eap/{parent=projects/*}/{name=tasks/*}"
+      get: "/v1eap/{name=projects/*/tasks/*}"
     };
   }
 
   // Cancels a Task.
   rpc CancelTask(CancelTaskRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      post: "/v1eap/{parent=projects/*}/{name=tasks/*}:cancel"
+      post: "/v1eap/{name=projects/*/tasks/*}:cancel"
       body: "*"
     };
   }
@@ -88,9 +88,6 @@ message Task {
 
     // The task has been aborted/cancelled.
     CANCELLED = 7;
-
-    // The task has been stopped, and can be resumed.
-    PAUSED = 8;
   }
 
   // A single Task. The name is ignored when creating a Task. The system
@@ -112,15 +109,12 @@ message Task {
   // Start time of the task.
   google.protobuf.Timestamp start_time = 8;
 
-  // Last update time of the state
+  // Last update time of the state.
   google.protobuf.Timestamp update_time = 9;
 
-  // End time of the task.
-  google.protobuf.Timestamp end_time = 10;
-
-  // Human readable message describing details about the current state.
-  // If it's failed, detail error messages will be logged here.
-  string message = 11;
+  // Human readable message describing details about the executing task.
+  // If failed, detailed error messages will be logged here.
+  string message = 10;
 }
 
 // Request message for FaultInjectionService.CreateTask.
@@ -135,22 +129,16 @@ message CreateTaskRequest {
 
 // Request message for FaultInjectionService.GetTask.
 message GetTaskRequest {
-  // Required. The project of this agent.
-  // Format: `projects/{project_id}`.
-  string parent = 1;
-
-  // The name of the Task to retrieve.
-  string name = 2;
+  // The name of the Task to retrieve, including the project, e.g.,
+  //  // "projects/*/tasks/*".
+  string name = 1;
 }
 
 // Request message for FaultInjectionService.CancelTask.
 message CancelTaskRequest {
-  // Required. The project of this agent.
-  // Format: `projects/{project_id}`.
-  string parent = 1;
-
-  // The name of the Task to cancel.
-  string name = 2;
+  // The name of the Task to cancel, including the project, e.g.,
+  // "projects/*/tasks/*".
+  string name = 1;
 }
 
 // Request message for FaultInjectionService.ListTasks.
@@ -172,17 +160,13 @@ message ListTasksRequest {
 
 // Response message for FaultInjectionService.ListTasks.
 message ListTasksResponse {
-  // Required. The project of this agent.
-  // Format: `projects/{project_id}`.
-  string parent = 1;
-
   // The list of Tasks.
-  repeated Task tasks = 2;
+  repeated Task tasks = 1;
 
   // A token to retrieve next page of results.
   // Pass this value in the
   // [ListTasksRequest.page_token][google.faults.v1eap.ListTasksRequest.page_token]
   // field in the subsequent call to `ListTasks` method to retrieve the next
   // page of results.
-  string next_page_token = 3;
+  string next_page_token = 2;
 }
