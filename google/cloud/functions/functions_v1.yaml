@@ -1,7 +1,7 @@
 type: google.api.Service
 config_version: 3
 name: cloudfunctions.googleapis.com
-title: Google Cloud Functions API
+title: Cloud Functions API
 
 apis:
 - name: google.cloud.functions.v1.CloudFunctionsService
@@ -10,19 +10,42 @@ types:
 - name: google.cloud.functions.v1.OperationMetadataV1
 
 documentation:
-  summary: |-
-    API for managing lightweight user-provided functions executed in response to
-    events.
-  overview: |-
-    API for managing lightweight user-provided functions executed in response to
-    events.
+  summary: 'Manages lightweight user-provided functions executed in response to events.'
+  overview: 'Manages lightweight user-provided functions executed in response to events.'
+
+backend:
+  rules:
+  - selector: google.longrunning.Operations.ListOperations
+    deadline: 30.0
+  - selector: google.longrunning.Operations.GetOperation
+    deadline: 30.0
+  - selector: google.longrunning.Operations.WaitOperation
+    deadline: 30.0
+  - selector: google.cloud.functions.v1.CloudFunctionsService.ListFunctions
+    deadline: 30.0
+  - selector: google.cloud.functions.v1.CloudFunctionsService.GetFunction
+    deadline: 30.0
+  - selector: google.cloud.functions.v1.CloudFunctionsService.CreateFunction
+    deadline: 30.0
+  - selector: google.cloud.functions.v1.CloudFunctionsService.UpdateFunction
+    deadline: 30.0
+  - selector: google.cloud.functions.v1.CloudFunctionsService.DeleteFunction
+    deadline: 30.0
+  - selector: google.cloud.functions.v1.CloudFunctionsService.CallFunction
+    deadline: 600.0
+  - selector: google.cloud.functions.v1.CloudFunctionsService.GenerateUploadUrl
+    deadline: 120.0
+  - selector: google.cloud.functions.v1.CloudFunctionsService.GenerateDownloadUrl
+    deadline: 30.0
 
 http:
   rules:
   - selector: google.longrunning.Operations.ListOperations
     get: /v1/operations
+
   - selector: google.longrunning.Operations.GetOperation
     get: '/v1/{name=operations/*}'
+
 
 authentication:
   rules:
