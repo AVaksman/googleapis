@@ -1,0 +1,140 @@
+// Copyright 2018 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.cloud.vehicledamageestimator.v1beta1;
+
+import "google/api/annotations.proto";
+
+option csharp_namespace = "Google.Cloud.VehicleDamageEstimator.V1Beta1";
+option go_package = "google.golang.org/genproto/googleapis/cloud/vehicledamageestimator/v1beta1;vehicledamageestimator";
+option java_multiple_files = true;
+option java_outer_classname = "AppraiserProto";
+option java_package = "com.google.cloud.vehicledamageestimator.v1beta1";
+option objc_class_prefix = "VDE";
+
+
+// An appraiser service for auto damage predictions.
+service AppraiserService {
+  // Predict damaged parts given one or more images uris.
+  rpc AnalyzeDamagedParts(AnalyzeDamagedPartsRequest) returns (AnalyzeDamagedPartsResponse) {
+    option (google.api.http) = {
+      post: "/v1beta1/{parent=projects/*}/damagedParts:analyze"
+      body: "*"
+    };
+  }
+
+  // List all available VDE models.
+  rpc ListModels(ListModelsRequest) returns (ListModelsResponse) {
+    option (google.api.http) = {
+      get: "/v1beta1/{parent=projects/*}/models"
+    };
+  }
+}
+
+// Request for ListModels method.
+message ListModelsRequest {
+  // Required. The name of the project to list available models.
+  string parent = 1;
+}
+
+// Response for ListModels method.
+message ListModelsResponse {
+  // A list of available model.
+  repeated Model models = 1;
+}
+
+// Description for one backend model.
+message Model {
+  // The name of the model. This name can be used in
+  // AnalyzeDamagedPartsRequest.model.
+  string name = 1;
+
+  // A description of what this model is used for.
+  string description = 2;
+
+  // A list of part names that might be returned from VDE API.
+  repeated string part_dictionary = 3;
+}
+
+// Damaged parts prediction request.
+message AnalyzeDamagedPartsRequest {
+  // Required. The project name.
+  string parent = 1;
+
+  // Claim information.
+  Claim claim = 2;
+
+  // The backend model name for making vehicle damage estimation. All images
+  // will be sent to the same backend model for predictions. This is required
+  // to be a valid one. Get possible values from ListModels method. Valid values
+  // should take the form "projects/foo/models/sedan".
+  string model = 3;
+}
+
+// Claim level information about insurance claim for damage to a single vehicle.
+message Claim {
+  // A list of image URIs located at Google Cloud Storage with format
+  // "gs://bucket_name/object_name". All images should be from the same car
+  // accident. They are captured from different view angles. Image must be in
+  // JPG file format with 3 RGB color channels.
+  repeated string gcs_image_uris = 1;
+
+  // A unique id for this claim.
+  string claim_id = 2;
+}
+
+// Damaged parts prediction response.
+message AnalyzeDamagedPartsResponse {
+  // List of damaged parts found on the input images. If damaged_parts is
+  // an empty list, no damage is found.
+  repeated Part damaged_parts = 1;
+}
+
+// Part level information.
+message Part {
+  // Part name. The possible values for part_description are declared in the
+  // part_dictionary field of [Model][google.cloud.vehicledamageestimator.v1beta1.Model].
+  string part_description = 1;
+
+  // The image URI contains the damage part.
+  string gcs_image_uri = 2;
+
+  // Damaged the part location on image. If set, 4 vertices are the rectangle
+  // corners.
+  BoundingPolygon box = 3;
+
+  // Damaged part confidence score (between 0.0 and 1.0).
+  float confidence = 4;
+}
+
+// A vertex represents a 2D point in the image. The origin is located at the
+// top-left of image. X-axis goes from left to right, while y-axis goes from top
+// to bottom. The vertex coordinates are in the same scale as the original
+// image in pixels.
+message Vertex {
+  // X coordinate.
+  int32 x = 1;
+
+  // Y coordinate.
+  int32 y = 2;
+}
+
+// A bounding polygon for the detected image annotation.
+message BoundingPolygon {
+  // The bounding polygon vertices.
+  repeated Vertex vertices = 1;
+}
