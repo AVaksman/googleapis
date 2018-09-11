@@ -17,33 +17,21 @@ syntax = "proto3";
 
 package google.cloud.bigquery.v3;
 
-import "google/protobuf/timestamp.proto";
-
 option go_package = "google.golang.org/genproto/googleapis/cloud/bigquery/v3;bigquery";
-option java_outer_classname = "TableReferenceProto";
 option java_package = "com.google.cloud.bigquery.v3";
 
 
-// Table reference that includes just the 3 strings needed to identify a table.
-message TableReference {
-  // The assigned project ID of the project.
-  string project_id = 1;
-
-  // The ID of the dataset in the above project.
-  string dataset_id = 2;
-
-  // The ID of the table in the above dataset.
-  string table_id = 3;
-
-  // Optional modifiers.
-  TableModifiers modifiers = 4;
+// Avro schema.
+message AvroSchema {
+  // Json serialized schema.
+  string json_schema = 1;
 }
 
-// All fields in this message optional.
-message TableModifiers {
-  // The snapshot time of the table. If not set, interpreted as now.
-  google.protobuf.Timestamp snapshot_time = 1;
+// Avro rows.
+message AvroRows {
+  // Binary serialized rows in a block.
+  bytes serialized_binary_rows = 1;
 
-  // The partition date of the table in the form YYYYMMDD.
-  string partition_date = 2;
+  // The count of rows in the returning block.
+  int64 row_count = 2;
 }

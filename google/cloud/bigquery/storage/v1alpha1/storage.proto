@@ -1,4 +1,4 @@
-// Copyright 2018 Google Inc.
+// Copyright 2018 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,12 +11,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
 
 syntax = "proto3";
 
 package google.cloud.bigquery.storage.v1alpha1;
 
 import "google/cloud/bigquery/storage/v1alpha1/read_options.proto";
+import "google/cloud/bigquery/v3/avro.proto";
 import "google/cloud/bigquery/v3/row.proto";
 import "google/cloud/bigquery/v3/table_reference.proto";
 import "google/protobuf/empty.proto";
@@ -42,7 +44,8 @@ service BigQueryStorage {
   //
   // Read sessions automatically expire 24 hours after they are created and do
   // not require manual clean-up by the caller.
-  rpc CreateReadSession(CreateReadSessionRequest) returns (ReadSession);
+  rpc CreateReadSession(CreateReadSessionRequest) returns (ReadSession) {
+  }
 
   // Reads rows from the table in the format prescribed by the read session.
   // Each response contains one or more table rows, up to a maximum of 10 MiB
@@ -53,12 +56,14 @@ service BigQueryStorage {
   // estimated total number of rows in the read stream. This number is computed
   // based on the total table size and the number of active streams in the read
   // session, and may change as other streams continue to read data.
-  rpc ReadRows(ReadRowsRequest) returns (stream ReadRowsResponse);
+  rpc ReadRows(ReadRowsRequest) returns (stream ReadRowsResponse) {
+  }
 
   // Creates additional streams for a ReadSession. This API can be used to
   // dynamically adjust the parallelism of a batch processing task upwards by
   // adding additional workers.
-  rpc BatchCreateStreamsForSession(BatchCreateStreamsForSessionRequest) returns (BatchCreateStreamsForSessionResponse);
+  rpc BatchCreateStreamsForSession(BatchCreateStreamsForSessionRequest) returns (BatchCreateStreamsForSessionResponse) {
+  }
 
   // Triggers the graceful termination of a single stream in a ReadSession. This
   // API can be used to dynamically adjust the parallelism of a batch processing
@@ -74,7 +79,8 @@ service BigQueryStorage {
   // This method will return an error if there are no other live streams
   // in the Session, or if SplitReadStream() has been called on the given
   // Stream.
-  rpc FinalizeStream(FinalizeStreamRequest) returns (google.protobuf.Empty);
+  rpc FinalizeStream(FinalizeStreamRequest) returns (google.protobuf.Empty) {
+  }
 
   // Splits a given read stream into two Streams. These streams are referred to
   // as the primary and the residual of the split. The original stream can still
@@ -89,7 +95,8 @@ service BigQueryStorage {
   // completion.
   //
   // This method is guaranteed to be idempotent.
-  rpc SplitReadStream(SplitReadStreamRequest) returns (SplitReadStreamResponse);
+  rpc SplitReadStream(SplitReadStreamRequest) returns (SplitReadStreamResponse) {
+  }
 }
 
 message Stream {
@@ -127,7 +134,13 @@ message ReadSession {
   // The schema for the read. If read_options.selected_fields is set, the
   // schema may be different from the table schema as it will only contain
   // the selected fields.
-  google.cloud.bigquery.v3.StructType projected_schema = 3;
+  oneof schema {
+    // Row proto3 schema.
+    google.cloud.bigquery.v3.StructType projected_schema = 3;
+
+    // Avro schema.
+    google.cloud.bigquery.v3.AvroSchema avro_schema = 5;
+  }
 
   // Streams associated with this session.
   repeated Stream streams = 4;
@@ -152,6 +165,9 @@ message CreateReadSessionRequest {
 
   // Optional. Read options for this session (e.g. column selection, filters).
   TableReadOptions read_options = 4;
+
+  // Data output format. Currently default to RowProto.
+  DataFormat format = 5;
 }
 
 message ReadRowsRequest {
@@ -162,8 +178,11 @@ message ReadRowsRequest {
 }
 
 message ReadRowsResponse {
-  // Row data.
+  // Row data in ROW_PROTO format.
   repeated google.cloud.bigquery.v3.Row rows = 1;
+
+  // Serialized row data in AVRO format.
+  google.cloud.bigquery.v3.AvroRows avro_rows = 3;
 
   // Estimated stream statistics.
   StreamStats status = 2;
@@ -202,4 +221,13 @@ message SplitReadStreamResponse {
 
   // Remainder stream. Will contain the tail of |original_stream|.
   Stream remainder_stream = 2;
+}
+
+// Data format for input or output data.
+enum DataFormat {
+  DATA_FORMAT_UNSPECIFIED = 0;
+
+  AVRO = 1;
+
+  ROW_PROTO = 2;
 }

@@ -6,9 +6,10 @@ common:
     - name: google-common-protos
   src_proto_paths:
   - storage/v1alpha1
+  - v3/avro.proto
   - v3/row.proto
   - v3/table_reference.proto
-  service_yaml: storage/v1alpha1/storage_v1alpha1.yaml
+  service_yaml: storage/storage_v1alpha1.yaml
   gapic_yaml: storage/v1alpha1/bigquerystorage_gapic.yaml
 artifacts:
 - name: gapic_config
