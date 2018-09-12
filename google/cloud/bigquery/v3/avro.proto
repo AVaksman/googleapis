@@ -18,6 +18,7 @@ syntax = "proto3";
 package google.cloud.bigquery.v3;
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/bigquery/v3;bigquery";
+option java_outer_classname = "AvroProto";
 option java_package = "com.google.cloud.bigquery.v3";
 
 
