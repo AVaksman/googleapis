@@ -7,7 +7,7 @@ language_settings:
   python:
     package_name: google.cloud.servicediscovery_v1alpha1.gapic
   go:
-    package_name: cloud.google.com/go/cloud/servicediscovery/apiv1alpha1
+    package_name: cloud.google.com/go/servicediscovery/apiv1alpha1
   csharp:
     package_name: Google.Cloud.Servicediscovery.V1alpha1
   ruby:
@@ -43,8 +43,8 @@ interfaces:
   retry_codes_def:
   - name: idempotent
     retry_codes:
-    - UNAVAILABLE
     - DEADLINE_EXCEEDED
+    - UNAVAILABLE
   - name: non_idempotent
     retry_codes: []
   # Definition for retry/backoff parameters.
@@ -154,8 +154,8 @@ interfaces:
   retry_codes_def:
   - name: idempotent
     retry_codes:
-    - UNAVAILABLE
     - DEADLINE_EXCEEDED
+    - UNAVAILABLE
   - name: non_idempotent
     retry_codes: []
   # Definition for retry/backoff parameters.
@@ -251,7 +251,14 @@ interfaces:
         - parent
     required_fields:
     - parent
-    request_object_method: false
+    request_object_method: true
+    page_streaming:
+      request:
+        page_size_field: page_size
+        token_field: page_token
+      response:
+        token_field: next_page_token
+        resources_field: service_registries
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -307,7 +314,14 @@ interfaces:
         - parent
     required_fields:
     - parent
-    request_object_method: false
+    request_object_method: true
+    page_streaming:
+      request:
+        page_size_field: page_size
+        token_field: page_token
+      response:
+        token_field: next_page_token
+        resources_field: services
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -326,6 +340,23 @@ interfaces:
     field_name_patterns:
       name: service
     timeout_millis: 10000
+  - name: UpdateService
+    flattening:
+      groups:
+      - parameters:
+        - service
+        - update_mask
+        - name
+    required_fields:
+    - service
+    - update_mask
+    - name
+    request_object_method: true
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: service
+    timeout_millis: 10000
   - name: DeleteService
     flattening:
       groups:
@@ -339,6 +370,23 @@ interfaces:
     field_name_patterns:
       name: service
     timeout_millis: 10000
+  - name: SetService
+    flattening:
+      groups:
+      - parameters:
+        - name
+        - service
+        - service_endpoints
+    required_fields:
+    - name
+    - service
+    - service_endpoints
+    request_object_method: true
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: service
+    timeout_millis: 60000
   - name: UpdateServiceMetadata
     flattening:
       groups:
@@ -391,7 +439,14 @@ interfaces:
         - parent
     required_fields:
     - parent
-    request_object_method: false
+    request_object_method: true
+    page_streaming:
+      request:
+        page_size_field: page_size
+        token_field: page_token
+      response:
+        token_field: next_page_token
+        resources_field: service_endpoints
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -406,6 +461,23 @@ interfaces:
     - name
     request_object_method: false
     retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: endpoint
+    timeout_millis: 10000
+  - name: UpdateServiceEndpoint
+    flattening:
+      groups:
+      - parameters:
+        - service_endpoint
+        - update_mask
+        - name
+    required_fields:
+    - service_endpoint
+    - update_mask
+    - name
+    request_object_method: true
+    retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
       name: endpoint
