@@ -1,0 +1,124 @@
+// Copyright 2018 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.cloud.automltables.v1eap;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "google.golang.org/genproto/googleapis/cloud/automltables/v1eap;automltables";
+option java_outer_classname = "OperationsProto";
+option java_package = "com.google.cloud.automltables.v1eap";
+
+
+// Output only.
+// Detail of the task that operation performs.
+message Task {
+  enum TaskType {
+    TASK_TYPE_UNSPECIFIED = 0;
+
+    // CreateModel tasks:
+    TUNING = 1;
+
+    TRAINING = 2;
+  }
+
+  enum TaskState {
+    // Unspecified state.
+    TASK_STATE_UNSPECIFIED = 0;
+
+    // Task is waiting.
+    WAITING = 1;
+
+    // Task is currently running.
+    RUNNING = 2;
+
+    // Task is done and successful.
+    DONE = 3;
+
+    // Task is finished, but failed.
+    FAILED = 4;
+  }
+
+  // The type of the task.
+  TaskType type = 1;
+
+  // The state of the task.
+  TaskState state = 2;
+
+  // The start time of the task.
+  google.protobuf.Timestamp start_time = 3;
+
+  // The end time of the task.
+  google.protobuf.Timestamp end_time = 4;
+}
+
+message ImportDataOperationMetadata {
+
+}
+
+message UpdateDatasetOperationMetadata {
+
+}
+
+// Output only.
+// Details of CreateModel operation.
+message CreateModelOperationMetadata {
+  message TunerTrial {
+    // The best objective value until the trial.
+    // For classification model, the objective is to maximize AUC-ROC.
+    // For regression model, the objective is to minimize loss.
+    double best_objective_value = 1;
+
+    // The end time of the trial.
+    google.protobuf.Timestamp end_time = 2;
+  }
+
+  // The list of all completed trials.
+  repeated TunerTrial tuner_trials = 1;
+}
+
+message DeleteModelOperationMetadata {
+
+}
+
+message BatchPredictOperationMetadata {
+
+}
+
+// Output only.
+// Metadata used across all long running operations returned by AutoML Tables
+// API.
+message OperationMetadata {
+  // Progress of operation. Range: [0, 100].
+  int32 progress_percent = 1;
+
+  // List of tasks that operation performs.
+  repeated Task tasks = 7;
+
+  // Ouptut only. Details of specific operation type.
+  oneof details {
+    ImportDataOperationMetadata import_data_details = 2;
+
+    UpdateDatasetOperationMetadata update_dataset_details = 3;
+
+    CreateModelOperationMetadata create_model_details = 4;
+
+    DeleteModelOperationMetadata delete_model_details = 5;
+
+    BatchPredictOperationMetadata batch_predict_details = 6;
+  }
+}

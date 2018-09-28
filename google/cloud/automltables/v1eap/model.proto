@@ -1,0 +1,46 @@
+// Copyright 2018 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.cloud.automltables.v1eap;
+
+option go_package = "google.golang.org/genproto/googleapis/cloud/automltables/v1eap;automltables";
+option java_outer_classname = "ModelProto";
+option java_package = "com.google.cloud.automltables.v1eap";
+
+
+// Spec for an AutoML Tables model.
+// Next ID: 8
+message TablesModelSpec {
+  // List of columns that should not be used for training.
+  repeated string ignored_columns = 7;
+}
+
+message Model {
+  // Resource name of the model.
+  // Format: 'projects/{project_id}/locations/{location_id}/models/{model_id}'
+  string name = 1;
+
+  // Human-readable name of the model.
+  string display_name = 2;
+
+  // Resource ID of the dataset used to create the model, which comes from the
+  // same ancestor project and location.
+  string dataset_id = 3;
+
+  // Spec for an AutoML Tables model.
+  TablesModelSpec tables_model_spec = 4;
+}

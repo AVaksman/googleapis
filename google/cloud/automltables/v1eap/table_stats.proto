@@ -1,0 +1,113 @@
+// Copyright 2018 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.cloud.automltables.v1eap;
+
+option go_package = "google.golang.org/genproto/googleapis/cloud/automltables/v1eap;automltables";
+option java_outer_classname = "TableStatsProto";
+option java_package = "com.google.cloud.automltables.v1eap";
+
+
+message TableStats {
+  repeated SliceStats slice_stats = 1 [deprecated = true];
+
+  int64 example_count = 2;
+
+  map<string, ColumnStats> column_stats = 3;
+
+  CorrelationStats correlation_stats = 4;
+}
+
+// DEPRECATED: We no longer support sliced statistics. This message is
+// deprecated.
+message SliceStats {
+  Slice slice = 1 [deprecated = true];
+
+  int64 example_count = 2 [deprecated = true];
+
+  map<string, ColumnStats> column_stats = 3 [deprecated = true];
+
+  CorrelationStats correlation_stats = 4 [deprecated = true];
+}
+
+message CorrelationStats {
+  message Correlation {
+    string column_1 = 1;
+
+    string column_2 = 2;
+
+    double cramers_v = 3;
+  }
+
+  repeated Correlation correlation = 1;
+}
+
+message ColumnStats {
+  CommonStats common_stats = 1;
+
+  oneof stats {
+    NumericStats numeric_stats = 2;
+
+    TextSnippetStats text_snippet_stats = 4;
+  }
+}
+
+message CommonStats {
+  int64 distinct_value_count = 1;
+
+  int64 valid_value_count = 2;
+}
+
+message NumericStats {
+  message Quantile {
+    double value = 1;
+
+    int64 percentile = 2;
+  }
+
+  double mean = 1;
+
+  double min_value = 2;
+
+  double max_value = 3;
+
+  repeated Quantile quantiles = 4;
+
+  int64 zero_count = 5;
+}
+
+message TextSnippetStats {
+  message Unigram {
+    string value = 1;
+
+    int64 count = 2;
+  }
+
+  repeated Unigram unigram = 1;
+}
+
+// DEPRECATED: We no longer support sliced statistics. This message is
+// deprecated.
+message Slice {
+  message OverallSlice {
+
+  }
+
+  oneof slice {
+    OverallSlice overall = 1 [deprecated = true];
+  }
+}

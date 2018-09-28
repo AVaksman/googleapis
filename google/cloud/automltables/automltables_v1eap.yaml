@@ -1,0 +1,20 @@
+type: google.api.Service
+config_version: 3
+name: automltables.googleapis.com
+title: Cloud AutoML Tables API
+
+apis:
+- name: google.cloud.automltables.v1eap.AutoMlTablesService
+
+types:
+- name: google.cloud.automltables.v1eap.OperationMetadata
+
+documentation:
+  summary: The AutoMl Tables project API.
+
+authentication:
+  rules:
+  - selector: '*'
+    oauth:
+      canonical_scopes: |-
+        https://www.googleapis.com/auth/cloud-platform

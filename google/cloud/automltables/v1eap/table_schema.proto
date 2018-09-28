@@ -1,0 +1,95 @@
+// Copyright 2018 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.cloud.automltables.v1eap;
+
+option go_package = "google.golang.org/genproto/googleapis/cloud/automltables/v1eap;automltables";
+option java_outer_classname = "TableSchemaProto";
+option java_package = "com.google.cloud.automltables.v1eap";
+
+
+// NextID: 8
+message DataType {
+  oneof type {
+    CategoricalType categorical_type = 1;
+
+    NumericType numeric_type = 2;
+
+    TextSnippetType text_snippet_type = 3;
+
+    ArrayType array_type = 4;
+
+    TimeType time_type = 5;
+
+    StructType struct_type = 6;
+  }
+
+  // If true, the data in this column can be empty.
+  bool nullable = 7;
+}
+
+message CategoricalType {
+
+}
+
+message TextSnippetType {
+
+}
+
+// Next ID: 2
+message NumericType {
+  bool integer = 1;
+}
+
+message ArrayType {
+  DataType value_type = 1;
+
+  bool ordered = 2;
+}
+
+message StructType {
+  map<string, DataType> value_types = 1;
+}
+
+// Next ID: 3
+message TimeType {
+  enum Granularity {
+    GRANULARITY_UNSPECIFIED = 0;
+
+    GRANULARITY_DAY = 1;
+  }
+
+  enum DateFormat {
+    DATE_FORMAT_UNSPECIFIED = 0;
+
+    DATE_FORMAT_YMD = 1;
+
+    DATE_FORMAT_MDY = 2;
+
+    DATE_FORMAT_DMY = 3;
+  }
+
+  DateFormat date_format = 1;
+
+  Granularity granularity = 2;
+}
+
+// Describes the schema of a table, including the types of each column, as
+// well as certain properties of each type.
+message TableSchema {
+  map<string, DataType> columns = 1;
+}
