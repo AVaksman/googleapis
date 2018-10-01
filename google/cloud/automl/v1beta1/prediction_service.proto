@@ -1,4 +1,4 @@
-// Copyright 2018 Google LLC
+// Copyright 2018 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
 
 syntax = "proto3";
 
@@ -19,19 +20,50 @@ package google.cloud.automl.v1beta1;
 import "google/api/annotations.proto";
 import "google/cloud/automl/v1beta1/annotation_payload.proto";
 import "google/cloud/automl/v1beta1/data_items.proto";
+import "google/cloud/automl/v1beta1/io.proto";
+import "google/longrunning/operations.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;automl";
 option java_multiple_files = true;
 option java_outer_classname = "PredictionServiceProto";
 option java_package = "com.google.cloud.automl.v1beta1";
+option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 
 
 // AutoML Prediction API.
 service PredictionService {
-  // Perform a prediction.
+  // Perform an online prediction. The prediction result will be directly
+  // returned in the response.
+  // Available for following ML problems, and their expected request payloads:
+  // * Image Classification - Image in .JPEG, .GIF or .PNG format, image_bytes
+  //                          up to 30MB.
+  // * Image Object Detection - Image in .JPEG, .GIF or .PNG format, image_bytes
+  //                            up to 30MB.
+  // * Text Classification - TextSnippet, content up to 10,000 characters,
+  //                         UTF-8 encoded.
+  // * Text Extraction - TextSnippet, content up to 30,000 characters,
+  //                     UTF-8 NFC encoded.
+  // * Text Sentiment - TextSnippet, content up 500 characters, UTF-8 encoded.
+  // * Translation - TextSnippet, content up to 25,000 characters, UTF-8
+  //                 encoded.
   rpc Predict(PredictRequest) returns (PredictResponse) {
     option (google.api.http) = {
       post: "/v1beta1/{name=projects/*/locations/*/models/*}:predict"
+      body: "*"
+    };
+  }
+
+  // Perform a batch prediction. Unlike the online [Predict][google.cloud.automl.v1beta1.PredictionService.Predict], batch
+  // prediction result won't be immediately avaiable in the response. Instead, a
+  // longrunning operation object is returned. User can poll the operation
+  // result via [GetOperation][google.longrunning.Operations.GetOperation]
+  // method. Once the operation is done, [BatchPredictResult][google.cloud.automl.v1beta1.BatchPredictResult] is returned in
+  // the [response][google.longrunning.Operation.response] field.
+  // Available for following ML problems:
+  // * Video Classification
+  rpc BatchPredict(BatchPredictRequest) returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      post: "/v1beta1/{name=projects/*/locations/*/models/*}:batchPredict"
       body: "*"
     };
   }
@@ -53,21 +85,71 @@ message PredictRequest {
   // *  For Image Classification:
   //
   //    `score_threshold` - (float) A value from 0.0 to 1.0. When the model
-  //     makes predictions for an
-  //     image, it will only produce results that have at least this confidence
-  //     score threshold. The default is 0.5.
+  //     makes predictions for an image, it will only produce results that have
+  //     at least this confidence score. The default is 0.5.
   map<string, string> params = 3;
 }
 
 // Response message for [PredictionService.Predict][google.cloud.automl.v1beta1.PredictionService.Predict].
-//
-// Currently, this is only
-// used to return an image recognition prediction result. More prediction
-// output metadata might be introduced in the future.
 message PredictResponse {
   // Prediction result.
+  // Translation and Text Sentiment will return precisely one payload.
   repeated AnnotationPayload payload = 1;
 
   // Additional domain-specific prediction response metadata.
   map<string, string> metadata = 2;
+}
+
+// Request message for [PredictionService.BatchPredict][google.cloud.automl.v1beta1.PredictionService.BatchPredict].
+message BatchPredictRequest {
+  // Name of the model requested to serve the batch prediction.
+  string name = 1;
+
+  // Optional. Unique identifier provided by client, within the parent scope.
+  // Ensures idempotency.
+  string request_id = 2;
+
+  // Required. The input configuration for batch prediction.
+  BatchPredictionInputConfig input_config = 3;
+
+  // Required. The Configuration specifying where output predictions should
+  // be written.
+  BatchPredictionOutputConfig output_config = 4;
+
+  // Additional domain-specific parameters for the predictions, any string must
+  // be up to 25000 characters long.
+  //
+  // *  For Video Classification:
+  //    `score_threshold` - (float) A value from 0.0 to 1.0. When the model
+  //        makes predictions for a video, it will only produce results that
+  //        have at least this confidence score. The default is 0.5.
+  //    `segment-classification` - (boolean) Whether Segment Classification
+  //        predictions should be returned. This classification type is done
+  //        on a specified by user time segment of a video. AnnotationSpec is
+  //        answered to be present in that time segment, if it is present in
+  //        any part of it. The video ML model evaluations are done only for
+  //        this type of classification. The default is "true".
+  //    `shot-classification` - (boolean) Whether Segment Classification
+  //        predictions should be returned. This classification type is as
+  //        segment classification type but the time segment
+  //        of a video is chosen by the model, to closely match when on the
+  //        video the AnnotationSpec is present.
+  //        WARNING: Model evaluation is
+  //        not done for this classification type, the quality of it depends
+  //        on training data, but there are no metrics provided to describe
+  //        that quality. The default is "false".
+  //    `1s-moving-window-classification` - (boolean) Whether 1 second Moving
+  //        Window Classification predictions should be returned. This
+  //        classification type is as shot classification type, but the model
+  //        picks time segments that are only 1 second long.
+  //        WARNING: Model evaluation is not done for this classification
+  //        type, the quality of it depends on training data, but there are no
+  //        metrics provided to describe that quality. The default is
+  //        "false".
+  map<string, string> params = 5;
+}
+
+// Batch predict result.
+message BatchPredictResult {
+
 }

@@ -133,6 +133,33 @@ interfaces:
       name: model
     resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
+  - name: BatchPredict
+    required_fields:
+    - name
+    - request_id
+    - input_config
+    - output_config
+    flattening:
+      groups:
+      - parameters:
+        - name
+        - request_id
+        - input_config
+        - output_config
+        - params
+    request_object_method: true
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: model
+    long_running:
+      return_type: google.cloud.automl.v1beta1.BatchPredictResult
+      metadata_type: google.cloud.automl.v1beta1.OperationMetadata
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 20000
   # The fully qualified name of the API interface.
 - name: google.cloud.automl.v1beta1.AutoMl
   # A list of resource collection configurations.
@@ -470,6 +497,23 @@ interfaces:
       name: model_evaluation
     resource_name_treatment: STATIC_TYPES
     timeout_millis: 5000
+  - name: ExportModel
+    required_fields:
+    - name
+    - output_config
+    request_object_method: true
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: model
+    long_running:
+      return_type: google.protobuf.Empty
+      metadata_type: google.cloud.automl.v1beta1.OperationMetadata
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 5000
   - name: ListModelEvaluations
     flattening:
       groups:
@@ -528,6 +572,9 @@ resource_name_generation:
 - message_name: UndeployModelRequest
   field_entity_map:
     name: model
+- message_name: ExportModelRequest
+  field_entity_map:
+    name: model
 - message_name: GetModelEvaluationRequest
   field_entity_map:
     name: model_evaluation
@@ -535,5 +582,8 @@ resource_name_generation:
   field_entity_map:
     parent: model
 - message_name: PredictRequest
+  field_entity_map:
+    name: model
+- message_name: BatchPredictRequest
   field_entity_map:
     name: model

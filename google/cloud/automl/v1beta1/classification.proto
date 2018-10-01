@@ -1,4 +1,4 @@
-// Copyright 2018 Google LLC
+// Copyright 2018 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,16 +11,19 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
 
 syntax = "proto3";
 
 package google.cloud.automl.v1beta1;
 
 import "google/api/annotations.proto";
+import "google/cloud/automl/v1beta1/temporal.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;automl";
 option java_outer_classname = "ClassificationProto";
 option java_package = "com.google.cloud.automl.v1beta1";
+option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 
 
 // Contains annotation details specific to classification.
@@ -33,8 +36,37 @@ message ClassificationAnnotation {
   float score = 1;
 }
 
+// Contains annotation details specific to video classification.
+message VideoClassificationAnnotation {
+  // Output only. Expresses the type of video classification. Possible values:
+  // *  `segment` - Classification done on a specified by user
+  //        time segment of a video. AnnotationSpec is answered to be present
+  //        in that time segment, if it is present in any part of it. The video
+  //        ML model evaluations are done only for this type of classification.
+  // *  `shot`- As segment type but the time segment of
+  //        a video is chosen by the model, to closely match when on the video
+  //        the AnnotationSpec is present.
+  //        WARNING: Model evaluation is not done for this classification type,
+  //        the quality of it depends on training data, but there are no
+  //        metrics provided to describe that quality.
+  // *  `1s-moving-window` - As shot type, but the model picks
+  //        time segments that are only 1 second long.
+  //        WARNING: Model evaluation is not done for this classification type,
+  //        the quality of it depends on training data, but there are no
+  //        metrics provided to describe that quality.
+  string type = 1;
+
+  // Output only . The classification details of this annotation.
+  ClassificationAnnotation classification_annotation = 2;
+
+  // Output only . The time segment of the video to which the
+  // annotation applies.
+  TimeSegment time_segment = 3;
+}
+
 // Model evaluation metrics for classification problems.
-// Visible only to v1beta1
+// Note: For Video Classification this metrics only describe quality of the
+// Video Classification predictions of "segment_classification" type.
 message ClassificationEvaluationMetrics {
   // Metrics for a single confidence threshold.
   message ConfidenceMetricsEntry {
@@ -91,8 +123,9 @@ message ClassificationEvaluationMetrics {
   // Output only. The Area under precision recall curve metric based on priors.
   float base_au_prc = 2;
 
-  // Output only. Metrics that have confidence thresholds.
-  // Precision-recall curve can be derived from it.
+  // Output only. Metrics for each confidence_threshold from
+  // 0.05,0.10,...,0.95,0.96,0.97,0.98,0.99. Precision-recall curve is derived
+  // from them.
   repeated ConfidenceMetricsEntry confidence_metrics_entry = 3;
 
   // Output only. Confusion matrix of the evaluation.

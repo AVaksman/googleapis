@@ -1,4 +1,4 @@
-// Copyright 2018 Google LLC
+// Copyright 2018 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
 
 syntax = "proto3";
 
@@ -24,6 +25,7 @@ option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;
 option java_multiple_files = true;
 option java_outer_classname = "ImageProto";
 option java_package = "com.google.cloud.automl.v1beta1";
+option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 
 
 // Dataset metadata that is specific to image classification.
@@ -31,6 +33,11 @@ message ImageClassificationDatasetMetadata {
   // Required.
   // Type of the classification problem.
   ClassificationType classification_type = 1;
+}
+
+// Dataset metadata specific to image object detection.
+message ImageObjectDetectionDatasetMetadata {
+
 }
 
 // Model metadata for image classification.
@@ -41,8 +48,8 @@ message ImageClassificationModelMetadata {
   // `project` and `location` as the new model to create.
   string base_model_id = 1;
 
-  // Required. The train budget of creating this model. The actual
-  // `train_cost` will be equal or less than this value.
+  // Required. The train budget of creating this model, expressed in hours. The
+  // actual `train_cost` will be equal or less than this value.
   int64 train_budget = 2;
 
   // Output only. The actual train cost of creating this model. If this
@@ -51,6 +58,30 @@ message ImageClassificationModelMetadata {
   int64 train_cost = 3;
 
   // Output only. The reason that this create model operation stopped,
-  // e.g. BUDGET_REACHED, CONVERGED.
+  // e.g. `BUDGET_REACHED`, `MODEL_CONVERGED`.
   string stop_reason = 5;
+
+  // Optional. Type of the model. The available values are:
+  // *   `cloud` - Model to be used via prediction calls to AutoML API.
+  //               This is the default value.
+  // *   `mobile-low-latency-1` - A model that, in addition to providing
+  //               prediction via AutoML API, can also be exported (see
+  //               [AutoMl.ExportModel][google.cloud.automl.v1beta1.AutoMl.ExportModel]) and used on a mobile device
+  //               afterwards. Expected to have low latency, but may have lower
+  //               prediction quality than other models.
+  // *   `mobile-versatile-1` - A model that, in addition to providing
+  //               prediction via AutoML API, can also be exported (see
+  //               [AutoMl.ExportModel][google.cloud.automl.v1beta1.AutoMl.ExportModel]) and used on a mobile device
+  //               afterwards.
+  // *   `mobile-high-accuracy-1` - A model that, in addition to providing
+  //               prediction via AutoML API, can also be exported (see
+  //               [AutoMl.ExportModel][google.cloud.automl.v1beta1.AutoMl.ExportModel]) and used on a mobile device
+  //               afterwards.  Expected to have a higher latency, but should
+  //               also have a higher prediction quality than other models.
+  string model_type = 7;
+}
+
+// Model metadata specific to image object detection.
+message ImageObjectDetectionModelMetadata {
+
 }
