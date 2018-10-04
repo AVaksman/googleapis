@@ -129,6 +129,9 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     timeout_millis: 60000
+    header_request_params:
+    - table_reference.project_id
+    - table_reference.dataset_id
   - name: ReadRows
     flattening:
       groups:
@@ -155,6 +158,8 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     timeout_millis: 60000
+    header_request_params:
+    - session.name
   - name: FinalizeStream
     flattening:
       groups:
@@ -166,6 +171,8 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     timeout_millis: 60000
+    header_request_params:
+    - stream.name
   - name: SplitReadStream
     flattening:
       groups:
@@ -177,3 +184,5 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     timeout_millis: 60000
+    header_request_params:
+    - original_stream.name
