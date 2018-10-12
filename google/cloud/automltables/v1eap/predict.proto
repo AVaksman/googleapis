@@ -37,19 +37,3 @@ message ClassificationResult {
 message RegressionResult {
   float value = 1;
 }
-
-message GcsOutput {
-  // The GCS bucket name.
-  string bucket_name = 1;
-
-  // Object name that will be used to populate batch prediction result in the
-  // GCS bucket.
-  string object_name = 2;
-}
-
-// Output target that the batch prediction result will be written to.
-message BatchPredictionOutput {
-  oneof output {
-    GcsOutput gcs_output = 1;
-  }
-}

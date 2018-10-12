@@ -19,6 +19,7 @@ package google.cloud.automltables.v1eap;
 
 import "google/api/annotations.proto";
 import "google/cloud/automltables/v1eap/dataset.proto";
+import "google/cloud/automltables/v1eap/io.proto";
 import "google/cloud/automltables/v1eap/model.proto";
 import "google/cloud/automltables/v1eap/model_evaluation.proto";
 import "google/cloud/automltables/v1eap/predict.proto";
@@ -254,8 +255,8 @@ message BatchPredictRequest {
   // ID to join input and output rows.
   string id_column = 3;
 
-  // Output for the batch prediction result.
-  BatchPredictionOutput output_target = 4;
+  // Output configuration for the batch prediction result.
+  OutputConfig output_config = 4;
 }
 
 // Request message for AutoMlTablesService.ListModelEvaluations.

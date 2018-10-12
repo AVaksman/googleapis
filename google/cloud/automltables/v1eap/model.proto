@@ -23,10 +23,13 @@ option java_package = "com.google.cloud.automltables.v1eap";
 
 
 // Spec for an AutoML Tables model.
-// Next ID: 8
+// Next ID: 9
 message TablesModelSpec {
   // List of columns that should not be used for training.
   repeated string ignored_columns = 7;
+
+  // The objective of the tuner.
+  TunerObjective tuner_objective = 8;
 }
 
 message Model {
@@ -43,4 +46,18 @@ message Model {
 
   // Spec for an AutoML Tables model.
   TablesModelSpec tables_model_spec = 4;
+}
+
+// The objective for the tuner.
+enum TunerObjective {
+  TUNER_OBJECTIVE_UNSPECIFIED = 0;
+
+  // Maximize the area under the precision-recall curve.
+  MAXIMIZE_AUC_PR = 1;
+
+  // Minimize the loss.
+  MINIMIZE_LOSS = 2;
+
+  // Maximize the area under the ROC curve.
+  MAXIMIZE_AUC_ROC = 3;
 }

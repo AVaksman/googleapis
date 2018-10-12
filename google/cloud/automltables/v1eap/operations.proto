@@ -34,6 +34,16 @@ message Task {
     TUNING = 1;
 
     TRAINING = 2;
+
+    // BatchPredict task:
+    BATCH_PREDICT = 3;
+
+    // ImportData tasks:
+    IMPORT_TABLES = 4;
+
+    INFER_SCHEMA = 5;
+
+    GENERATE_STATS = 6;
   }
 
   enum TaskState {
@@ -96,7 +106,20 @@ message DeleteModelOperationMetadata {
 }
 
 message BatchPredictOperationMetadata {
+  // The stats returned from the batch prediction operation.
+  message BatchPredictionStats {
+    int64 total_input_count = 1;
 
+    int64 total_output_count = 2;
+
+    // Number of input records that are missing an ID column value.
+    int64 missing_id_count = 3;
+
+    // Number of input records that fail to convert to TF example.
+    int64 input_conversion_failure_count = 4;
+  }
+
+  BatchPredictionStats batch_prediction_stats = 1;
 }
 
 // Output only.

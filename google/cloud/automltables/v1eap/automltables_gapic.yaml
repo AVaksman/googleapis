@@ -307,12 +307,12 @@ interfaces:
         - name
         - input_source
         - id_column
-        - output_target
+        - output_config
     required_fields:
     - name
     - input_source
     - id_column
-    - output_target
+    - output_config
     request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default

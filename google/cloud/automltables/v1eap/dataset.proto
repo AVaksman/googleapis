@@ -17,6 +17,7 @@ syntax = "proto3";
 
 package google.cloud.automltables.v1eap;
 
+import "google/cloud/automltables/v1eap/io.proto";
 import "google/cloud/automltables/v1eap/table_schema.proto";
 import "google/cloud/automltables/v1eap/table_stats.proto";
 import "google/protobuf/timestamp.proto";
@@ -25,46 +26,6 @@ option go_package = "google.golang.org/genproto/googleapis/cloud/automltables/v1
 option java_outer_classname = "DatasetProto";
 option java_package = "com.google.cloud.automltables.v1eap";
 
-
-// A pointer to the BigQuery table.
-message BigQuerySource {
-  // ID of the Google Cloud Project owning the BigQuery table. Not to be
-  // confused with project number or the display name.
-  string project_id = 1;
-
-  // BigQuery dataset ID containing the table. This is the partially-qualified
-  // ID, i.e. without the project ID prefix.
-  // https://cloud.google.com/bigquery/docs/reference/rest/v2/datasets
-  string dataset_id = 2;
-
-  // ID of the BigQuery table. This is the partially-qualified ID, i.e. without
-  // the project ID and dataset ID prefix.
-  // https://cloud.google.com/bigquery/docs/reference/rest/v2/tables
-  string table_id = 3;
-}
-
-// A pointer to a table sharded across several Google Cloud Storage files.
-message GcsSource {
-  // The GCS bucket name.
-  string bucket_name = 1;
-
-  // A list of object names in the GCS bucket. Each file is a table shard.
-  // Currently on CSV files are supported, and the first file in the list must
-  // contain the CSV header.
-  repeated string object_names = 2;
-}
-
-// A pointer to a table.
-message TableSource {
-  // A table can be stored in one of the following locations.
-  oneof source {
-    // A table stored on BigQuery.
-    BigQuerySource big_query_source = 1;
-
-    // A table stored on Google Cloud Storage.
-    GcsSource gcs_source = 2;
-  }
-}
 
 // Description of an input table.
 message TableDescriptor {

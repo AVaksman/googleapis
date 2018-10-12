@@ -29,7 +29,9 @@ message TableStats {
 
   map<string, ColumnStats> column_stats = 3;
 
-  CorrelationStats correlation_stats = 4;
+  CorrelationStats correlation_stats = 4 [deprecated = true];
+
+  map<string, double> target_column_correlations = 5;
 }
 
 // DEPRECATED: We no longer support sliced statistics. This message is
@@ -46,9 +48,11 @@ message SliceStats {
 
 message CorrelationStats {
   message Correlation {
-    string column_1 = 1;
+    string column_1 = 1 [deprecated = true];
 
-    string column_2 = 2;
+    string column_2 = 2 [deprecated = true];
+
+    string column = 4;
 
     double cramers_v = 3;
   }
@@ -64,6 +68,8 @@ message ColumnStats {
 
     TextSnippetStats text_snippet_stats = 4;
   }
+
+  CorrelationStats correlation_stats = 5;
 }
 
 message CommonStats {
