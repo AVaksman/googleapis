@@ -90,4 +90,4 @@ interfaces:
     request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
-    timeout_millis: 1000000
+    timeout_millis: 10800000
