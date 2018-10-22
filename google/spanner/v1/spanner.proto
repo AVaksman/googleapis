@@ -1,4 +1,4 @@
-// Copyright 2018 Google Inc.
+// Copyright 2018 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
 
 syntax = "proto3";
 
@@ -118,6 +119,27 @@ service Spanner {
     };
   }
 
+  // Executes a batch of SQL DML statements, returning an array of
+  // ResultSets for each statement in the batch in a single reply. This API
+  // allows many DML statements to be run with lower latency than submitting
+  // them serially with [ExecuteSql][google.spanner.v1.Spanner.ExecuteSql].
+  //
+  // Statements are executed in order, sequentially. If there is a problem
+  // executing any of the statements, the operation will fail; the remaining
+  // statements are not executed and `ABORTED` will be returned, with an error
+  // message specifying the index of the failed statement and the reason for
+  // the failure. If this occurs, the application should restart the
+  // transaction from the beginning. See [Transaction][google.spanner.v1.Transaction] for more details.
+  //
+  // Each individual statement must be a DML statement. Otherwise the
+  // transaction will be aborted.
+  rpc ExecuteBatchDml(ExecuteBatchDmlRequest) returns (ExecuteBatchDmlResponse) {
+    option (google.api.http) = {
+      post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:executeBatchDml"
+      body: "*"
+    };
+  }
+
   // Reads rows from the database using key lookups and scans, as a
   // simple key/value style alternative to
   // [ExecuteSql][google.spanner.v1.Spanner.ExecuteSql].  This method cannot be used to
@@ -197,8 +219,11 @@ service Spanner {
   // of the query result to read.  The same session and read-only transaction
   // must be used by the PartitionQueryRequest used to create the
   // partition tokens and the ExecuteSqlRequests that use the partition tokens.
+  //
   // Partition tokens become invalid when the session used to create them
-  // is deleted or begins a new transaction.
+  // is deleted, is idle for too long, begins a new transaction, or becomes too
+  // old.  When any of these happen, it is not possible to resume the query, and
+  // the whole operation must be restarted from the beginning.
   rpc PartitionQuery(PartitionQueryRequest) returns (PartitionResponse) {
     option (google.api.http) = {
       post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:partitionQuery"
@@ -211,9 +236,14 @@ service Spanner {
   // by [StreamingRead][google.spanner.v1.Spanner.StreamingRead] to specify a subset of the read
   // result to read.  The same session and read-only transaction must be used by
   // the PartitionReadRequest used to create the partition tokens and the
-  // ReadRequests that use the partition tokens.
+  // ReadRequests that use the partition tokens.  There are no ordering
+  // guarantees on rows returned among the returned partition tokens, or even
+  // within each individual StreamingRead call issued with a partition_token.
+  //
   // Partition tokens become invalid when the session used to create them
-  // is deleted or begins a new transaction.
+  // is deleted, is idle for too long, begins a new transaction, or becomes too
+  // old.  When any of these happen, it is not possible to resume the read, and
+  // the whole operation must be restarted from the beginning.
   rpc PartitionRead(PartitionReadRequest) returns (PartitionResponse) {
     option (google.api.http) = {
       post: "/v1/{session=projects/*/instances/*/databases/*/sessions/*}:partitionRead"
@@ -328,6 +358,7 @@ message ExecuteSqlRequest {
 
   // The transaction to use. If none is provided, the default is a
   // temporary read-only transaction with strong concurrency.
+  //
   // The transaction to use.
   //
   // For queries, if none is provided, the default is a temporary read-only
@@ -401,6 +432,74 @@ message ExecuteSqlRequest {
   int64 seqno = 9;
 }
 
+// The request for [ExecuteBatchDml][google.spanner.v1.Spanner.ExecuteBatchDml]
+message ExecuteBatchDmlRequest {
+  // A single DML statement.
+  message Statement {
+    // Required. The DML string.
+    string sql = 1;
+
+    // The DML string can contain parameter placeholders. A parameter
+    // placeholder consists of `'@'` followed by the parameter
+    // name. Parameter names consist of any combination of letters,
+    // numbers, and underscores.
+    //
+    // Parameters can appear anywhere that a literal value is expected.  The
+    // same parameter name can be used more than once, for example:
+    //   `"WHERE id > @msg_id AND id < @msg_id + 100"`
+    //
+    // It is an error to execute an SQL statement with unbound parameters.
+    //
+    // Parameter values are specified using `params`, which is a JSON
+    // object whose keys are parameter names, and whose values are the
+    // corresponding parameter values.
+    google.protobuf.Struct params = 2;
+
+    // It is not always possible for Cloud Spanner to infer the right SQL type
+    // from a JSON value.  For example, values of type `BYTES` and values
+    // of type `STRING` both appear in [params][google.spanner.v1.ExecuteBatchDmlRequest.Statement.params] as JSON strings.
+    //
+    // In these cases, `param_types` can be used to specify the exact
+    // SQL type for some or all of the SQL statement parameters. See the
+    // definition of [Type][google.spanner.v1.Type] for more information
+    // about SQL types.
+    map<string, Type> param_types = 3;
+  }
+
+  // Required. The session in which the DML statements should be performed.
+  string session = 1;
+
+  // The transaction to use. A ReadWrite transaction is required. Single-use
+  // transactions are not supported (to avoid replay).  The caller must either
+  // supply an existing transaction ID or begin a new transaction.
+  TransactionSelector transaction = 2;
+
+  // The list of statements to execute in this batch.  Statements are executed
+  // serially, such that the effects of statement i are visible to
+  // statement i+1. Each statement must be a DML statement. If there is a
+  // problem executing any of the statements, the operation will fail; the
+  // remaining statements are not executed and `ABORTED` will be returned, with
+  // an error message specifying the index of the failed statement.
+  repeated Statement statements = 3;
+
+  // A per-transaction sequence number used to identify this request. This is
+  // used in the same space as the seqno in
+  // [ExecuteSqlRequest][Spanner.ExecuteSqlRequest]. See more details
+  // in [ExecuteSqlRequest][Spanner.ExecuteSqlRequest].
+  int64 seqno = 4;
+}
+
+// The response for [ExecuteBatchDml][google.spanner.v1.Spanner.ExecuteBatchDml]. Only the first
+// [ResultSet][google.spanner.v1.ResultSet] in the response contains a valid [ResultSetMetadata][google.spanner.v1.ResultSetMetadata].
+message ExecuteBatchDmlResponse {
+  // ResultSets, one for each statement in the batch, in the same order as the
+  // request. Each ResultSet will not contain any rows. The [ResultSetStats][google.spanner.v1.ResultSetStats]
+  // in each ResultSet will contain updated row count for each statement. The
+  // [ResultSetMetadata][google.spanner.v1.ResultSetMetadata] in the first ResultSet will contain row type and
+  // transaction information.
+  repeated ResultSet result_sets = 1;
+}
+
 // Options for a PartitionQueryRequest and
 // PartitionReadRequest.
 message PartitionOptions {
@@ -440,7 +539,7 @@ message PartitionQueryRequest {
   // then unions all results.
   //
   // This must not contain DML commands, such as INSERT, UPDATE, or
-  // DELETE. Use [ExecuteStreamingSql][Spanner.ExecuteStreamingSql] with a
+  // DELETE. Use [ExecuteStreamingSql][google.spanner.v1.Spanner.ExecuteStreamingSql] with a
   // PartitionedDml transaction for large, partition-friendly DML operations.
   string sql = 3;
 

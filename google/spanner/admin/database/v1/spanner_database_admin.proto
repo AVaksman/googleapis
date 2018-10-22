@@ -1,4 +1,4 @@
-// Copyright 2018 Google Inc.
+// Copyright 2018 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
 
 syntax = "proto3";
 
@@ -22,6 +23,8 @@ import "google/iam/v1/policy.proto";
 import "google/longrunning/operations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
+import "google/spanner/admin/database/v1/backup.proto";
+import "google/spanner/admin/database/v1/common.proto";
 
 option csharp_namespace = "Google.Cloud.Spanner.Admin.Database.V1";
 option go_package = "google.golang.org/genproto/googleapis/spanner/admin/database/v1;database";
@@ -96,11 +99,11 @@ service DatabaseAdmin {
     };
   }
 
-  // Sets the access control policy on a database resource. Replaces any
-  // existing policy.
+  // Sets the access control policy on a database resource.
+  // Replaces any existing policy.
   //
-  // Authorization requires `spanner.databases.setIamPolicy` permission on
-  // [resource][google.iam.v1.SetIamPolicyRequest.resource].
+  // Authorization requires `spanner.databases.setIamPolicy`
+  // permission on [resource][google.iam.v1.SetIamPolicyRequest.resource].
   rpc SetIamPolicy(google.iam.v1.SetIamPolicyRequest) returns (google.iam.v1.Policy) {
     option (google.api.http) = {
       post: "/v1/{resource=projects/*/instances/*/databases/*}:setIamPolicy"
@@ -108,8 +111,9 @@ service DatabaseAdmin {
     };
   }
 
-  // Gets the access control policy for a database resource. Returns an empty
-  // policy if a database exists but does not have a policy set.
+  // Gets the access control policy for a database resource.
+  // Returns an empty policy if a database exists but does
+  // not have a policy set.
   //
   // Authorization requires `spanner.databases.getIamPolicy` permission on
   // [resource][google.iam.v1.GetIamPolicyRequest.resource].
@@ -122,16 +126,85 @@ service DatabaseAdmin {
 
   // Returns permissions that the caller has on the specified database resource.
   //
-  // Attempting this RPC on a non-existent Cloud Spanner database will result in
-  // a NOT_FOUND error if the user has `spanner.databases.list` permission on
-  // the containing Cloud Spanner instance. Otherwise returns an empty set of
-  // permissions.
+  // Attempting this RPC on a non-existent Cloud Spanner database will
+  // result in a NOT_FOUND error if the user has
+  // `spanner.databases.list` permission on the containing Cloud
+  // Spanner instance. Otherwise returns an empty set of permissions.
   rpc TestIamPermissions(google.iam.v1.TestIamPermissionsRequest) returns (google.iam.v1.TestIamPermissionsResponse) {
     option (google.api.http) = {
       post: "/v1/{resource=projects/*/instances/*/databases/*}:testIamPermissions"
       body: "*"
     };
   }
+
+  rpc CreateBackup(CreateBackupRequest) returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      post: "/v1/{parent=projects/*/instances/*}/backups"
+      body: "*"
+    };
+  }
+
+  rpc GetBackup(GetBackupRequest) returns (Backup) {
+    option (google.api.http) = {
+      get: "/v1/{name=projects/*/instances/*/backups/*}"
+    };
+  }
+
+  rpc UpdateBackup(UpdateBackupRequest) returns (Backup) {
+    option (google.api.http) = {
+      patch: "/v1/{backup.name=projects/*/instances/*/backups/*}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteBackup(DeleteBackupRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/{name=projects/*/instances/*/backups/*}"
+    };
+  }
+
+  rpc ListBackups(ListBackupsRequest) returns (ListBackupsResponse) {
+    option (google.api.http) = {
+      get: "/v1/{parent=projects/*/instances/*}/backups"
+    };
+  }
+
+  rpc CreateDatabaseFromBackup(CreateDatabaseFromBackupRequest) returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      post: "/v1/{parent=projects/*/instances/*}/databases:createFromBackup"
+      body: "*"
+    };
+  }
+
+  rpc ListCreateDatabaseFromBackupMetadata(ListCreateDatabaseFromBackupMetadataRequest) returns (ListCreateDatabaseFromBackupMetadataResponse) {
+    option (google.api.http) = {
+      get: "/v1/{parent=projects/*}/instances/{instance_id}:ListCreateDatabaseFromBackupMetadata"
+    };
+  }
+}
+
+message RestoreInfo {
+  // Indicates the type of the restore source.
+  enum RestoreSourceType {
+    // No restore associated.
+    RESTORE_SOURCE_TYPE_UNSPECIFIED = 0;
+
+    // A backup was used as the source of the restore.
+    BACKUP = 1;
+  }
+
+  // The type of the restore source.
+  RestoreSourceType source_type = 1;
+
+  // Name of the source (e.g. backup) from which the database was
+  // restored. The source might no longer exist.
+  string source = 2;
+
+  // Create time of the restore source.
+  google.protobuf.Timestamp source_create_time = 3;
+
+  // Name of the database associated with the restore source.
+  string source_database = 4;
 }
 
 // A Cloud Spanner database.
@@ -147,6 +220,8 @@ message Database {
 
     // The database is fully created and ready for use.
     READY = 2;
+
+    READY_OPTIMIZING = 3;
   }
 
   // Required. The name of the database. Values are of the form
@@ -158,6 +233,12 @@ message Database {
 
   // Output only. The current database state.
   State state = 2;
+
+  OperationProgress creating_progress = 3;
+
+  OperationProgress ready_optimizing_progress = 4;
+
+  RestoreInfo restore_info = 5;
 }
 
 // The request for [ListDatabases][google.spanner.admin.database.v1.DatabaseAdmin.ListDatabases].
