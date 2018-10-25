@@ -18,6 +18,7 @@ syntax = "proto3";
 package google.cloud.automl.v1beta1;
 
 import "google/api/annotations.proto";
+import "google/cloud/automl/v1beta1/io.proto";
 import "google/cloud/automl/v1beta1/model.proto";
 import "google/cloud/automl/v1beta1/model_evaluation.proto";
 import "google/cloud/automl/v1beta1/prediction_service.proto";
@@ -47,6 +48,9 @@ message OperationMetadata {
 
     // Details of BatchPredict operation.
     BatchPredictOperationMetadata batch_predict_details = 16;
+
+    // Details of ExportModel operation.
+    ExportModelOperationMetadata export_model_details = 22;
   }
 
   // Output only. Progress of operation. Range: [0, 100].
@@ -83,5 +87,37 @@ message ImportDataOperationMetadata {
 
 // Details of BatchPredict operation.
 message BatchPredictOperationMetadata {
+  // Further describes this batch predict's output.
+  // Supplements
+  //
+  // [BatchPredictionOutputConfig][google.cloud.automl.v1beta1.BatchPredictionOutputConfig].
+  message BatchPredictionOutputInfo {
+    // The full path of the GCS directory created, into which the prediction
+    // output had been written.
+    string gcs_output_directory = 1;
+  }
 
+  // Output only. The input config that was given upon starting this
+  // batch predict operation.
+  BatchPredictionInputConfig input_config = 1;
+
+  // Output only. Information further describing this batch predict's output.
+  BatchPredictionOutputInfo output_info = 2;
+}
+
+// Details of ExportModel operation.
+message ExportModelOperationMetadata {
+  // Further describes the output of model export.
+  // Supplements
+  //
+  // [ModelExportOutputConfig][google.cloud.automl.v1beta1.ModelExportOutputConfig].
+  message ExportModelOutputInfo {
+    // The full path of the GCS directory created, into which the model will
+    // be exported.
+    string gcs_output_directory = 1;
+  }
+
+  // Output only. Information further describing the output of this model
+  // export.
+  ExportModelOutputInfo output_info = 2;
 }

@@ -67,7 +67,7 @@ message TextSnippet {
 message ExamplePayload {
   // Required. Input only. The example data.
   oneof payload {
-    // An example image.
+    // Example image.
     Image image = 1;
 
     // Example text.

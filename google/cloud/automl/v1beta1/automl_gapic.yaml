@@ -136,14 +136,12 @@ interfaces:
   - name: BatchPredict
     required_fields:
     - name
-    - request_id
     - input_config
     - output_config
     flattening:
       groups:
       - parameters:
         - name
-        - request_id
         - input_config
         - output_config
         - params

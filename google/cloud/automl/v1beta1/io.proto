@@ -28,13 +28,16 @@ option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 // Input configuration for ImportData Action.
 //
 // The format of input depends on dataset_metadata the Dataset into which
-// the import is happening has. If a file with identical content
-// (even if it had different GCS_FILE_PATH) is mentioned multiple times its
-// label, bounding boxes etc. are appended. The same file should be always
+// the import is happening has. As input source the
+// [gcs_source][google.cloud.automl.v1beta1.InputConfig.gcs_source]
+// is expected, unless specified otherwise. If a file with identical content
+// (even if it had different GCS_FILE_PATH) is mentioned multiple times , then
+// its label, bounding boxes etc. are appended. The same file should be always
 // provided with the same ML_USE and GCS_FILE_PATH, if it is not then
 // these values are nondeterministically selected from the given ones.
 //
-// The formats, represented in EBNF, where commas are literal, are as follows:
+// The formats are represented in EBNF with commas being literal and with
+// non-terminal symbols defined near the end of this comment. The formats are:
 //
 //  *  For Image Object Detection:
 //         CSV file(s) with each line in format:
@@ -55,30 +58,25 @@ option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 //           where ML_USE VALIDATE value should not be used (service picks
 //           validation examples from the TRAIN set). The GCS_FILE_PATH should
 //           lead to another .csv file which describes examples that have
-//           given ML_USE, using following format:
+//           given ML_USE, using the following row format:
 //           GCS_FILE_PATH,LABEL,TIME_SEGMENT_START,TIME_SEGMENT_END
 //           Here GCS_FILE_PATH leads to a video of up to 1.5GB in size and up
 //           to 1h duration. Supported extensions: .MOV, .MPEG4, .MP4, .AVI.
 //           TIME_SEGMENT_START and TIME_SEGMENT_END must be within the
-//           length of the video, and end has to be after the start. Any frame
+//           length of the video, and end has to be after the start. Any segment
 //           of a video which has one or more labels on it, is considered a
-//           hard negative for all other labels. A frame with no labels on it
-//           by default is considered unknown (can be overridden via
-//           "is_exhaustively_labeled" param).  Also special label "-" can be
-//           used to express given time segment to be hard negative for all
-//           the labels, the segments of "-" cannot overlap with segments of
-//           any other label.
+//           hard negative for all other labels. Any segment with no labels on
+//           it is considered to be unknown.
 //         Sample top level CSV file:
 //           TRAIN,gs://folder/train_videos.csv
 //           TEST,gs://folder/test_videos.csv
 //           UNASSIGNED,gs://folder/other_videos.csv
-//         Four sample rows of a CSV file for a particular ML_USE:
+//         Three sample rows of a CSV file for a particular ML_USE:
 //           gs://folder/video1.avi,car,120,180.000021
-//           gs://folder/video1.avi,bike,150,180.000023
-//           gs://folder/video1.avi,-,180.000024,300.000999
+//           gs://folder/video1.avi,bike,150,180.000021
 //           gs://folder/vid2.avi,car,0,60.5
 //
-//  * For Text Extraction:
+//  *  For Text Extraction:
 //         CSV file(s) with each line in format:
 //           ML_USE,GCS_FILE_PATH
 //           GCS_FILE_PATH leads to a .JSONL (i.e. JSON Lines) file.
@@ -211,27 +209,21 @@ message InputConfig {
   oneof source {
     // The GCS location for the input content.
     GcsSource gcs_source = 1;
-  }
 
-  // Additional domain-specific parameters describing the semantic of the
-  // imported data, any string must be up to 25000
-  // characters long.
-  //
-  // *  For Video Classification:
-  //    `is_exhaustively_labeled` - (boolean) Are the being imported videos
-  //        exhaustively labeled, i.e. should any time segment of a video that
-  //        has no labels on it be automatically understood as a hard-negative
-  //        for all labels (i.e. as if it had "-" label on it). Default value is
-  //        "false".
-  map<string, string> params = 2;
+    // The BigQuery location for the input content.
+    BigQuerySource bigquery_source = 3;
+  }
 }
 
 // Input configuration for BatchPredict Action.
 //
-// The expected format of input depends on the ML problem of the model used for
-// prediction.
+// The format of input depends on the ML problem of the model used for
+// prediction. As input source the
+// [gcs_source][google.cloud.automl.v1beta1.InputConfig.gcs_source]
+// is expected, unless specified otherwise.
 //
-// The formats, represented in EBNF, where commas are literal, are as follows:
+// The formats are represented in EBNF with commas being literal and with
+// non-terminal symbols defined near the end of this comment. The formats are:
 //
 //  *  For Video Classification:
 //         CSV file(s) with each line in format:
@@ -271,6 +263,9 @@ message BatchPredictionInputConfig {
   oneof source {
     // The GCS location for the input content.
     GcsSource gcs_source = 1;
+
+    // The BigQuery location for the input content.
+    BigQuerySource bigquery_source = 2;
   }
 }
 
@@ -285,18 +280,16 @@ message OutputConfig {
 
 // Output configuration for BatchPredict Action.
 //
-// The given output depends on the ML problem the predictions are made for.
+// In provided destination directory a new directory will be created.
+// Its name will be
+// "prediction-<model-display-name>-<timestamp-of-prediction-call>",
+// where timestamp is in YYYY-MM-DDThh:mm:ss.sssZ ISO-8601 format. The contents
+// of it depend on the ML problem the predictions are made for.
 //
 //  *  For Video Classification:
-//         In provided destination directory a new directory will be created.
-//         Its name will be
-//         "prediction-<model-display-name>-<timestamp-of-prediction-call>",
-//         where timestamp is in YYYY-MM-DDThh:mm:ss.sssZ ISO-8601 format. In
-//         the created directory a video_classification.csv file will be
-//         created, and multiple files video_classification_1.json,
-//         video_classification_2.json,..., video_classification_N.json, where N
-//         is the number of video classifications requested in the input (i.e.
-//         the number of lines in given CSV(s)).
+//         In the created directory a video_classification.csv file, and a .JSON
+//         file per each video classification requested in the input (i.e. each
+//         line in given CSV(s)), will be created.
 //
 //         The format of video_classification.csv is:
 //
@@ -305,14 +298,14 @@ message OutputConfig {
 //         GCS_FILE_PATH,TIME_SEGMENT_START,TIME_SEGMENT_END = matches 1 to 1
 //             the prediction input lines (i.e. video_classification.csv has
 //             precisely the same number of lines as the prediction input had.)
-//         JSON_FILE_NAME = Name of json file in the output directory, which
+//         JSON_FILE_NAME = Name of .JSON file in the output directory, which
 //             contains prediction responses for the video time segment.
 //         STATUS = "OK" if prediction completed successfully, or an error
 //             code and,or message otherwise. If STATUS is not "OK" then the
-//             json file for that line may not exist or be empty.
+//             .JSON file for that line may not exist or be empty.
 //
-//         Each .json file, assuming STATUS is "OK", will contain a list of
-//         AnnotationPayload protos in json format, which are the predictions
+//         Each .JSON file, assuming STATUS is "OK", will contain a list of
+//         AnnotationPayload protos in JSON format, which are the predictions
 //         for the video time segment the file is assigned to in the
 //         video_classification.csv. All AnnotationPayload protos will have
 //         video_classification field set, and will be sorted by
@@ -337,7 +330,11 @@ message BatchPredictionOutputConfig {
 //        Under the directory given as the destination a new one with name
 //        "model-export-<model-display-name>-<timestamp-of-export-call>",
 //        where timestamp is in YYYY-MM-DDThh:mm:ss.sssZ ISO-8601 format, will
-//        be created. Inside of it a vision_model.tflite file will be written.
+//        be created. Inside the model and any of its supporting files will be
+//        written, as described
+//
+// [here](https:
+// //cloud.google.com/vision/automl/alpha/docs/predict#deployment_to_devices).
 message ModelExportOutputConfig {
   // Required. The destination of the output.
   oneof destination {
@@ -352,9 +349,12 @@ message ModelExportOutputConfig {
   // *  For Image Classification mobile-low-latency-1, mobile-versatile-1,
   //        mobile-high-accuracy-1:
   //
-  //      `tf_version` - (string) Tensorflow/TFLite version the model should be
+  //      `tf-version` - (string) Tensorflow/TFLite version the model should be
   //        exported in. Currently the only available value is "TF_1_9", which
   //        is also the default.
+  //      `model-format` - (string) The format in which the model should be
+  //        exported. Available values are "tflite" and "edgetpu_tflite" with
+  //        former being the default.
   map<string, string> params = 2;
 }
 
@@ -364,6 +364,14 @@ message GcsSource {
   // long. Accepted forms:
   // * Full object path, e.g. gs://bucket/directory/object.csv
   repeated string input_uris = 1;
+}
+
+// The BigQuery location for the input content.
+message BigQuerySource {
+  // Required. BigQuery URI to a table, up to 2000 characters long.
+  // Accepted forms:
+  // *  BigQuery gs path e.g. bq://projectId.bqDatasetId.bqTableId
+  string input_uri = 1;
 }
 
 // The GCS location where the output must be written to
