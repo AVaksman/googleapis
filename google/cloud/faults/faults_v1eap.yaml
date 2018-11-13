@@ -12,10 +12,7 @@ documentation:
     # Introduction
 
     This is the GCP Fault Injection service. It allows controlled
-    fault-injection testing of development and production systems. (-- #
-    Introduction
-
-    Internal site: go/catzilla --)
+    fault-injection testing of development and production systems.
 
 backend:
   rules:

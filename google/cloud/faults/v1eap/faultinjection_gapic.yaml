@@ -4,15 +4,15 @@ language_settings:
   java:
     package_name: com.google.cloud.faults.v1eap
   python:
-    package_name: google.cloud.faults.v1eap.gapic
+    package_name: google.cloud.faults_v1eap.gapic
   go:
     package_name: cloud.google.com/go/faults/apiv1eap
   csharp:
-    package_name: Google.Cloud.Faults.V1eap
+    package_name: Google.Cloud.Faults.v1eap
   ruby:
-    package_name: Google::Cloud::Faults::V1eap
+    package_name: Google::Cloud::Faults::v1eap
   php:
-    package_name: Google\Cloud\Faults\V1eap
+    package_name: Google\Cloud\Faults\v1eap
   nodejs:
     package_name: faults.v1eap
 license_header:
