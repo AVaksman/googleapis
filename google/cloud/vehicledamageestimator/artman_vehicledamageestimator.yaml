@@ -1,13 +1,13 @@
 common:
   api_name: vehicledamageestimator
-  api_version: v1beta1
+  api_version: v1alpha3
   organization_name: google-cloud
   proto_deps:
     - name: google-common-protos
   src_proto_paths:
-  - v1beta1
+  - v1alpha3
   service_yaml: vehicledamageestimator.yaml
-  gapic_yaml: v1beta1/vehicledamageestimator_gapic.yaml
+  gapic_yaml: v1alpha3/vehicledamageestimator_gapic.yaml
 artifacts:
 - name: gapic_config
   type: GAPIC_CONFIG

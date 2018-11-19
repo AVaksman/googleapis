@@ -4,7 +4,7 @@ name: vehicledamageestimator.googleapis.com
 title: Vehicle Damage Estimator
 
 apis:
-- name: google.cloud.vehicledamageestimator.v1beta1.AppraiserService
+- name: google.cloud.vehicledamageestimator.v1alpha3.AppraiserService
 
 documentation:
   summary: |-
