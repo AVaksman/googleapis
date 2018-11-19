@@ -21,6 +21,8 @@ import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/spanner/admin/database/v1;database";
+option java_package = "com.google.spanner.admin.database.v1";
+option java_multiple_files = true;
 
 
 message OperationProgress {
