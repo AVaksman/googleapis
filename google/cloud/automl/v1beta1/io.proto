@@ -60,8 +60,8 @@ option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 //           lead to another .csv file which describes examples that have
 //           given ML_USE, using the following row format:
 //           GCS_FILE_PATH,LABEL,TIME_SEGMENT_START,TIME_SEGMENT_END
-//           Here GCS_FILE_PATH leads to a video of up to 1.5GB in size and up
-//           to 1h duration. Supported extensions: .MOV, .MPEG4, .MP4, .AVI.
+//           Here GCS_FILE_PATH leads to a video of up to 50GB in size and up
+//           to 3h duration. Supported extensions: .MOV, .MPEG4, .MP4, .AVI.
 //           TIME_SEGMENT_START and TIME_SEGMENT_END must be within the
 //           length of the video, and end has to be after the start. Any segment
 //           of a video which has one or more labels on it, is considered a
@@ -75,7 +75,6 @@ option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 //           gs://folder/video1.avi,car,120,180.000021
 //           gs://folder/video1.avi,bike,150,180.000021
 //           gs://folder/vid2.avi,car,0,60.5
-//
 //  *  For Text Extraction:
 //         CSV file(s) with each line in format:
 //           ML_USE,GCS_FILE_PATH
@@ -143,7 +142,6 @@ option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 //         TRAIN,"@freewrytin God is way too good for Claritin",2
 //         TRAIN,"I need Claritin so bad",3
 //         TEST,"Thank god for Claritin.",4
-//
 //  Definitions:
 //  ML_USE = "TRAIN" | "VALIDATE" | "TEST" | "UNASSIGNED"
 //           Describes how the given example (file) should be used for model
@@ -213,6 +211,17 @@ message InputConfig {
     // The BigQuery location for the input content.
     BigQuerySource bigquery_source = 3;
   }
+
+  // Additional domain-specific parameters describing the semantic of the
+  // imported data, any string must be up to 25000
+  // characters long.
+  //
+  // *  For Tables:
+  //    `schema_inference_version` - (integer) Required. The version of the
+  //        algorithm that should be used for the initial inference of the
+  //        schema (columns' DataTypes) of the table the data is being imported
+  //        into. Allowed values: "1".
+  map<string, string> params = 2;
 }
 
 // Input configuration for BatchPredict Action.
@@ -225,10 +234,11 @@ message InputConfig {
 // The formats are represented in EBNF with commas being literal and with
 // non-terminal symbols defined near the end of this comment. The formats are:
 //
+//
 //  *  For Video Classification:
 //         CSV file(s) with each line in format:
 //           GCS_FILE_PATH,TIME_SEGMENT_START,TIME_SEGMENT_END
-//           GCS_FILE_PATH leads to video of up to 1.5GB in size and up to 1h
+//           GCS_FILE_PATH leads to video of up to 50GB in size and up to 3h
 //           duration. Supported extensions: .MOV, .MPEG4, .MP4, .AVI.
 //           TIME_SEGMENT_START and TIME_SEGMENT_END must be within the
 //           length of the video, and end has to be after the start.
@@ -236,7 +246,6 @@ message InputConfig {
 //           gs://folder/video1.mp4,10,40
 //           gs://folder/video1.mp4,20,60
 //           gs://folder/vid2.mov,0,inf
-//
 //  Definitions:
 //  GCS_FILE_PATH = A path to file on GCS, e.g. "gs://folder/video.avi".
 //  TIME_SEGMENT_START = TIME_OFFSET
@@ -285,6 +294,7 @@ message OutputConfig {
 // "prediction-<model-display-name>-<timestamp-of-prediction-call>",
 // where timestamp is in YYYY-MM-DDThh:mm:ss.sssZ ISO-8601 format. The contents
 // of it depend on the ML problem the predictions are made for.
+//
 //
 //  *  For Video Classification:
 //         In the created directory a video_classification.csv file, and a .JSON

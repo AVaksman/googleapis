@@ -19,6 +19,7 @@ package google.cloud.automl.v1beta1;
 
 import "google/api/annotations.proto";
 import "google/cloud/automl/v1beta1/image.proto";
+import "google/cloud/automl/v1beta1/tables.proto";
 import "google/cloud/automl/v1beta1/text.proto";
 import "google/cloud/automl/v1beta1/translation.proto";
 import "google/cloud/automl/v1beta1/video.proto";
@@ -65,6 +66,9 @@ message Model {
 
     // Metadata for text extraction models.
     TextExtractionModelMetadata text_extraction_model_metadata = 19;
+
+    // Metadata for Tables models.
+    TablesModelMetadata tables_model_metadata = 24;
 
     // Metadata for text extraction models.
     TextSentimentModelMetadata text_sentiment_model_metadata = 22;

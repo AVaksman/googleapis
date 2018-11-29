@@ -19,10 +19,12 @@ package google.cloud.automl.v1beta1;
 
 import "google/api/annotations.proto";
 import "google/cloud/automl/v1beta1/annotation_payload.proto";
+import "google/cloud/automl/v1beta1/column_spec.proto";
 import "google/cloud/automl/v1beta1/dataset.proto";
 import "google/cloud/automl/v1beta1/io.proto";
 import "google/cloud/automl/v1beta1/model.proto";
 import "google/cloud/automl/v1beta1/model_evaluation.proto";
+import "google/cloud/automl/v1beta1/table_spec.proto";
 import "google/longrunning/operations.proto";
 import "google/protobuf/field_mask.proto";
 
@@ -66,6 +68,14 @@ service AutoMl {
     };
   }
 
+  // Updates a dataset.
+  rpc UpdateDataset(UpdateDatasetRequest) returns (Dataset) {
+    option (google.api.http) = {
+      patch: "/v1beta1/{dataset.name=projects/*/locations/*/datasets/*}"
+      body: "dataset"
+    };
+  }
+
   // Deletes a dataset and all of its contents.
   // Returns empty response in the
   // [response][google.longrunning.Operation.response] field when it completes,
@@ -78,7 +88,13 @@ service AutoMl {
   }
 
   // Imports data into a dataset.
-  // For Image Object Detection, Video Classification and Text Extraction this method can only be called on an empty Dataset.
+  // For Image Object Detection, Video Classification , Text Extraction and Tables this method can only be called on an empty
+  // Dataset.
+  //
+  // For Tables:
+  // *   A
+  // [schema_inference_version][google.cloud.automl.v1beta1.InputConfig.params]
+  //     parameter must be explicitly set.
   // Returns an empty response in the
   // [response][google.longrunning.Operation.response] field when it completes.
   rpc ImportData(ImportDataRequest) returns (google.longrunning.Operation) {
@@ -102,6 +118,50 @@ service AutoMl {
   rpc GetAnnotationSpec(GetAnnotationSpecRequest) returns (AnnotationSpec) {
     option (google.api.http) = {
       get: "/v1beta1/{name=projects/*/locations/*/datasets/*/annotationSpecs/*}"
+    };
+  }
+
+  // Gets a table spec.
+  rpc GetTableSpec(GetTableSpecRequest) returns (TableSpec) {
+    option (google.api.http) = {
+      get: "/v1beta1/{name=projects/*/locations/*/datasets/*/tableSpecs/*}"
+    };
+  }
+
+  // Lists table specs in a dataset.
+  rpc ListTableSpecs(ListTableSpecsRequest) returns (ListTableSpecsResponse) {
+    option (google.api.http) = {
+      get: "/v1beta1/{parent=projects/*/locations/*/datasets/*}/tableSpecs"
+    };
+  }
+
+  // Updates a table spec.
+  rpc UpdateTableSpec(UpdateTableSpecRequest) returns (TableSpec) {
+    option (google.api.http) = {
+      patch: "/v1beta1/{table_spec.name=projects/*/locations/*/datasets/*/tableSpecs/*}"
+      body: "table_spec"
+    };
+  }
+
+  // Gets a column spec.
+  rpc GetColumnSpec(GetColumnSpecRequest) returns (ColumnSpec) {
+    option (google.api.http) = {
+      get: "/v1beta1/{name=projects/*/locations/*/datasets/*/tableSpecs/*/columnSpecs/*}"
+    };
+  }
+
+  // Lists column specs in a table spec.
+  rpc ListColumnSpecs(ListColumnSpecsRequest) returns (ListColumnSpecsResponse) {
+    option (google.api.http) = {
+      get: "/v1beta1/{parent=projects/*/locations/*/datasets/*/tableSpecs/*}/columnSpecs"
+    };
+  }
+
+  // Updates a column spec.
+  rpc UpdateColumnSpec(UpdateColumnSpecRequest) returns (ColumnSpec) {
+    option (google.api.http) = {
+      patch: "/v1beta1/{column_spec.name=projects/*/locations/*/datasets/*/tableSpecs/*/columnSpecs/*}"
+      body: "column_spec"
     };
   }
 
@@ -242,6 +302,18 @@ message ListDatasetsResponse {
   string next_page_token = 2;
 }
 
+// Request message for [AutoMl.UpdateDataset][google.cloud.automl.v1beta1.AutoMl.UpdateDataset]
+message UpdateDatasetRequest {
+  // The dataset which replaces the resource on the server.
+  Dataset dataset = 1;
+
+  // The update mask applies to the resource. For the `FieldMask` definition,
+  // see
+  //
+  // https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
+  google.protobuf.FieldMask update_mask = 2;
+}
+
 // Request message for [AutoMl.DeleteDataset][google.cloud.automl.v1beta1.AutoMl.DeleteDataset].
 message DeleteDatasetRequest {
   // The resource name of the dataset to delete.
@@ -272,6 +344,116 @@ message ExportDataRequest {
 message GetAnnotationSpecRequest {
   // The resource name of the annotation spec to retrieve.
   string name = 1;
+}
+
+// Request message for [AutoMl.GetTableSpec][google.cloud.automl.v1beta1.AutoMl.GetTableSpec].
+message GetTableSpecRequest {
+  // The resource name of the table spec to retrieve.
+  string name = 1;
+
+  // Mask specifying which fields to read.
+  google.protobuf.FieldMask field_mask = 2;
+}
+
+// Request message for [AutoMl.ListTableSpecs][google.cloud.automl.v1beta1.AutoMl.ListTableSpecs].
+message ListTableSpecsRequest {
+  // The resource name of the dataset to list table specs from.
+  string parent = 1;
+
+  // Mask specifying which fields to read.
+  google.protobuf.FieldMask field_mask = 2;
+
+  // Filter expression, see go/filtering.
+  string filter = 3;
+
+  // Requested page size. The server can return fewer results than requested.
+  // If unspecified, the server will pick a default size.
+  int32 page_size = 4;
+
+  // A token identifying a page of results for the server to return.
+  // Typically obtained from the
+  // [ListTableSpecsResponse.next_page_token][google.cloud.automl.v1beta1.ListTableSpecsResponse.next_page_token] field of the previous
+  // [AutoMl.ListTableSpecs][google.cloud.automl.v1beta1.AutoMl.ListTableSpecs] call.
+  string page_token = 6;
+}
+
+// Response message for [AutoMl.ListTableSpecs][google.cloud.automl.v1beta1.AutoMl.ListTableSpecs].
+message ListTableSpecsResponse {
+  // The table specs read.
+  repeated TableSpec table_specs = 1;
+
+  // A token to retrieve next page of results.
+  // Pass to [ListTableSpecsRequest.page_token][google.cloud.automl.v1beta1.ListTableSpecsRequest.page_token] to obtain that page.
+  string next_page_token = 2;
+}
+
+// Request message for [AutoMl.UpdateTableSpec][google.cloud.automl.v1beta1.AutoMl.UpdateTableSpec]
+message UpdateTableSpecRequest {
+  // The table spec which replaces the resource on the server.
+  TableSpec table_spec = 1;
+
+  // The update mask applies to the resource. For the `FieldMask` definition,
+  // see
+  //
+  // https:
+  // //developers.google.com/protocol-buffers
+  // // /docs/reference/google.protobuf#fieldmask
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+// Request message for [AutoMl.GetColumnSpec][google.cloud.automl.v1beta1.AutoMl.GetColumnSpec].
+message GetColumnSpecRequest {
+  // The resource name of the column spec to retrieve.
+  string name = 1;
+
+  // Mask specifying which fields to read.
+  google.protobuf.FieldMask field_mask = 2;
+}
+
+// Request message for [AutoMl.ListColumnSpecs][google.cloud.automl.v1beta1.AutoMl.ListColumnSpecs].
+message ListColumnSpecsRequest {
+  // The resource name of the table spec to list column specs from.
+  string parent = 1;
+
+  // Mask specifying which fields to read.
+  google.protobuf.FieldMask field_mask = 2;
+
+  // Filter expression, see go/filtering.
+  string filter = 3;
+
+  // Requested page size. The server can return fewer results than requested.
+  // If unspecified, the server will pick a default size.
+  int32 page_size = 4;
+
+  // A token identifying a page of results for the server to return.
+  // Typically obtained from the
+  // [ListColumnSpecsResponse.next_page_token][google.cloud.automl.v1beta1.ListColumnSpecsResponse.next_page_token] field of the previous
+  // [AutoMl.ListColumnSpecs][google.cloud.automl.v1beta1.AutoMl.ListColumnSpecs] call.
+  string page_token = 6;
+}
+
+// Response message for [AutoMl.ListColumnSpecs][google.cloud.automl.v1beta1.AutoMl.ListColumnSpecs].
+message ListColumnSpecsResponse {
+  // The column specs read.
+  repeated ColumnSpec column_specs = 1;
+
+  // A token to retrieve next page of results.
+  // Pass to [ListColumnSpecsRequest.page_token][google.cloud.automl.v1beta1.ListColumnSpecsRequest.page_token] to obtain that page.
+  string next_page_token = 2;
+}
+
+// Request message for [AutoMl.UpdateColumnSpec][google.cloud.automl.v1beta1.AutoMl.UpdateColumnSpec]
+message UpdateColumnSpecRequest {
+  // The column spec which replaces the resource on the server.
+  ColumnSpec column_spec = 1;
+
+  // The update mask applies to the resource. For the `FieldMask` definition,
+  // see
+  //
+  // https:
+  // //developers.google.com/protocol-buffers
+  // // /docs/reference/google.protobuf#fieldmask
+  google.protobuf.FieldMask update_mask = 2;
 }
 
 // Request message for [AutoMl.CreateModel][google.cloud.automl.v1beta1.AutoMl.CreateModel].

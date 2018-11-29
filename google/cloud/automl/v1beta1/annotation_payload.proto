@@ -20,6 +20,7 @@ package google.cloud.automl.v1beta1;
 import "google/api/annotations.proto";
 import "google/cloud/automl/v1beta1/classification.proto";
 import "google/cloud/automl/v1beta1/detection.proto";
+import "google/cloud/automl/v1beta1/tables.proto";
 import "google/cloud/automl/v1beta1/text_extraction.proto";
 import "google/cloud/automl/v1beta1/text_sentiment.proto";
 import "google/cloud/automl/v1beta1/translation.proto";
@@ -54,6 +55,9 @@ message AnnotationPayload {
 
     // Annotation details for text sentiment.
     TextSentimentAnnotation text_sentiment = 7;
+
+    // Annotation details for Tables.
+    TablesAnnotation tables = 10;
   }
 
   // Output only . The resource ID of the annotation spec that

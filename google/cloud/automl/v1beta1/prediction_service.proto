@@ -87,6 +87,14 @@ message PredictRequest {
   //    `score_threshold` - (float) A value from 0.0 to 1.0. When the model
   //     makes predictions for an image, it will only produce results that have
   //     at least this confidence score. The default is 0.5.
+  //
+  //  *  For Image Object Detection:
+  //    `score_threshold` - (float) When Model detects objects on the image,
+  //        it will only produce bounding boxes which have at least this
+  //        confidence score. Value in 0 to 1 range, default is 0.5.
+  //    `max_bounding_box_count` - (int32) No more than this number of bounding
+  //        boxes will be returned in the response. Default is 100, the
+  //        requested value may be limited by server.
   map<string, string> params = 3;
 }
 
@@ -97,6 +105,20 @@ message PredictResponse {
   repeated AnnotationPayload payload = 1;
 
   // Additional domain-specific prediction response metadata.
+  //
+  // * For Image Object Detection:
+  //  `max_bounding_box_count` - (int64) At most that many bounding boxes per
+  //      image could had been returned.
+  //
+  // * For Text Sentiment:
+  //  `sentiment_score` - (float, deprecated) A value between -1 and 1,
+  //      -1 maps to least positive sentiment, while 1 maps to the most positive
+  //      one and the higher the score, the more positive the sentiment in the
+  //      document is. Yet these values are relative to the training data, so
+  //      e.g. if all data was positive then -1 will be also positive (though
+  //      the least).
+  //      The sentiment_score shouldn't be confused with "score" or "magnitude"
+  //      from the previous Natural Language Sentiment Analysis API.
   map<string, string> metadata = 2;
 }
 
@@ -114,7 +136,6 @@ message BatchPredictRequest {
 
   // Additional domain-specific parameters for the predictions, any string must
   // be up to 25000 characters long.
-  //
   // *  For Video Classification (see
   //    [Annotating videos](/video-intelligence/automl/docs/predict)
   //    for more details):
