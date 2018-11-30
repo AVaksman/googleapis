@@ -22,6 +22,7 @@ import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "google/spanner/admin/database/v1/common.proto";
 
+option csharp_namespace = "Google.Cloud.Spanner.Admin.Database.V1";
 option go_package = "google.golang.org/genproto/googleapis/spanner/admin/database/v1;database";
 option java_package = "com.google.spanner.admin.database.v1";
 option java_multiple_files = true;
