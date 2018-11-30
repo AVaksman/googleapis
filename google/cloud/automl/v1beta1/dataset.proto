@@ -74,6 +74,10 @@ message Dataset {
   // (_), and ASCII digits 0-9.
   string display_name = 2;
 
+  // User-provided description of the dataset. The description can be up to
+  // 25000 characters long.
+  string description = 3;
+
   // Output only. The number of examples in the dataset.
   int32 example_count = 21;
 
