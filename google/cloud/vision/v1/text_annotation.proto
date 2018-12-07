@@ -1,4 +1,4 @@
-// Copyright 2018 Google Inc.
+// Copyright 2018 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
 
 syntax = "proto3";
 
@@ -24,15 +25,16 @@ option go_package = "google.golang.org/genproto/googleapis/cloud/vision/v1;visio
 option java_multiple_files = true;
 option java_outer_classname = "TextAnnotationProto";
 option java_package = "com.google.cloud.vision.v1";
+option objc_class_prefix = "GCVN";
+
 
 // TextAnnotation contains a structured representation of OCR extracted text.
 // The hierarchy of an OCR extracted text structure is like this:
 //     TextAnnotation -> Page -> Block -> Paragraph -> Word -> Symbol
 // Each structural component, starting from Page, may further have their own
 // properties. Properties describe detected languages, breaks etc.. Please refer
-// to the
-// [TextAnnotation.TextProperty][google.cloud.vision.v1.TextAnnotation.TextProperty]
-// message definition below for more detail.
+// to the [TextAnnotation.TextProperty][google.cloud.vision.v1.TextAnnotation.TextProperty] message definition below for more
+// detail.
 message TextAnnotation {
   // Detected language for a structural component.
   message DetectedLanguage {
@@ -97,10 +99,12 @@ message Page {
   // Additional information detected on the page.
   TextAnnotation.TextProperty property = 1;
 
-  // Page width in pixels.
+  // Page width. For PDFs the unit is points. For images (including
+  // TIFFs) the unit is pixels.
   int32 width = 2;
 
-  // Page height in pixels.
+  // Page height. For PDFs the unit is points. For images (including
+  // TIFFs) the unit is pixels.
   int32 height = 3;
 
   // List of blocks of text, images etc on this page.
@@ -108,6 +112,10 @@ message Page {
 
   // Confidence of the OCR results on the page. Range [0, 1].
   float confidence = 5;
+
+  // All UTF-8 text detected in this page. This field is by default not
+  // returned unless specified in TextDetectionParams.page_filter.
+  string merged_text = 6;
 }
 
 // Logical element on the page.
@@ -155,7 +163,7 @@ message Block {
   //         |    |
   //         1----0
   //
-  //   and the vertice order will still be (0, 1, 2, 3).
+  //   and the vertex order will still be (0, 1, 2, 3).
   BoundingPoly bounding_box = 2;
 
   // List of paragraphs in this block (if this blocks is of type text).
@@ -166,6 +174,16 @@ message Block {
 
   // Confidence of the OCR results on the block. Range [0, 1].
   float confidence = 5;
+
+  // Detected table for TABLE block_type. This field is by default not returned
+  // unless enabled via TextDetectionParams.table_detection_options. The
+  // `bounding_box` for this Block will be the detected boundaries for this
+  // table.
+  Table table = 6;
+
+  // All UTF-8 text detected in this block. This field is by default not
+  // returned unless specified in TextDetectionParams.block_filter.
+  string merged_text = 7;
 }
 
 // Structural unit of text representing a number of words in certain order.
@@ -187,7 +205,7 @@ message Paragraph {
   //      2----3
   //      |    |
   //      1----0
-  //   and the vertice order will still be (0, 1, 2, 3).
+  //   and the vertex order will still be (0, 1, 2, 3).
   BoundingPoly bounding_box = 2;
 
   // List of words in this paragraph.
@@ -195,6 +213,11 @@ message Paragraph {
 
   // Confidence of the OCR results for the paragraph. Range [0, 1].
   float confidence = 4;
+
+  // All UTF-8 text detected in this paragraph. This field is by default not
+  // returned unless specified in
+  // TextDetectionParams.paragraph_filter.
+  string merged_text = 5;
 }
 
 // A word representation.
@@ -216,7 +239,7 @@ message Word {
   //      2----3
   //      |    |
   //      1----0
-  //   and the vertice order will still be (0, 1, 2, 3).
+  //   and the vertex order will still be (0, 1, 2, 3).
   BoundingPoly bounding_box = 2;
 
   // List of symbols in the word.
@@ -225,6 +248,10 @@ message Word {
 
   // Confidence of the OCR results for the word. Range [0, 1].
   float confidence = 4;
+
+  // All UTF-8 text detected in this word. This field is by default not
+  // returned unless specified in TextDetectionParams.word_filter.
+  string merged_text = 5;
 }
 
 // A single symbol representation.
@@ -254,4 +281,37 @@ message Symbol {
 
   // Confidence of the OCR results for the symbol. Range [0, 1].
   float confidence = 4;
+}
+
+// A table representation similar to HTML table structure.
+message Table {
+  // A cell representation inside of tables.
+  message TableCell {
+    // How many rows this cell spans.
+    int32 row_span = 1;
+
+    // How many columns this cell spans.
+    int32 col_span = 2;
+
+    // Deeper structural information about the contents of the cell if it
+    // contains deeper structures such as inner tables. This field is not set
+    // for simple cells with no such structures.
+    Block structured_text = 3;
+
+    // The merged text value of this cell, omitting any deeper structural
+    // information unlike `structured_text`. This is useful for simple cells.
+    string merged_text = 4;
+  }
+
+  // A row of table cells.
+  message TableRow {
+    // Cells that make up this row.
+    repeated TableCell cells = 1;
+  }
+
+  // Header rows of the table
+  repeated TableRow header_rows = 2;
+
+  // Body rows of the table
+  repeated TableRow body_rows = 3;
 }
