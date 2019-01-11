@@ -70,9 +70,7 @@ interfaces:
   #       message.
   #   required_fields - Fields that are always required for a request to be
   #       valid.
-  #   request_object_method - Turns on or off the generation of a method whose
-  #       sole parameter is a request object. Not all languages will generate
-  #       this method.
+  #
   #   page_streaming - Specifies the configuration for paging.
   #       Describes information for generating a method which transforms a
   #       paging list RPC into a stream of resources.
@@ -107,7 +105,6 @@ interfaces:
         - parent
     required_fields:
     - parent
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -121,7 +118,6 @@ interfaces:
         - parent
     required_fields:
     - parent
-    request_object_method: true
     page_streaming:
       request:
         page_size_field: page_size
@@ -142,7 +138,6 @@ interfaces:
         - parent
     required_fields:
     - parent
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -165,7 +160,6 @@ interfaces:
         - parent
     required_fields:
     - parent
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -184,7 +178,6 @@ interfaces:
   - name: ImportAgent
     required_fields:
     - parent
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -203,7 +196,6 @@ interfaces:
   - name: RestoreAgent
     required_fields:
     - parent
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -271,9 +263,7 @@ interfaces:
   #       message.
   #   required_fields - Fields that are always required for a request to be
   #       valid.
-  #   request_object_method - Turns on or off the generation of a method whose
-  #       sole parameter is a request object. Not all languages will generate
-  #       this method.
+  #
   #   page_streaming - Specifies the configuration for paging.
   #       Describes information for generating a method which transforms a
   #       paging list RPC into a stream of resources.
@@ -308,7 +298,6 @@ interfaces:
         - parent
     required_fields:
     - parent
-    request_object_method: true
     page_streaming:
       request:
         page_size_field: page_size
@@ -329,7 +318,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -345,7 +333,6 @@ interfaces:
     required_fields:
     - parent
     - context
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -359,7 +346,6 @@ interfaces:
         - context
     required_fields:
     - context
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -373,7 +359,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -387,7 +372,6 @@ interfaces:
         - parent
     required_fields:
     - parent
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -442,9 +426,7 @@ interfaces:
   #       message.
   #   required_fields - Fields that are always required for a request to be
   #       valid.
-  #   request_object_method - Turns on or off the generation of a method whose
-  #       sole parameter is a request object. Not all languages will generate
-  #       this method.
+  #
   #   page_streaming - Specifies the configuration for paging.
   #       Describes information for generating a method which transforms a
   #       paging list RPC into a stream of resources.
@@ -482,7 +464,6 @@ interfaces:
         - language_code
     required_fields:
     - parent
-    request_object_method: true
     page_streaming:
       request:
         page_size_field: page_size
@@ -506,7 +487,6 @@ interfaces:
         - language_code
     required_fields:
     - name
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -526,7 +506,6 @@ interfaces:
     required_fields:
     - parent
     - entity_type
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -543,7 +522,6 @@ interfaces:
         - language_code
     required_fields:
     - entity_type
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -557,7 +535,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -567,7 +544,6 @@ interfaces:
   - name: BatchUpdateEntityTypes
     required_fields:
     - parent
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -592,7 +568,6 @@ interfaces:
     required_fields:
     - parent
     - entity_type_names
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -621,7 +596,6 @@ interfaces:
     required_fields:
     - parent
     - entities
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -650,7 +624,6 @@ interfaces:
     required_fields:
     - parent
     - entities
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -679,7 +652,6 @@ interfaces:
     required_fields:
     - parent
     - entity_values
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -743,9 +715,7 @@ interfaces:
   #       message.
   #   required_fields - Fields that are always required for a request to be
   #       valid.
-  #   request_object_method - Turns on or off the generation of a method whose
-  #       sole parameter is a request object. Not all languages will generate
-  #       this method.
+  #
   #   page_streaming - Specifies the configuration for paging.
   #       Describes information for generating a method which transforms a
   #       paging list RPC into a stream of resources.
@@ -783,7 +753,6 @@ interfaces:
         - language_code
     required_fields:
     - parent
-    request_object_method: true
     page_streaming:
       request:
         page_size_field: page_size
@@ -807,7 +776,6 @@ interfaces:
         - language_code
     required_fields:
     - name
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -827,7 +795,6 @@ interfaces:
     required_fields:
     - parent
     - intent
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -847,7 +814,6 @@ interfaces:
     required_fields:
     - intent
     - language_code
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -861,7 +827,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -872,7 +837,6 @@ interfaces:
     required_fields:
     - parent
     - language_code
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -897,7 +861,6 @@ interfaces:
     required_fields:
     - parent
     - intents
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -965,9 +928,7 @@ interfaces:
   #       message.
   #   required_fields - Fields that are always required for a request to be
   #       valid.
-  #   request_object_method - Turns on or off the generation of a method whose
-  #       sole parameter is a request object. Not all languages will generate
-  #       this method.
+  #
   #   page_streaming - Specifies the configuration for paging.
   #       Describes information for generating a method which transforms a
   #       paging list RPC into a stream of resources.
@@ -1002,7 +963,6 @@ interfaces:
         - parent
     required_fields:
     - parent
-    request_object_method: true
     page_streaming:
       request:
         page_size_field: page_size
@@ -1023,7 +983,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -1039,7 +998,6 @@ interfaces:
     required_fields:
     - parent
     - session_entity_type
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -1053,7 +1011,6 @@ interfaces:
         - session_entity_type
     required_fields:
     - session_entity_type
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -1067,7 +1024,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -1122,9 +1078,7 @@ interfaces:
   #       message.
   #   required_fields - Fields that are always required for a request to be
   #       valid.
-  #   request_object_method - Turns on or off the generation of a method whose
-  #       sole parameter is a request object. Not all languages will generate
-  #       this method.
+  #
   #   page_streaming - Specifies the configuration for paging.
   #       Describes information for generating a method which transforms a
   #       paging list RPC into a stream of resources.
@@ -1161,7 +1115,6 @@ interfaces:
     required_fields:
     - session
     - query_input
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -1172,7 +1125,6 @@ interfaces:
     required_fields:
     - session
     - query_input
-    request_object_method: false
     retry_codes_name: non_idempotent
     retry_params_name: default
     timeout_millis: 220000
@@ -1227,10 +1179,6 @@ interfaces:
   #   required_fields - Fields that are always required for a request to be
   #   valid.
   #
-  #   request_object_method - Turns on or off the generation of a method whose
-  #   sole parameter is a request object. Not all languages will generate this
-  #   method.
-  #
   #   resource_name_treatment - An enum that specifies how to treat the resource
   #   name formats defined in the field_name_patterns and
   #   response_field_name_patterns fields.
@@ -1277,7 +1225,6 @@ interfaces:
         - parent
     required_fields:
     - parent
-    request_object_method: true
     page_streaming:
       request:
         page_size_field: page_size
@@ -1298,7 +1245,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -1314,7 +1260,6 @@ interfaces:
     required_fields:
     - parent
     - knowledge_base
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -1328,7 +1273,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -1386,10 +1330,6 @@ interfaces:
   #   required_fields - Fields that are always required for a request to be
   #   valid.
   #
-  #   request_object_method - Turns on or off the generation of a method whose
-  #   sole parameter is a request object. Not all languages will generate this
-  #   method.
-  #
   #   resource_name_treatment - An enum that specifies how to treat the resource
   #   name formats defined in the field_name_patterns and
   #   response_field_name_patterns fields.
@@ -1436,7 +1376,6 @@ interfaces:
         - parent
     required_fields:
     - parent
-    request_object_method: true
     page_streaming:
       request:
         page_size_field: page_size
@@ -1457,7 +1396,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -1473,7 +1411,6 @@ interfaces:
     required_fields:
     - parent
     - document
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -1496,7 +1433,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:

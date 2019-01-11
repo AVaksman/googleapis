@@ -73,10 +73,6 @@ interfaces:
   #   required_fields - Fields that are always required for a request to be
   #   valid.
   #
-  #   request_object_method - Turns on or off the generation of a method whose
-  #   sole parameter is a request object. Not all languages will generate this
-  #   method.
-  #
   #   resource_name_treatment - An enum that specifies how to treat the resource
   #   name formats defined in the field_name_patterns and
   #   response_field_name_patterns fields.
@@ -119,7 +115,6 @@ interfaces:
   - name: SearchAssets
     required_fields:
     - org_name
-    request_object_method: true
     page_streaming:
       request:
         page_size_field: page_size
@@ -141,7 +136,6 @@ interfaces:
     required_fields:
     - org_name
     - id
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -150,7 +144,6 @@ interfaces:
   - name: SearchFindings
     required_fields:
     - org_name
-    request_object_method: true
     page_streaming:
       request:
         page_size_field: page_size
@@ -172,7 +165,6 @@ interfaces:
     required_fields:
     - org_name
     - source_finding
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -187,7 +179,6 @@ interfaces:
     required_fields:
     - org_name
     - id
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:

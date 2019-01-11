@@ -63,7 +63,6 @@ interfaces:
     - instance_id
     - instance
     - clusters
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -84,7 +83,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     resource_name_treatment: STATIC_TYPES
     retry_codes_name: idempotent
     retry_params_name: default
@@ -98,7 +96,6 @@ interfaces:
         - parent
     required_fields:
     - parent
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -116,7 +113,6 @@ interfaces:
     - name
     - display_name
     - type
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -130,7 +126,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -148,7 +143,6 @@ interfaces:
     - parent
     - cluster_id
     - cluster
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -169,7 +163,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -183,7 +176,6 @@ interfaces:
         - parent
     required_fields:
     - parent
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -199,7 +191,6 @@ interfaces:
     required_fields:
     - name
     - serve_nodes
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -220,7 +211,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -264,7 +254,6 @@ interfaces:
     - parent
     - table_id
     - table
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -278,7 +267,6 @@ interfaces:
         - parent
     required_fields:
     - parent
-    request_object_method: false
     page_streaming:
       request:
         token_field: page_token
@@ -298,7 +286,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -312,7 +299,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -328,7 +314,6 @@ interfaces:
     required_fields:
     - name
     - modifications
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -338,7 +323,6 @@ interfaces:
   - name: DropRowRange
     required_fields:
     - name
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:

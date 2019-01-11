@@ -54,7 +54,6 @@ interfaces:
         - requests
     required_fields:
     - requests
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     timeout_millis: 60000
@@ -65,7 +64,6 @@ interfaces:
         - requests
     required_fields:
     - requests
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     timeout_millis: 60000
@@ -83,7 +81,6 @@ interfaces:
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 45000
       total_poll_timeout_millis: 86400000
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     timeout_millis: 60000
@@ -101,7 +98,6 @@ interfaces:
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 45000
       total_poll_timeout_millis: 86400000
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     timeout_millis: 60000
@@ -142,7 +138,6 @@ interfaces:
     required_fields:
     - parent
     - product
-    request_object_method: true
     resource_name_treatment: STATIC_TYPES
     retry_codes_name: non_idempotent
     retry_params_name: default
@@ -156,7 +151,6 @@ interfaces:
         - parent
     required_fields:
     - parent
-    request_object_method: true
     resource_name_treatment: STATIC_TYPES
     page_streaming:
       request:
@@ -177,7 +171,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     resource_name_treatment: STATIC_TYPES
     retry_codes_name: idempotent
     retry_params_name: default
@@ -192,7 +185,6 @@ interfaces:
         - update_mask
     required_fields:
     - product
-    request_object_method: true
     resource_name_treatment: STATIC_TYPES
     retry_codes_name: idempotent
     retry_params_name: default
@@ -206,7 +198,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     resource_name_treatment: STATIC_TYPES
     retry_codes_name: idempotent
     retry_params_name: default
@@ -220,7 +211,6 @@ interfaces:
         - parent
     required_fields:
     - parent
-    request_object_method: true
     resource_name_treatment: STATIC_TYPES
     page_streaming:
       request:
@@ -241,7 +231,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     resource_name_treatment: STATIC_TYPES
     retry_codes_name: idempotent
     retry_params_name: default
@@ -255,7 +244,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     resource_name_treatment: STATIC_TYPES
     retry_codes_name: idempotent
     retry_params_name: default
@@ -272,7 +260,6 @@ interfaces:
     required_fields:
     - parent
     - reference_image
-    request_object_method: true
     resource_name_treatment: STATIC_TYPES
     retry_codes_name: non_idempotent
     retry_params_name: default
@@ -289,7 +276,6 @@ interfaces:
     required_fields:
     - parent
     - product_set
-    request_object_method: true
     resource_name_treatment: STATIC_TYPES
     retry_codes_name: non_idempotent
     retry_params_name: default
@@ -303,7 +289,6 @@ interfaces:
         - parent
     required_fields:
     - parent
-    request_object_method: true
     resource_name_treatment: STATIC_TYPES
     page_streaming:
       request:
@@ -324,7 +309,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     resource_name_treatment: STATIC_TYPES
     retry_codes_name: idempotent
     retry_params_name: default
@@ -339,7 +323,6 @@ interfaces:
         - update_mask
     required_fields:
     - product_set
-    request_object_method: true
     resource_name_treatment: STATIC_TYPES
     retry_codes_name: idempotent
     retry_params_name: default
@@ -353,7 +336,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     resource_name_treatment: STATIC_TYPES
     retry_codes_name: idempotent
     retry_params_name: default
@@ -369,7 +351,6 @@ interfaces:
     required_fields:
     - name
     - product
-    request_object_method: true
     resource_name_treatment: STATIC_TYPES
     retry_codes_name: idempotent
     retry_params_name: default
@@ -385,7 +366,6 @@ interfaces:
     required_fields:
     - name
     - product
-    request_object_method: true
     resource_name_treatment: STATIC_TYPES
     retry_codes_name: idempotent
     retry_params_name: default
@@ -399,7 +379,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: true
     resource_name_treatment: STATIC_TYPES
     page_streaming:
       request:
@@ -429,7 +408,6 @@ interfaces:
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 45000
       total_poll_timeout_millis: 86400000
-    request_object_method: true
     resource_name_treatment: STATIC_TYPES
     retry_codes_name: non_idempotent
     retry_params_name: default

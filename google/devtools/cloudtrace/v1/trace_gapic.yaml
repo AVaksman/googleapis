@@ -55,7 +55,6 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     timeout_millis: 30000
-    request_object_method: true
   - name: GetTrace
     flattening:
       groups:
@@ -68,7 +67,6 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     timeout_millis: 30000
-    request_object_method: false
   - name: ListTraces
     page_streaming:
       request:
@@ -85,4 +83,3 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     timeout_millis: 30000
-    request_object_method: true

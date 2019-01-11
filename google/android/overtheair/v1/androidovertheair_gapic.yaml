@@ -80,9 +80,7 @@ interfaces:
   #       message.
   #   required_fields - Fields that are always required for a request to be
   #       valid.
-  #   request_object_method - Turns on or off the generation of a method whose
-  #       sole parameter is a request object. Not all languages will generate
-  #       this method.
+  #
   #   page_streaming - Specifies the configuration for paging.
   #       Describes information for generating a method which transforms a
   #       paging list RPC into a stream of resources.
@@ -118,7 +116,6 @@ interfaces:
         - view
     required_fields:
     - name
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -130,7 +127,6 @@ interfaces:
       - parameters:
         - view
     required_fields:
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     timeout_millis: 60000
@@ -145,7 +141,6 @@ interfaces:
     - name
     - deployment
     - version_tag
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -159,7 +154,6 @@ interfaces:
         - view
     required_fields:
     - name
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -173,7 +167,6 @@ interfaces:
         - view
     required_fields:
     - name
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -186,7 +179,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -203,7 +195,6 @@ interfaces:
     - name
     - package_obj
     - version_tag
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -218,7 +209,6 @@ interfaces:
     required_fields:
     - name
     - config
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -232,7 +222,6 @@ interfaces:
         - view
     required_fields:
     - name
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -246,7 +235,6 @@ interfaces:
         - view
     required_fields:
     - name
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -259,7 +247,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -276,7 +263,6 @@ interfaces:
     - name
     - config
     - version_tag
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -291,7 +277,6 @@ interfaces:
     required_fields:
     - name
     - group
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -305,7 +290,6 @@ interfaces:
         - view
     required_fields:
     - name
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -319,7 +303,6 @@ interfaces:
         - view
     required_fields:
     - name
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -332,7 +315,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -349,7 +331,6 @@ interfaces:
     - name
     - group
     - version_tag
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -364,7 +345,6 @@ interfaces:
     required_fields:
     - name
     - group_names
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -379,7 +359,6 @@ interfaces:
     required_fields:
     - name
     - group_names
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -394,7 +373,6 @@ interfaces:
     required_fields:
     - name
     - group_member
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -409,7 +387,6 @@ interfaces:
     required_fields:
     - name
     - group_members
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -423,7 +400,6 @@ interfaces:
         - view
     required_fields:
     - name
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -436,7 +412,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -449,7 +424,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -464,7 +438,6 @@ interfaces:
     required_fields:
     - name
     - group_members
-    request_object_method: true
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -478,7 +451,6 @@ interfaces:
         - options
     required_fields:
     - name
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -493,7 +465,6 @@ interfaces:
         - view
     required_fields:
     - name
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -506,7 +477,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -523,7 +493,6 @@ interfaces:
     - name
     - config_names
     - version_tag
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -536,7 +505,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -549,7 +517,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -564,7 +531,6 @@ interfaces:
     required_fields:
     - name
     - package_configs
-    request_object_method: true
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
@@ -577,7 +543,6 @@ interfaces:
         - name
     required_fields:
     - name
-    request_object_method: false
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
