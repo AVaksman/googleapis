@@ -1,0 +1,29 @@
+type: google.api.Service
+config_version: 3
+name: datacatalog.googleapis.com
+title: Cloud DataCatalog API
+
+apis:
+- name: google.cloud.datacatalog.v1beta1.DataCatalog
+
+documentation:
+  summary: |-
+    DataCatalog APIs provides features to attach metadata to Google Cloud
+    Platform resources like Bigquery Tables.<br> Key critical resources include
+    -<br> - Entries  (Datahub representation of a cloud resource)<br> - Tag
+    Templates (Definition of columns and value types for attaching metadata)<br>
+    - Tags (Values associated with Tag templates and attached to Entries.)<br>
+    Datahub also provides rich search functionality to search resources for
+    Entries and tags.
+  overview: |-
+    DataCatalog is a centralized and unified data catalog service for all your
+    Cloud resources, where users and systems can discover data, explore and
+    curate its semantics, understand how to act on it, and help govern its
+    usage.
+
+authentication:
+  rules:
+  - selector: '*'
+    oauth:
+      canonical_scopes: |-
+        https://www.googleapis.com/auth/cloud-platform
