@@ -27,7 +27,11 @@ option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 
 
 // A contiguous part of a text (string), assuming it has an UTF-8 NFC encoding.
+// .
 message TextSegment {
+  // Output only. The content of the TextSegment.
+  string content = 3;
+
   // Required. Zero-based character index of the first character of the text
   // segment (counting characters from the beginning of the text).
   int64 start_offset = 1;

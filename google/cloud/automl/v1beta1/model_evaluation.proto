@@ -36,7 +36,10 @@ option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 message ModelEvaluation {
   // Output only. Problem type specific evaluation metrics.
   oneof metrics {
-    // Model evaluation metrics for image, text and video classification.
+    // Model evaluation metrics for image, text, video and tables
+    // classification.
+    // Tables problem is considered a classification when the target column
+    // has either CATEGORY or ARRAY(CATEGORY) DataType.
     ClassificationEvaluationMetrics classification_evaluation_metrics = 8;
 
     // Model evaluation metrics for translation.
@@ -62,6 +65,9 @@ message ModelEvaluation {
   // Output only.
   // The ID of the annotation spec that the model evaluation applies to. The
   // The ID is empty for the overall model evaluation.
+  // For Tables classification these are the distinct values of the target
+  // column at the moment of the evaluation; for this problem annotation specs
+  // in the dataset do not exist.
   // NOTE: Currently there is no way to obtain the display_name of the
   // annotation spec from its ID. To see the display_names, review the model
   // evaluations in the UI.
@@ -79,6 +85,15 @@ message ModelEvaluation {
   // Timestamp when this model evaluation was created.
   google.protobuf.Timestamp create_time = 5;
 
-  // Output only. The number of examples used for model evaluation.
+  // Output only.
+  // The number of examples used for model evaluation, i.e. for
+  // which ground truth from time of model creation is compared against the
+  // predicted annotations created by the model.
+  // For overall ModelEvaluation (i.e. with annotation_spec_id not set) this is
+  // the total number of all examples used for evaluation.
+  // Otherwise, this is the count of examples that according to the ground
+  // truth were annotated by the
+  //
+  // [annotation_spec_id][google.cloud.automl.v1beta1.ModelEvaluation.annotation_spec_id].
   int32 evaluated_example_count = 6;
 }

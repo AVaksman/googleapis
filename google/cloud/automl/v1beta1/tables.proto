@@ -19,7 +19,9 @@ package google.cloud.automl.v1beta1;
 
 import "google/api/annotations.proto";
 import "google/cloud/automl/v1beta1/column_spec.proto";
+import "google/cloud/automl/v1beta1/data_stats.proto";
 import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;automl";
 option java_multiple_files = true;
@@ -40,7 +42,7 @@ message TablesDatasetMetadata {
   // * ARRAY(CATEGORY)
   // * FLOAT64
   // Furthermore, if the type is CATEGORY or ARRAY(CATEGORY), then only up to
-  // 25 unique values may exist in that column across all rows, but for
+  // 40 unique values may exist in that column across all rows, but for
   // ARRAY(CATEGORY) unique values are counted as elements of the ARRAY (i.e.
   // following 3 ARRAY-s: [A, B], [A], [B] are counted as having 2 unique
   // values).
@@ -74,6 +76,25 @@ message TablesDatasetMetadata {
   // NOTE: Updates of this field will instantly affect any other users
   // concurrently working with the dataset.
   string ml_use_column_spec_id = 4;
+
+  // Output only. Correlations between
+  //
+  // [target_column][google.cloud.automl.v1beta1.TablesDatasetMetadata.target_column],
+  // and other columns of the
+  //
+  // [primary_table][google.cloud.automl.v1beta1.TablesDatasetMetadata.primary_table_spec_id].
+  // Only set if the target column is set. Mapping from other column spec id to
+  // its CorrelationStats with the target column.
+  // This field may be stale, see the stats_update_time field for
+  // for the timestamp at which these stats were last updated.
+  map<string, CorrelationStats> target_column_correlations = 6;
+
+  // The most recent timestamp when target_column_correlations field and all
+  // descendant ColumnSpec.data_stats and ColumnSpec.top_correlated_columns
+  // fields were last (re-)generated. Any changes that happened to the dataset
+  // afterwards are not reflected in these fields values. The regeneration
+  // happens in the background on a best effort basis.
+  google.protobuf.Timestamp stats_update_time = 7;
 }
 
 // Model metadata specific to AutoML Tables.
@@ -81,10 +102,10 @@ message TablesModelMetadata {
   // Column spec of the dataset's primary table's column the model is
   // predicting. Snapshotted when model creation started.
   // Only 3 fields are used:
-  // column_spec_id - May be set on CreateModel, if it's not then the current
-  //                  target_column_spec_id of the dataset the model is trained
-  //                  from is used.
-  //                  If neither is set, CreateModel will error.
+  // name - May be set on CreateModel, if it's not then the ColumnSpec
+  //        corresponding to the current target_column_spec_id of the dataset
+  //        the model is trained from is used.
+  //        If neither is set, CreateModel will error.
   // display_name - Output only.
   // data_type - Output only.
   ColumnSpec target_column_spec = 2;
@@ -102,10 +123,9 @@ message TablesModelMetadata {
   // [ml_use_column][google.cloud.automl.v1beta1.TablesDatasetMetadata.ml_use_column_spec_id]
   // must never be included here.
   // Only 3 fields are used:
-  // column_spec_id - May be set on CreateModel, if set only the columns
-  //                 specified are used, otherwise all  primary table's columns
-  //                 (except the ones listed above) are used for the training
-  //                 and prediction input.
+  // name - May be set on CreateModel, if set only the columns specified are
+  //        used, otherwise all primary table's columns (except the ones listed
+  //        above) are used for the training and prediction input.
   // display_name - Output only.
   // data_type - Output only.
   repeated ColumnSpec input_feature_column_specs = 3;

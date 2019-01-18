@@ -52,6 +52,7 @@ option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 //           TRAIN,gs://folder/image1.png,bike,.7,.6,,,.8,.9,,
 //           TEST,gs://folder/im2.png,car,0.1,0.1,0.2,0.1,0.2,0.3,0.1,0.3
 //
+//
 //  *  For Video Classification:
 //         CSV file(s) with each line in format:
 //           ML_USE,GCS_FILE_PATH
@@ -78,26 +79,31 @@ option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 //  *  For Text Extraction:
 //         CSV file(s) with each line in format:
 //           ML_USE,GCS_FILE_PATH
-//           GCS_FILE_PATH leads to a .JSONL (i.e. JSON Lines) file.
-//           A .JSONL file contains, per line, a proto that wraps a TextSnippet
-//           proto (in json representation) followed by one or more
-//           AnnotationPayload protos (called annotations), which have
-//           display_name and text_extraction detail populated.
-//           Given text is expected to be annotated exhaustively, e.g. if you
-//           look for animals and text contains "dolphin" that is not labeled,
-//           then "dolphin" will be assumed to not be an animal.
-//           Any given text snippet content must have 30,000 characters or less,
-//           and also be UTF-8 NFC encoded (ASCII already is). Any given
-//           .JSONL file must be 100MB or smaller.
+//           GCS_FILE_PATH leads to a .JSONL (i.e. JSON Lines) file which either
+//           imports text in-line or as documents.
+//           The in-line .JSONL file contains, per line, a proto that wraps a
+//             TextSnippet proto (in json representation) followed by one or
+//             more AnnotationPayload protos (called annotations), which have
+//             display_name and text_extraction detail populated.
+//             Given text is expected to be annotated exhaustively, e.g. if you
+//             look for animals and text contains "dolphin" that is not labeled,
+//             then "dolphin" will be assumed to not be an animal.
+//             Any given text snippet content must have 30,000 characters or
+//             less, and also be UTF-8 NFC encoded (ASCII already is).
+//           The document .JSONL file contains, per line, a proto that wraps a
+//             Document proto with input_config set. Only PDF documents are
+//             supported now, and each document must be up to 2MB large.
+//             Currently annotations on documents cannot be specified at import.
+//           Any given .JSONL file must be 100MB or smaller.
 //         Three sample CSV rows:
 //           TRAIN,gs://folder/file1.jsonl
 //           VALIDATE,gs://folder/file2.jsonl
 //           TEST,gs://folder/file3.jsonl
-//         Sample JSON Lines file (presented here with artificial line breaks,
-//         but the only actual line break is denoted by \n).:
+//         Sample in-line JSON Lines file (presented here with artificial line
+//         breaks, but the only actual line break is denoted by \n).:
 //           {
 //             "text_snippet": {
-//               "content" : "dog car cat"
+//               "content": "dog car cat"
 //             },
 //             "annotations": [
 //                {
@@ -122,7 +128,7 @@ option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 //           }\n
 //           {
 //              "text_snippet": {
-//                "content" : "This dog is good."
+//                "content": "This dog is good."
 //              },
 //              "annotations": [
 //                 {
@@ -132,6 +138,24 @@ option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 //                   }
 //                 }
 //              ]
+//           }
+//         Sample document JSON Lines file (presented here with artificial line
+//         breaks, but the only actual line break is denoted by \n).:
+//           {
+//             "document": {
+//               "input_config": {
+//                 "gcs_source": { "input_uris": [ "gs://folder/document1.pdf" ]
+//                 }
+//               }
+//             }
+//           }\n
+//           {
+//             "document": {
+//               "input_config": {
+//                 "gcs_source": { "input_uris": [ "gs://folder/document2.pdf" ]
+//                 }
+//               }
+//             }
 //           }
 //
 //  *  For Text Sentiment:
@@ -205,7 +229,7 @@ option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 message InputConfig {
   // Required. The source of the input.
   oneof source {
-    // The GCS location for the input content.
+    // The Google Cloud Storage location for the input content.
     GcsSource gcs_source = 1;
 
     // The BigQuery location for the input content.
@@ -267,10 +291,10 @@ message InputConfig {
 //  per-row failures, up to a certain count cap, will be listed in
 //  Operation.metadata.partial_failures.
 //
-message BatchPredictionInputConfig {
+message BatchPredictInputConfig {
   // Required. The source of the input.
   oneof source {
-    // The GCS location for the input content.
+    // The Google Cloud Storage location for the input content.
     GcsSource gcs_source = 1;
 
     // The BigQuery location for the input content.
@@ -282,7 +306,7 @@ message BatchPredictionInputConfig {
 message OutputConfig {
   // Required. The destination of the output.
   oneof destination {
-    // The GCS location where the output must be written to.
+    // The Google Cloud Storage location where the output must be written to.
     GcsDestination gcs_destination = 1;
   }
 }
@@ -294,7 +318,6 @@ message OutputConfig {
 // "prediction-<model-display-name>-<timestamp-of-prediction-call>",
 // where timestamp is in YYYY-MM-DDThh:mm:ss.sssZ ISO-8601 format. The contents
 // of it depend on the ML problem the predictions are made for.
-//
 //
 //  *  For Video Classification:
 //         In the created directory a video_classification.csv file, and a .JSON
@@ -322,53 +345,86 @@ message OutputConfig {
 //         video_classification.type field (note that the returned types are
 //         governed by `classifaction_types` parameter in
 //         [PredictService.BatchPredictRequest.params][]).
-message BatchPredictionOutputConfig {
+message BatchPredictOutputConfig {
   // Required. The destination of the output.
   oneof destination {
-    // The GCS location of the directory where the output must be written to.
+    // The Google Cloud Storage location of the directory where the output must
+    // be written to.
     GcsDestination gcs_destination = 1;
   }
 }
 
 // Output configuration for ModelExport Action.
-//
-// The given back output depends on the type of the model.
-//
-// *  For Image Classification mobile-low-latency-1, mobile-versatile-1,
-//        mobile-high-accuracy-1:
-//
-//        Under the directory given as the destination a new one with name
-//        "model-export-<model-display-name>-<timestamp-of-export-call>",
-//        where timestamp is in YYYY-MM-DDThh:mm:ss.sssZ ISO-8601 format, will
-//        be created. Inside the model and any of its supporting files will be
-//        written, as described
-//
-// [here](https:
-// //cloud.google.com/vision/automl/alpha/docs/predict#deployment_to_devices).
 message ModelExportOutputConfig {
   // Required. The destination of the output.
   oneof destination {
-    // The GCS location where the output must be written to.
+    // The Google Cloud Storage location where the model must be written to.
+    // This location
+    // may only be set for the following model formats:
+    //   "tflite", "edgetpu_tflite", "core_ml", "docker".
+    //
+    //  Under the directory given as the destination a new one with name
+    //  "model-export-<model-display-name>-<timestamp-of-export-call>",
+    //  where timestamp is in YYYY-MM-DDThh:mm:ss.sssZ ISO-8601 format,
+    //  will be created. Inside the model and any of its supporting files
+    //  will be written, as described
+    //
+    // [here](https:
+    // //cloud.google.com/vision/automl/alpha/d
+    // // ocs/predict#deployment_to_devices).
     GcsDestination gcs_destination = 1;
+
+    // The GCR location where model image must be pushed to. This location
+    // may only be set for the following model formats:
+    //   "docker".
+    //
+    // The model image will be created under the given URI.
+    GcrDestination gcr_destination = 3;
   }
 
-  // Additional model-type-specific parameters describing the requirements for
-  // the to be exported model files, any string must be up to 25000 characters
-  // long.
+  // The format in which the model must be exported. The available, and default,
+  // formats depend on the problem and model type (if given problem and type
+  // combination doesn't have a format listed, it means its models are not
+  // exportable):
   //
   // *  For Image Classification mobile-low-latency-1, mobile-versatile-1,
   //        mobile-high-accuracy-1:
+  //      "tflite" (default), "edgetpu_tflite", "docker".
   //
-  //      `tf-version` - (string) Tensorflow/TFLite version the model should be
-  //        exported in. Currently the only available value is "TF_1_9", which
-  //        is also the default.
-  //      `model-format` - (string) The format in which the model should be
-  //        exported. Available values are "tflite" and "edgetpu_tflite" with
-  //        former being the default.
+  // *  For Image Classification mobile-core-ml-low-latency-1,
+  //        mobile-core-ml-versatile-1, mobile-core-ml-high-accuracy-1:
+  //      "core_ml" (default).
+  //
+  // *  For Image Object Detection mobile-low-latency-1, mobile-versatile-1,
+  //        mobile-high-accuracy-1:
+  //      "tflite" (default), "edgetpu_tflite", "docker".
+  //
+  // *  For Image ObjectDetection mobile-core-ml-low-latency-1,
+  //        mobile-core-ml-versatile-1, mobile-core-ml-high-accuracy-1:
+  //      "core_ml" (default).
+  //
+  // Formats description:
+  //
+  // * tflite - Used for Android mobile devices.
+  // * edgetpu_tflite - Used for [Edge TPU](https://cloud.google.com/edge-tpu/)
+  //                    devices.
+  // * docker - Used for Docker containers. Use the params field to customize
+  //            the container. The container is verified to work correctly on
+  //            ubuntu 16.04 operating system.
+  // * core_ml - Used for iOS mobile devices.
+  string model_format = 4;
+
+  // Additional model-type and format specific parameters describing the
+  // requirements for the to be exported model files, any string must be up to
+  // 25000 characters long.
+  //
+  //  * For `docker` format:
+  //     `cpu_architecture` - (string) "x86_64" (default).
+  //     `gpu_architecture` - (string) "none" (default), "nvidia".
   map<string, string> params = 2;
 }
 
-// The GCS location for the input content.
+// The Google Cloud Storage location for the input content.
 message GcsSource {
   // Required. Google Cloud Storage URIs to input files, up to 2000 characters
   // long. Accepted forms:
@@ -384,7 +440,7 @@ message BigQuerySource {
   string input_uri = 1;
 }
 
-// The GCS location where the output must be written to
+// The Google Cloud Storage location where the output must be written to.
 message GcsDestination {
   // Required. Google Cloud Storage URI to output directory, up to 2000
   // characters long.
@@ -393,4 +449,20 @@ message GcsDestination {
   // The requesting user must have write permission to the bucket.
   // The directory is created if it doesn't exist.
   string output_uri_prefix = 1;
+}
+
+// The GCR location where the image must be pushed to.
+message GcrDestination {
+  // Required. Google Contained Registry URI of the new image, up to 2000
+  // characters long. See
+  //
+  // https:
+  // //cloud.google.com/container-registry/do
+  // // cs/pushing-and-pulling#pushing_an_image_to_a_registry
+  // Accepted forms:
+  // * [HOSTNAME]/[PROJECT-ID]/[IMAGE]
+  // * [HOSTNAME]/[PROJECT-ID]/[IMAGE]:[TAG]
+  //
+  // The requesting user must have permission to push images the project.
+  string output_uri = 1;
 }

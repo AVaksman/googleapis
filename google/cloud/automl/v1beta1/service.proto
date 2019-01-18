@@ -45,6 +45,7 @@ option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 // `projects/{project_id}/locations/{location_id}/datasets/{dataset_id}`, then
 // the id for the item is `{dataset_id}`.
 //
+// Currently the only supported `location_id` is "us-central1".
 service AutoMl {
   // Creates a dataset.
   rpc CreateDataset(CreateDatasetRequest) returns (Dataset) {
@@ -88,8 +89,7 @@ service AutoMl {
   }
 
   // Imports data into a dataset.
-  // For Image Object Detection, Video Classification , Text Extraction and Tables this method can only be called on an empty
-  // Dataset.
+  // For Tables this method can only be called on an empty Dataset.
   //
   // For Tables:
   // *   A
@@ -202,8 +202,8 @@ service AutoMl {
     };
   }
 
-  // Deploys model.
-  // Returns a [DeployModelResponse][] in the
+  // Deploys a model.
+  // Returns an empty response in the
   // [response][google.longrunning.Operation.response] field when it completes.
   rpc DeployModel(DeployModelRequest) returns (google.longrunning.Operation) {
     option (google.api.http) = {
@@ -212,8 +212,8 @@ service AutoMl {
     };
   }
 
-  // Undeploys model.
-  // Returns an `UndeployModelResponse` in the
+  // Undeploys a model.
+  // Returns an empty response in the
   // [response][google.longrunning.Operation.response] field when it completes.
   rpc UndeployModel(UndeployModelRequest) returns (google.longrunning.Operation) {
     option (google.api.http) = {
@@ -222,7 +222,8 @@ service AutoMl {
     };
   }
 
-  // Exports a trained, "export-able", model to a user specified GCS location.
+  // Exports a trained, "export-able", model to a user specified Google Cloud
+  // Storage location.
   // A model is considered export-able if and only if:
   // *  Is an Image Classification model and has `mobile-low-latency-1`,
   //    `mobile-versatile-1` or `mobile-high-accuracy-1` model type.
@@ -273,9 +274,8 @@ message ListDatasetsRequest {
 
   // An expression for filtering the results of the request.
   //
-  //   * `dataset_metadata` - for existence of the case.
-  //
-  // An example of using the filter is:
+  //   * `dataset_metadata` - for existence of the case (e.g.
+  //             image_classification_dataset_metadata:*). Some examples of using the filter are:
   //
   //   * `translation_dataset_metadata:*` --> The dataset has
   //                                          translation_dataset_metadata.
@@ -310,7 +310,9 @@ message UpdateDatasetRequest {
   // The update mask applies to the resource. For the `FieldMask` definition,
   // see
   //
-  // https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
+  // https:
+  // //developers.google.com/protocol-buffers
+  // // /docs/reference/google.protobuf#fieldmask
   google.protobuf.FieldMask update_mask = 2;
 }
 
@@ -478,10 +480,9 @@ message ListModelsRequest {
 
   // An expression for filtering the results of the request.
   //
-  //   * `model_metadata` - for existence of the case.
-  //   * `dataset_id` - for = or !=.
-  //
-  // Some examples of using the filter are:
+  //   * `model_metadata` - for existence of the case (e.g.
+  //             video_classification_model_metadata:*).
+  //   * `dataset_id` - for = or !=. Some examples of using the filter are:
   //
   //   * `image_classification_model_metadata:*` --> The model has
   //                                        image_classification_model_metadata.
@@ -504,7 +505,7 @@ message ListModelsResponse {
   repeated Model model = 1;
 
   // A token to retrieve next page of results.
-  // Pass to [ListModels.page_token][] to obtain that page.
+  // Pass to [ListModelsRequest.page_token][google.cloud.automl.v1beta1.ListModelsRequest.page_token] to obtain that page.
   string next_page_token = 2;
 }
 
@@ -568,7 +569,7 @@ message ListModelEvaluationsRequest {
 
   // A token identifying a page of results for the server to return.
   // Typically obtained via
-  // `ListModelEvaluationsResponse.next_page_token` of the previous
+  // [ListModelEvaluationsResponse.next_page_token][google.cloud.automl.v1beta1.ListModelEvaluationsResponse.next_page_token] of the previous
   // [AutoMl.ListModelEvaluations][google.cloud.automl.v1beta1.AutoMl.ListModelEvaluations] call.
   string page_token = 6;
 }
@@ -579,6 +580,7 @@ message ListModelEvaluationsResponse {
   repeated ModelEvaluation model_evaluation = 1;
 
   // A token to retrieve next page of results.
-  // Pass to [ListModelEvaluations.page_token][] to obtain that page.
+  // Pass to the [ListModelEvaluationsRequest.page_token][google.cloud.automl.v1beta1.ListModelEvaluationsRequest.page_token] field of a new
+  // [AutoMl.ListModelEvaluations][google.cloud.automl.v1beta1.AutoMl.ListModelEvaluations] request to obtain that page.
   string next_page_token = 2;
 }

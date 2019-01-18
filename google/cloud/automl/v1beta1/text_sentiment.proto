@@ -76,5 +76,9 @@ message TextSentimentEvaluationMetrics {
   ClassificationEvaluationMetrics.ConfusionMatrix confusion_matrix = 8;
 
   // Output only. The annotation spec ids used for this evaluation.
+  // Deprecated, remove after Boq Migration and use then
+  // TextSentimentModelMetadata.annotation_spec_count for count, and list
+  // all model evaluations to see the exact annotation_spec_ids that were
+  // used.
   repeated string annotation_spec_id = 9;
 }

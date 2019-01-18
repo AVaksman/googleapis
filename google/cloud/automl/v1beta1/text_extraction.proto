@@ -33,6 +33,7 @@ message TextExtractionAnnotation {
   float score = 1;
 
   // Output only. The actual content of the text span.
+  // Deprecated, use text_segment.content instead.
   string content = 2;
 
   // Required. The part of the original text to which this annotation pertains.

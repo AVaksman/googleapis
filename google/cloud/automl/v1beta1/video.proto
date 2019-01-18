@@ -28,6 +28,7 @@ option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 
 
 // Dataset metadata specific to video classification.
+// All Video Classification datasets are treated as multi label.
 message VideoClassificationDatasetMetadata {
 
 }
