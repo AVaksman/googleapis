@@ -10,10 +10,10 @@ documentation:
   summary: |-
     DataCatalog APIs provides features to attach metadata to Google Cloud
     Platform resources like Bigquery Tables.<br> Key critical resources include
-    -<br> - Entries  (Datahub representation of a cloud resource)<br> - Tag
+    -<br> - Entries  (DataCatalog representation of a cloud resource)<br> - Tag
     Templates (Definition of columns and value types for attaching metadata)<br>
     - Tags (Values associated with Tag templates and attached to Entries.)<br>
-    Datahub also provides rich search functionality to search resources for
+    DataCatalog also provides rich search functionality to search resources for
     Entries and tags.
   overview: |-
     DataCatalog is a centralized and unified data catalog service for all your
