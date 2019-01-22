@@ -1,15 +1,13 @@
 type: google.api.Service
 config_version: 3
 name: translate.googleapis.com
-title: Google Cloud Translation API
+title: Cloud Translation API
 
 apis:
 - name: google.cloud.translation.v3alpha1.TranslationService
 
 documentation:
-  summary: |-
-    The Google Cloud Translation API lets websites and programs integrate with
-    Google Translate programmatically.
+  summary: Integrates text translation into your website or application.
 
 http:
   rules:

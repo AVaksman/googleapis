@@ -7,11 +7,11 @@ language_settings:
   python:
     package_name: google.cloud.translation_v3alpha1.gapic
   go:
-    package_name: cloud.google.com/go/cloud/translation/apiv3alpha1
+    package_name: cloud.google.com/go/translation/apiv3alpha1
   csharp:
     package_name: Google.Cloud.Translation.V3alpha1
   ruby:
-    package_name: Google::Cloud::Translation::V3Alpha1
+    package_name: Google::Cloud::Translation::V3alpha1
   php:
     package_name: Google\Cloud\Translation\V3alpha1
   nodejs:
@@ -37,16 +37,18 @@ interfaces:
   # The entity_name is the name to be used as a basis for generated methods and
   # classes.
   collections:
-  - name_pattern: projects/{project}
-    entity_name: project
-  - name_pattern: projects/{project}/models/{model}
-    entity_name: model
+  - name_pattern: projects/{project}/locations/{location}
+    entity_name: location
+  - name_pattern: projects/{project}/locations/{location}/glossaries/{glossary}
+    entity_name: glossary
+  - name_pattern: projects/{project}/locations/{location}/models/{model_path=**}
+    entity_name: model_path
   # Definition for retryable codes.
   retry_codes_def:
   - name: idempotent
     retry_codes:
-    - UNAVAILABLE
     - DEADLINE_EXCEEDED
+    - UNAVAILABLE
   - name: non_idempotent
     retry_codes: []
   # Definition for retry/backoff parameters.
@@ -115,135 +117,98 @@ interfaces:
   #   the call is retrying, refer to retry_params_name instead.
   methods:
   - name: TranslateText
-    flattening:
-      groups:
-      - parameters:
-        - mime_type
-        - source_language_code
-        - target_language_codes
-        - model
     required_fields:
-    - mime_type
-    - source_language_code
-    - target_language_codes
-    - model
+    - target_language_code
     retry_codes_name: non_idempotent
     retry_params_name: default
-    timeout_millis: 30000
-    resource_name_treatment: STATIC_TYPES
     field_name_patterns:
-      model: model
+      model: model_path
+    timeout_millis: 60000
   - name: DetectLanguage
     flattening:
       groups:
       - parameters:
+        - name
         - mime_type
     required_fields:
-    - mime_type
+    - name
     retry_codes_name: non_idempotent
     retry_params_name: default
-    timeout_millis: 30000
-  - name: ListSupportedLanguages
+    field_name_patterns:
+      name: location
+    timeout_millis: 60000
+  - name: GetSupportedLanguages
     flattening:
       groups:
       - parameters:
         - display_language_code
-        - model
+        - name
     required_fields:
-    - display_language_code
-    - model
+    - name
     retry_codes_name: idempotent
     retry_params_name: default
-    timeout_millis: 30000
-    resource_name_treatment: STATIC_TYPES
     field_name_patterns:
-      model: model
-  - name: CreateModel
-    flattening:
-      groups:
-      - parameters:
-        - parent
-        - model
-    required_fields:
-    - model
-    retry_codes_name: non_idempotent
-    retry_params_name: default
-    resource_name_treatment: STATIC_TYPES
-    field_name_patterns:
-      model.name: model
-    timeout_millis: 180000
-    long_running:
-      return_type: google.longrunning.Operation
-      metadata_type: google.cloud.translation.v3alpha1.CreateModelMetadata
-      initial_poll_delay_millis: 200000 # 200 seconds
-      poll_delay_multiplier: 1.5
-      max_poll_delay_millis: 450000
-      total_poll_timeout_millis: 64800000 # 18 hours
-  - name: ListModels
-    flattening:
-      groups:
-      - parameters:
-        - parent
-        - filter
+      name: location
+    timeout_millis: 60000
+  - name: BatchTranslateText
     required_fields:
     - parent
-    - filter
+    - target_language_codes
+    - input_configs
+    - output_config
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: location
+    long_running:
+      return_type: google.longrunning.Operation
+      metadata_type: google.cloud.translation.v3alpha1.BatchTranslateMetadata
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 60000
+  - name: CreateGlossary
+    flattening:
+      groups:
+      - parameters:
+        - parent
+        - glossary
+    required_fields:
+    - parent
+    - glossary
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: location
+    long_running:
+      return_type: google.longrunning.Operation
+      metadata_type: google.cloud.translation.v3alpha1.CreateGlossaryMetadata
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 60000
+  - name: ListGlossaries
+    flattening:
+      groups:
+      - parameters:
+        - parent
+    required_fields:
+    - parent
     page_streaming:
       request:
         page_size_field: page_size
         token_field: page_token
       response:
         token_field: next_page_token
-        resources_field: models
+        resources_field: glossaries
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
-      parent: project
-    timeout_millis: 180000
-  - name: GetModel
-    flattening:
-      groups:
-      - parameters:
-        - name
-    required_fields:
-    - name
-    retry_codes_name: idempotent
-    retry_params_name: default
-    resource_name_treatment: STATIC_TYPES
-    field_name_patterns:
-      name: model
-    timeout_millis: 180000
-  - name: LoadModel
-    flattening:
-      groups:
-      - parameters:
-        - name
-        - expire_time
-        - characters_per_second
-    required_fields:
-    - name
-    - expire_time
-    - characters_per_second
-    retry_codes_name: non_idempotent
-    retry_params_name: default
-    resource_name_treatment: STATIC_TYPES
-    field_name_patterns:
-      name: model
-    timeout_millis: 180000
-  - name: UnloadModel
-    flattening:
-      groups:
-      - parameters:
-        - name
-    required_fields:
-    - name
-    retry_codes_name: non_idempotent
-    retry_params_name: default
-    resource_name_treatment: STATIC_TYPES
-    field_name_patterns:
-      name: model
-    timeout_millis: 180000
-  - name: DeleteModel
+      parent: location
+    timeout_millis: 60000
+  - name: GetGlossary
     flattening:
       groups:
       - parameters:
@@ -252,36 +217,25 @@ interfaces:
     - name
     retry_codes_name: idempotent
     retry_params_name: default
-    resource_name_treatment: STATIC_TYPES
     field_name_patterns:
-      name: model
-    timeout_millis: 180000
-
-resource_name_generation:
-- message_name: TranslateTextRequest
-  field_entity_map:
-    model: model
-- message_name: DetectLanguageRequest
-  field_entity_map:
-    model: model
-- message_name: ListSupportedLanguagesRequest
-  field_entity_map:
-    model: model
-- message_name: CreateModelRequest
-  field_entity_map:
-    model.name: model
-- message_name: ListModelsRequest
-  field_entity_map:
-    parent: project
-- message_name: GetModelRequest
-  field_entity_map:
-    name: model
-- message_name: LoadModelRequest
-  field_entity_map:
-    name: model
-- message_name: UnloadModelRequest
-  field_entity_map:
-    name: model
-- message_name: DeleteModelRequest
-  field_entity_map:
-    name: model
+      name: glossary
+    timeout_millis: 60000
+  - name: DeleteGlossary
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: glossary
+    long_running:
+      return_type: google.longrunning.Operation
+      metadata_type: google.cloud.translation.v3alpha1.DeleteGlossaryMetadata
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 60000
