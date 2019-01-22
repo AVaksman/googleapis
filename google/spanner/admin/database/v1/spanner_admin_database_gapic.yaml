@@ -39,8 +39,8 @@ interfaces:
   retry_codes_def:
   - name: idempotent
     retry_codes:
-    - UNAVAILABLE
     - DEADLINE_EXCEEDED
+    - UNAVAILABLE
   - name: non_idempotent
     retry_codes: []
   retry_params_def:
@@ -201,9 +201,11 @@ interfaces:
       groups:
       - parameters:
         - parent
+        - backup_id
         - backup
     required_fields:
     - parent
+    - backup_id
     - backup
     retry_codes_name: non_idempotent
     retry_params_name: default
@@ -235,11 +237,9 @@ interfaces:
       - parameters:
         - backup
         - update_mask
-        - labels_update_option
     required_fields:
     - backup
     - update_mask
-    - labels_update_option
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -280,53 +280,68 @@ interfaces:
     field_name_patterns:
       parent: instance
     timeout_millis: 30000
-  - name: CreateDatabaseFromBackup
+  - name: RestoreDatabase
     flattening:
       groups:
       - parameters:
         - parent
-        - name
-        - backup
+        - database_id
     required_fields:
     - parent
-    - name
-    - backup
+    - database_id
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
       parent: instance
     long_running:
       return_type: google.protobuf.Empty
-      metadata_type: google.spanner.admin.database.v1.CreateDatabaseFromBackupMetadata
+      metadata_type: google.spanner.admin.database.v1.RestoreDatabaseMetadata
       initial_poll_delay_millis: 20000
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 45000
       total_poll_timeout_millis: 86400000
     timeout_millis: 30000
-  - name: ListCreateDatabaseFromBackupMetadata
+  - name: ListDatabaseOperations
     flattening:
       groups:
       - parameters:
         - parent
-        - instance_id
         - filter
-        - order_by
     required_fields:
     - parent
-    - instance_id
     - filter
-    - order_by
     page_streaming:
       request:
         page_size_field: page_size
         token_field: page_token
       response:
         token_field: next_page_token
-        resources_field: metadata
+        resources_field: operations
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
-      parent: project
+      parent: instance
+    timeout_millis: 30000
+  - name: ListBackupOperations
+    flattening:
+      groups:
+      - parameters:
+        - parent
+        - filter
+    required_fields:
+    - parent
+    - filter
+    page_streaming:
+      request:
+        page_size_field: page_size
+        token_field: page_token
+      response:
+        token_field: next_page_token
+        resources_field: operations
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: instance
     timeout_millis: 30000
 resource_name_generation:
 - message_name: ListDatabasesRequest
@@ -377,16 +392,12 @@ resource_name_generation:
   field_entity_map:
     parent: instance
 - message_name: ListBackupsResponse
-- message_name: ListCreateDatabaseFromBackupMetadataRequest
-  field_entity_map:
-    parent: project
-- message_name: ListCreateDatabaseFromBackupMetadataResponse
-- message_name: CreateDatabaseFromBackupRequest
+- message_name: ListDatabaseOperationsRequest
   field_entity_map:
     parent: instance
-    name: database
-    backup: backup
-- message_name: CreateDatabaseFromBackupMetadata
+- message_name: ListDatabaseOperationsResponse
+- message_name: RestoreDatabaseRequest
   field_entity_map:
-    name: database
-    backup: backup
+    parent: instance
+    database_id: database
+- message_name: RestoreDatabaseMetadata

@@ -27,24 +27,14 @@ option java_multiple_files = true;
 
 
 message OperationProgress {
+  // Percent completion of the operation.
+  // Values are between 0 and 100 inclusive.
   int32 progress_percent = 1;
 
+  // Time the request was received.
   google.protobuf.Timestamp start_time = 2;
 
+  // If set, the time at which this operation failed or was completed
+  // successfully.
   google.protobuf.Timestamp end_time = 3;
-}
-
-enum LabelsUpdateOption {
-  // Unspecified option
-  LABELS_UPDATE_OPTION_UNSPECIFIED = 0;
-
-  // Set labels with the new labels specified in the update. This option will
-  // replace existing labels with the new labels.
-  SET_LABELS = 1;
-
-  // Add specified labels to the existing set of labels.
-  ADD_LABELS = 2;
-
-  // Remove specified labels from the existing set of labels.
-  REMOVE_LABELS = 3;
 }
