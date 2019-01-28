@@ -12,17 +12,26 @@ documentation:
 http:
   rules:
   - selector: google.longrunning.Operations.ListOperations
-    get: '/v1/projects/*/operations'
+    get: '/v3alpha1/projects/*/locations/*/operations'
+    additional_bindings:
+    - get: '/v1/projects/*/operations'
 
   - selector: google.longrunning.Operations.GetOperation
-    get: '/v1/projects/*/operations/{name=*}'
+    get: '/v3alpha1/projects/*/locations/*/operations/{name=*}'
+    additional_bindings:
+    - get: '/v1/projects/*/operations/{name=*}'
 
   - selector: google.longrunning.Operations.DeleteOperation
-    delete: '/v1/projects/*/operations/{name=*}'
+    delete: '/v3alpha1/projects/*/locations/*/operations/{name=*}'
+    additional_bindings:
+    - delete: '/v1/projects/*/operations/{name=*}'
 
   - selector: google.longrunning.Operations.CancelOperation
-    post: '/v1/projects/*/operations/{name=*}:cancel'
+    post: '/v3alpha1/projects/*/locations/*/operations/{name=*}:cancel'
     body: '*'
+    additional_bindings:
+    - post: '/v1/projects/*/operations/{name=*}:cancel'
+      body: '*'
 
 
 authentication:

@@ -76,7 +76,7 @@ service TranslationService {
     };
   }
 
-  // Translates large volumne of text in asynchronous batch mode.
+  // Translates large volume of text in asynchronous batch mode.
   // This function provides real time output as the inputs are being processed.
   // If caller cancels a request, the partial results may still be available on
   // the specified output location.
@@ -298,25 +298,9 @@ message SupportedLanguage {
   bool support_target = 4;
 }
 
-// The GCS location for the input content
+// The GCS location for the input content.
 message GcsSource {
-  // Required. Source data URI. (e.g. 'gs://my_bucket/my_object').
-  // This can also be a file or wildcard. For example,
-  // case 1: directly specify file name:
-  // gs://translation-test/input.tsv
-  // case 2: all files under directory 'translation-test':
-  // gs://translation-test/*
-  // If file extension is csv/tsv, it can contain either 2 columns
-  // or just one column.
-  // The first column (optional) is the id of the text request.
-  // If the first column is missing, we will use the row number
-  // (0-based) from the input file as ID in the output file.
-  // The second column is the actual sentence to be
-  // translated.
-  // We recommend each row to be <= 10K Unicode codepoints. Otherwise an error
-  // might be returned.
-  //
-  // The other file extension we accept is txt (i.e. a big chunk of text).
+  // Required. Source data URI. For example, `gs://my_bucket/my_object`.
   string input_uri = 1;
 }
 
@@ -329,7 +313,18 @@ message InputConfig {
 
   // Required. Specify the input.
   oneof source {
-    // Google Cloud Storage for the source input.
+    // Required. Google Cloud Storage location for the source input.
+    // This can be a single file (e.g., `gs://translation-test/input.tsv`) or a
+    // wildcard (e.g., `gs://translation-test/*`). If a file extension is
+    // `.csv`/`.tsv`, it can contain either one or two columns. The first column
+    // (optional) is the id of the text request. If the first column is missing,
+    // we will use the row number (0-based) from the input file as ID in the
+    // output file. The second column is the actual text to be translated. We
+    // recommend each row to be <= 10K Unicode codepoints. Otherwise an error
+    // might be returned.
+    //
+    //  The other supported file extension is `.txt`, which is treated as a
+    //  single large chunk of text.
     GcsSource gcs_source = 2;
   }
 }
@@ -526,14 +521,35 @@ message BatchTranslateResponse {
 message GlossaryInputConfig {
   // Required. Specify the input.
   oneof source {
-    // Google Cloud Storage location of glossary data.
+    // Required. Google Cloud Storage location of glossary data.
+    // File format is determined based on file name extension. API returns
+    // [google.rpc.Code.INVALID_ARGUMENT] for unsupported URI-s and file
+    // formats. Wildcards are not allowed. This must be a single file in one of
+    // the following formats:
+    //
+    // For `UNIDIRECTIONAL` glossaries:
+    //
+    // - TSV/CSV (`.tsv`/`.csv`): 2 column file, tab- or comma-separated.
+    //   The first column is source text. The second column is target text.
+    //   The file must not contain headers i.e., the first row is data, not
+    //   column names.
+    //
+    // - TMX (`.tmx`): TMX file with parallel data defining source/target term
+    // pairs.
+    //
+    // For `EQUIVALENT_TERMS_SET` glossaries:
+    //
+    // - CSV (`.csv`): Multi-column CSV file defining equivalent glossary terms
+    //   in multiple languages. The format is defined for Google Translation
+    //   Toolkit and documented here:
+    //   `https://support.google.com/translatortoolkit/answer/6306379?hl=en`.
     GcsSource gcs_source = 1;
   }
 }
 
 // Represents a glossary built from user provided data.
 message Glossary {
-  // Used with GLOSSARY_TYPE_UNIDIRECTIONAL.
+  // Used with UNIDIRECTIONAL.
   message LanguageCodePair {
     // Required. The BCP-47 language code of the input text e.g., "en-US".
     // Expected to be an exact match for GlossaryTerm.language_code.
@@ -544,7 +560,7 @@ message Glossary {
     string target_language_code = 2;
   }
 
-  // Used with GLOSSARY_TYPE_EQUIVALENT_TERMS_SET.
+  // Used with EQUIVALENT_TERMS_SET.
   message LanguageCodesSet {
     // The BCP-47 language code(s) for terms defined in the glossary.
     // All entries are unique. The list contains at least two entries.
@@ -571,11 +587,12 @@ message Glossary {
   // Required. Glossary type.
   GlossaryType type = 2;
 
+  // Languages supported by the glossary.
   oneof languages {
-    // Used with GLOSSARY_TYPE_UNIDIRECTIONAL.
+    // Used with UNIDIRECTIONAL.
     LanguageCodePair language_pair = 3;
 
-    // Used with GLOSSARY_TYPE_EQUIVALENT_TERMS_SET.
+    // Used with EQUIVALENT_TERMS_SET.
     LanguageCodesSet language_codes_set = 4;
   }
 
