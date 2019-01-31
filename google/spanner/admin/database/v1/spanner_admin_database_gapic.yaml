@@ -263,11 +263,9 @@ interfaces:
       - parameters:
         - parent
         - filter
-        - order_by
     required_fields:
     - parent
     - filter
-    - order_by
     page_streaming:
       request:
         page_size_field: page_size

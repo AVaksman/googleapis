@@ -399,7 +399,12 @@ message ListDatabaseOperationsRequest {
   //   * `done` --> False if the operation is in progress, else true.
   //   * `metadata.type_url` (using filter string `metadata.@type`) and fields
   //      in `metadata.value` (using filter string `metadata.<field_name>`,
-  //      where <field_name> is a field in metadata.value) are  eligible for
+  //      where <field_name> is a field in metadata.value) are eligible for
+  //      filtering.
+  //   * `error` --> Error associated with the long-running operation.
+  //   * `response.type_url` (using filter string `response.@type`) and fields
+  //      in `response.value` (using filter string `response.<field_name>`,
+  //      where <field_name> is a field in response.value) are eligible for
   //      filtering.
   //
   // To filter on multiple expressions, provide each separate expression within
