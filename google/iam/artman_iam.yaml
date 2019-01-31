@@ -2,6 +2,7 @@ common:
   api_name: iam
   api_version: v1
   organization_name: google
+  service_yaml: iam.yaml
   gapic_yaml: v1/iam_gapic.yaml
   src_proto_paths:
   - v1
