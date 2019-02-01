@@ -506,6 +506,22 @@ interfaces:
       max_poll_delay_millis: 5000
       total_poll_timeout_millis: 300000
     timeout_millis: 5000
+  - name: ExportEvaluatedExamples
+    required_fields:
+    - name
+    - output_config
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: model
+    long_running:
+      return_type: google.protobuf.Empty
+      metadata_type: google.cloud.automl.v1beta1.OperationMetadata
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 5000
   - name: ListModelEvaluations
     flattening:
       groups:
@@ -665,6 +681,9 @@ resource_name_generation:
   field_entity_map:
     name: model
 - message_name: ExportModelRequest
+  field_entity_map:
+    name: model
+- message_name: ExportEvaluatedExamplesRequest
   field_entity_map:
     name: model
 - message_name: GetModelEvaluationRequest

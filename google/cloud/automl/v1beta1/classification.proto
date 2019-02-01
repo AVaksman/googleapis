@@ -77,8 +77,14 @@ message VideoClassificationAnnotation {
 message ClassificationEvaluationMetrics {
   // Metrics for a single confidence threshold.
   message ConfidenceMetricsEntry {
-    // Output only. The confidence threshold value used to compute the metrics.
+    // Output only. Metrics are computed with an assumption that the model
+    // never returns predictions with score lower than this value.
     float confidence_threshold = 1;
+
+    // Output only. Metrics are computed with an assumption that the model
+    // always returns at most this many predictions (ordered by their score,
+    // descendingly), but they all still need to meet the confidence_threshold.
+    int32 position_threshold = 14;
 
     // Output only. Recall (True Positive Rate) for the given confidence
     // threshold.
@@ -165,9 +171,12 @@ message ClassificationEvaluationMetrics {
   // Output only. The Log Loss metric.
   float log_loss = 7;
 
-  // Output only. Metrics for each confidence_threshold from
-  // 0.05,0.10,...,0.95,0.96,0.97,0.98,0.99. Precision-recall curve is derived
-  // from them.
+  // Output only. Metrics for each confidence_threshold in
+  // 0.00,0.05,0.10,...,0.95,0.96,0.97,0.98,0.99 and
+  // position_threshold = INT32_MAX_VALUE.
+  // Precision-recall curve is derived from them.
+  // The above metrics may also be supplied for additional values of
+  // position_threshold.
   repeated ConfidenceMetricsEntry confidence_metrics_entry = 3;
 
   // Output only. Confusion matrix of the evaluation.

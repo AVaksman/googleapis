@@ -77,6 +77,8 @@ backend:
     deadline: 5.0
   - selector: google.cloud.automl.v1beta1.AutoMl.ExportModel
     deadline: 5.0
+  - selector: google.cloud.automl.v1beta1.AutoMl.ExportEvaluatedExamples
+    deadline: 5.0
   - selector: google.cloud.automl.v1beta1.AutoMl.GetModelEvaluation
     deadline: 5.0
   - selector: google.cloud.automl.v1beta1.AutoMl.ListModelEvaluations

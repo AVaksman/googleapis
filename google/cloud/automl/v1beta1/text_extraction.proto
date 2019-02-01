@@ -32,10 +32,6 @@ message TextExtractionAnnotation {
   // means greater confidence in correctness of the annotation.
   float score = 1;
 
-  // Output only. The actual content of the text span.
-  // Deprecated, use text_segment.content instead.
-  string content = 2;
-
   // Required. The part of the original text to which this annotation pertains.
   TextSegment text_segment = 3;
 }

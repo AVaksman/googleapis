@@ -18,33 +18,25 @@ syntax = "proto3";
 package google.cloud.automl.v1beta1;
 
 import "google/api/annotations.proto";
-import "google/cloud/automl/v1beta1/classification.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;automl";
-option java_multiple_files = true;
-option java_outer_classname = "TextProto";
+option java_outer_classname = "RegressionProto";
 option java_package = "com.google.cloud.automl.v1beta1";
 option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 
 
-// Dataset metadata for classification.
-message TextClassificationDatasetMetadata {
-  // Required.
-  // Type of the classification problem.
-  ClassificationType classification_type = 1;
-}
+// Metrics for regression problems.
+message RegressionEvaluationMetrics {
+  // Output only. Root Mean Squared Error (RMSE).
+  float root_mean_squared_error = 1;
 
-// Model metadata that is specific to text classification.
-message TextClassificationModelMetadata {
+  // Output only. Mean Absolute Error (MAE).
+  float mean_absolute_error = 2;
 
-}
+  // Output only. Mean absolute percentage error. Only set if all ground truth
+  // values are are positive.
+  float mean_absolute_percentage_error = 3;
 
-// Dataset metadata that is specific to text extraction
-message TextExtractionDatasetMetadata {
-
-}
-
-// Model metadata that is specific to text extraction.
-message TextExtractionModelMetadata {
-
+  // Output only. R squared.
+  float r_squared = 4;
 }

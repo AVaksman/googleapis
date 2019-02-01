@@ -65,6 +65,12 @@ message TextSnippet {
   string content_uri = 4;
 }
 
+// A structured text document e.g. a PDF.
+message Document {
+  // An input config specifying the content of the document.
+  DocumentInputConfig input_config = 1;
+}
+
 // A representation of a row in a relational table.
 message Row {
   // The resource IDs of the column specs describing the columns of the row.
@@ -93,6 +99,9 @@ message ExamplePayload {
 
     // Example text.
     TextSnippet text_snippet = 2;
+
+    // Example document.
+    Document document = 4;
 
     // Example relational table row.
     Row row = 3;

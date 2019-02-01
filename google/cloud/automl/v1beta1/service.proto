@@ -21,6 +21,7 @@ import "google/api/annotations.proto";
 import "google/cloud/automl/v1beta1/annotation_payload.proto";
 import "google/cloud/automl/v1beta1/column_spec.proto";
 import "google/cloud/automl/v1beta1/dataset.proto";
+import "google/cloud/automl/v1beta1/image.proto";
 import "google/cloud/automl/v1beta1/io.proto";
 import "google/cloud/automl/v1beta1/model.proto";
 import "google/cloud/automl/v1beta1/model_evaluation.proto";
@@ -46,6 +47,9 @@ option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 // the id for the item is `{dataset_id}`.
 //
 // Currently the only supported `location_id` is "us-central1".
+//
+// On any input that is documented to expect a string parameter in
+// snake_case or kebab-case, either of those cases is accepted.
 service AutoMl {
   // Creates a dataset.
   rpc CreateDataset(CreateDatasetRequest) returns (Dataset) {
@@ -88,8 +92,7 @@ service AutoMl {
     };
   }
 
-  // Imports data into a dataset.
-  // For Tables this method can only be called on an empty Dataset.
+  // Imports data into a dataset. For Tables this method can only be called on an empty Dataset.
   //
   // For Tables:
   // *   A
@@ -104,7 +107,7 @@ service AutoMl {
     };
   }
 
-  // Exports dataset's data to a Google Cloud Storage bucket.
+  // Exports dataset's data to the provided output location.
   // Returns an empty response in the
   // [response][google.longrunning.Operation.response] field when it completes.
   rpc ExportData(ExportDataRequest) returns (google.longrunning.Operation) {
@@ -202,7 +205,16 @@ service AutoMl {
     };
   }
 
-  // Deploys a model.
+  // Deploys a model. If a model is already deployed, deploying it with the
+  // same parameters has no effect. Deploying with different parametrs
+  // (as e.g. changing
+  //
+  // [node_number][google.cloud.automl.v1beta1.ImageObjectDetectionModelDeploymentMetadata.node_number]
+  // ) will update the deployment without pausing the model's availability.
+  //
+  // Only applicable for Text Classification, Image Object Detection and Tables;
+  // all other domains manage deployment automatically.
+  //
   // Returns an empty response in the
   // [response][google.longrunning.Operation.response] field when it completes.
   rpc DeployModel(DeployModelRequest) returns (google.longrunning.Operation) {
@@ -212,7 +224,11 @@ service AutoMl {
     };
   }
 
-  // Undeploys a model.
+  // Undeploys a model. If the model is not deployed this method has no effect.
+  //
+  // Only applicable for Text Classification, Image Object Detection and Tables;
+  // all other domains manage deployment automatically.
+  //
   // Returns an empty response in the
   // [response][google.longrunning.Operation.response] field when it completes.
   rpc UndeployModel(UndeployModelRequest) returns (google.longrunning.Operation) {
@@ -223,16 +239,37 @@ service AutoMl {
   }
 
   // Exports a trained, "export-able", model to a user specified Google Cloud
-  // Storage location.
-  // A model is considered export-able if and only if:
-  // *  Is an Image Classification model and has `mobile-low-latency-1`,
-  //    `mobile-versatile-1` or `mobile-high-accuracy-1` model type.
+  // Storage location. A model is considered export-able if and only if it has
+  // an export format defined for it in
+  //
+  // [ModelExportOutputConfig][google.cloud.automl.v1beta1.ModelExportOutputConfig].
   //
   // Returns an empty response in the
   // [response][google.longrunning.Operation.response] field when it completes.
   rpc ExportModel(ExportModelRequest) returns (google.longrunning.Operation) {
     option (google.api.http) = {
       post: "/v1beta1/{name=projects/*/locations/*/models/*}:export"
+      body: "*"
+    };
+  }
+
+  // Exports examples on which the model was evaluated (i.e. which were in the
+  // TEST set of the dataset the model was created from), together with their
+  // ground truth annotations and the annotations created (predicted) by the
+  // model.
+  // The examples, ground truth and predictions are exported in the state
+  // they were at the moment the model was evaluated.
+  //
+  // This export is available only for 30 days since the model evaluation is
+  // created.
+  //
+  // Currently only available for Tables.
+  //
+  // Returns an empty response in the
+  // [response][google.longrunning.Operation.response] field when it completes.
+  rpc ExportEvaluatedExamples(ExportEvaluatedExamplesRequest) returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      post: "/v1beta1/{name=projects/*/locations/*/models/*}:exportEvaluatedExamples"
       body: "*"
     };
   }
@@ -517,6 +554,12 @@ message DeleteModelRequest {
 
 // Request message for [AutoMl.DeployModel][google.cloud.automl.v1beta1.AutoMl.DeployModel].
 message DeployModelRequest {
+  // The per-domain specific deployment parameters.
+  oneof model_deployment_metadata {
+    // Model deployment metadata specific to Image Object Detection.
+    ImageObjectDetectionModelDeploymentMetadata image_object_detection_model_deployment_metadata = 2;
+  }
+
   // Resource name of the model to deploy.
   string name = 1;
 }
@@ -536,6 +579,16 @@ message ExportModelRequest {
 
   // Required. The desired output location and configuration.
   ModelExportOutputConfig output_config = 3;
+}
+
+// Request message for [AutoMl.ExportEvaluatedExamples][google.cloud.automl.v1beta1.AutoMl.ExportEvaluatedExamples].
+message ExportEvaluatedExamplesRequest {
+  // Required. The resource name of the model whose evaluated examples are to
+  // be exported.
+  string name = 1;
+
+  // Required. The desired output location and configuration.
+  ExportEvaluatedExamplesOutputConfig output_config = 3;
 }
 
 // Request message for [AutoMl.GetModelEvaluation][google.cloud.automl.v1beta1.AutoMl.GetModelEvaluation].

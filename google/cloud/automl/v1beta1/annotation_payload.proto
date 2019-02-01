@@ -35,7 +35,7 @@ option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 // Contains annotation information that is relevant to AutoML.
 message AnnotationPayload {
   // Output only . Additional information about the annotation
-  // specific to the AutoML solution.
+  // specific to the AutoML domain.
   oneof detail {
     // Annotation details for translation.
     TranslationAnnotation translation = 2;
@@ -52,9 +52,6 @@ message AnnotationPayload {
 
     // Annotation details for text extraction.
     TextExtractionAnnotation text_extraction = 6;
-
-    // Annotation details for text sentiment.
-    TextSentimentAnnotation text_sentiment = 7;
 
     // Annotation details for Tables.
     TablesAnnotation tables = 10;

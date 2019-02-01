@@ -150,6 +150,7 @@ message CategoryStats {
   }
 
   // The statistics of the top 20 CATEGORY values, ordered by
+  //
   // [count][google.cloud.automl.v1beta1.CategoryStats.SingleCategoryStats.count].
   repeated SingleCategoryStats top_category_stats = 1;
 }
