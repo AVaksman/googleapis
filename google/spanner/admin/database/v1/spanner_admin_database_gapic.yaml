@@ -212,7 +212,7 @@ interfaces:
     field_name_patterns:
       parent: instance
     long_running:
-      return_type: google.protobuf.Empty
+      return_type: google.spanner.admin.database.v1.Backup
       metadata_type: google.spanner.admin.database.v1.CreateBackupMetadata
       initial_poll_delay_millis: 20000
       poll_delay_multiplier: 1.5
@@ -292,7 +292,7 @@ interfaces:
     field_name_patterns:
       parent: instance
     long_running:
-      return_type: google.protobuf.Empty
+      return_type: google.spanner.admin.database.v1.Database
       metadata_type: google.spanner.admin.database.v1.RestoreDatabaseMetadata
       initial_poll_delay_millis: 20000
       poll_delay_multiplier: 1.5
