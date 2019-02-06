@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+package google.cloud.bigquery.v2;
+
+option java_package = "com.google.cloud.bigquery.v2";
+option java_outer_classname = "TimePartitioningProto";
+
+// Configures time based partitioning.
+message TimePartitioning {
+  // [Required] The only type supported is DAY, which will generate one
+  // partition per day.
+  // Providing an empty string used to cause an error.
+  string type = 1;
+  // [Optional] Number of milliseconds for which to keep the storage for a
+  // partition.
+  // A wrapper is used here because 0 is an invalid value.
+  google.protobuf.Int64Value expiration_ms = 2;
+  // [Optional] If not set, the table is partitioned by pseudo
+  // column '_PARTITIONTIME'; if set, the table is partitioned by this field.
+  // The field must be a top-level TIMESTAMP or DATE field. Its mode must be
+  // NULLABLE or REQUIRED.
+  // A wrapper is used here because an empty string is an invalid value.
+  google.protobuf.StringValue field = 3;
+  // [Deprecated] If set to true, queries over this table require a
+  // partition filter that can be used for partition elimination to be
+  // specified. This field is deprecated; please set the field with the same
+  // name on the table itself instead.
+  // @default false
+  // This field needs a wrapper because we want to output the default value,
+  // false, if the user explicitly set it.
+  google.protobuf.BoolValue require_partition_filter = 4;
+}
