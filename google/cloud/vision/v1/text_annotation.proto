@@ -139,6 +139,9 @@ message Block {
 
     // Barcode block.
     BARCODE = 5;
+
+    // A key-value pair block.
+    KEY_VALUE_PAIR = 6;
   }
 
   // Additional information detected for the block.
@@ -180,6 +183,10 @@ message Block {
   // `bounding_box` for this Block will be the detected boundaries for this
   // table.
   Table table = 6;
+
+  // Detected pair for KEY_VALUE_PAIR block_type. This field is by default not
+  // returned unless DocumentType is specified.
+  KeyValuePair key_value_pair = 8;
 
   // All UTF-8 text detected in this block. This field is by default not
   // returned unless specified in TextDetectionParams.block_filter.
@@ -293,14 +300,13 @@ message Table {
     // How many columns this cell spans.
     int32 col_span = 2;
 
-    // Deeper structural information about the contents of the cell if it
-    // contains deeper structures such as inner tables. This field is not set
-    // for simple cells with no such structures.
-    Block structured_text = 3;
+    // Text block for this cell which also contains the normalized bounding box
+    // for the cell and deeper structures within a cell if present.
+    Block text_block = 3;
 
     // The merged text value of this cell, omitting any deeper structural
-    // information unlike `structured_text`. This is useful for simple cells.
-    string merged_text = 4;
+    // information unlike `text_block`. This is useful for simple cells.
+    string text = 4;
   }
 
   // A row of table cells.
@@ -314,4 +320,36 @@ message Table {
 
   // Body rows of the table
   repeated TableRow body_rows = 3;
+}
+
+// Proto for a key value pair.
+message KeyValuePair {
+  // The key string value.
+  string key = 1;
+
+  // Key block of the pair containing the normalized bounding box and key text.
+  Block key_block = 2;
+
+  // Value block of the pair containing the normalized bounding box and value
+  // text, including potentially deeper structures within the value text.
+  Block value_block = 3;
+
+  // Type of the value. Valid strings are the following:
+  //
+  //  "generic" - For generic text that is mapped to a value.
+  //  "number" - for numeric types
+  //  "id" - for generic identifiers.
+  //  "currency" - for currency values.
+  //  "date" - for dates.
+  //  "time" - for time and duration values.
+  //  "date_range" - for date ranges.
+  //  "address" - for address values (can be long).
+  //  "person" - for names of people or other personal identifiers.
+  //  "phone" - for phone numbers.
+  string value_type = 4;
+
+  // (Optional) The normalized key text if the text is common and classified.
+  //
+  // For example, 'TOTAL DUE' will be normalized to ‘Total amount’.
+  string normalized_key = 5;
 }
