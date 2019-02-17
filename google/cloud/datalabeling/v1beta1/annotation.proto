@@ -55,11 +55,18 @@ enum AnnotationType {
   // Bounding box annotations in an image.
   IMAGE_BOUNDING_BOX_ANNOTATION = 2;
 
+  // Oriented bounding box. The box does not have to be parallel to horizontal
+  // line.
+  IMAGE_ORIENTED_BOUNDING_BOX_ANNOTATION = 13;
+
   // Bounding poly annotations in an image.
   IMAGE_BOUNDING_POLY_ANNOTATION = 10;
 
   // Polyline annotations in an image.
   IMAGE_POLYLINE_ANNOTATION = 11;
+
+  // Segmentation annotations in an image.
+  IMAGE_SEGMENTATION_ANNOTATION = 12;
 
   // Classification annotations in video shots.
   VIDEO_SHOTS_CLASSIFICATION_ANNOTATION = 3;
@@ -72,6 +79,9 @@ enum AnnotationType {
 
   // Video event annotation.
   VIDEO_EVENT_ANNOTATION = 6;
+
+  // Speech to text annotation.
+  AUDIO_TRANSCRIPTION_ANNOTATION = 7;
 
   // Classification for text.
   TEXT_CLASSIFICATION_ANNOTATION = 8;
@@ -110,7 +120,8 @@ message AnnotationValue {
     // Annotation value for image classification case.
     ImageClassificationAnnotation image_classification_annotation = 1;
 
-    // Annotation value for image bounding box and polygon cases.
+    // Annotation value for image bounding box, oriented bounding box
+    // and polygon cases.
     ImageBoundingPolyAnnotation image_bounding_poly_annotation = 2;
 
     // Annotation value for image polyline cases.
@@ -118,6 +129,9 @@ message AnnotationValue {
     // line segments connected to each other but not closed form(Bounding Poly).
     // The line segments can cross each other.
     ImagePolylineAnnotation image_polyline_annotation = 8;
+
+    // Annotation value for image segmentation.
+    ImageSegmentationAnnotation image_segmentation_annotation = 9;
 
     // Annotation value for text classification case.
     TextClassificationAnnotation text_classification_annotation = 3;
@@ -130,6 +144,9 @@ message AnnotationValue {
 
     // Annotation value for video event case.
     VideoEventAnnotation video_event_annotation = 6;
+
+    // Annotation value for speech audio recognition case.
+    AudioRecognitionAnnotation audio_recognition_annotation = 7;
   }
 }
 
@@ -211,6 +228,20 @@ message ImagePolylineAnnotation {
   AnnotationSpec annotation_spec = 1;
 }
 
+// Image segmentation annotation.
+message ImageSegmentationAnnotation {
+  // The mapping between rgb color and annotation spec. The key is the rgb
+  // color represented in format of rgb(0, 0, 0). The value is the
+  // AnnotationSpec.
+  map<string, AnnotationSpec> annotation_colors = 1;
+
+  // Image format.
+  string mime_type = 2;
+
+  // A byte string of a full image's color map.
+  bytes image_bytes = 3;
+}
+
 // Text classification annotation.
 message TextClassificationAnnotation {
   // Label of the text.
@@ -269,6 +300,18 @@ message VideoEventAnnotation {
 
   // The time segment of the video to which the annotation applies.
   TimeSegment time_segment = 2;
+}
+
+// Speech audio recognition.
+message AudioRecognitionAnnotation {
+  // Transcript text representing the words spoken.
+  string transcript = 1;
+
+  // Start position in audio file that the transcription corresponds to.
+  google.protobuf.Duration start_offset = 2;
+
+  // End position in audio file that the transcription corresponds to.
+  google.protobuf.Duration end_offset = 3;
 }
 
 // Additional information associated with the annotation.
