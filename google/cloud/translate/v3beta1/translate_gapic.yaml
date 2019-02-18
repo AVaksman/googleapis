@@ -9,7 +9,7 @@ language_settings:
   go:
     package_name: cloud.google.com/go/translation/apiv3beta1
   csharp:
-    package_name: Google.Cloud.Translation.V3beta1
+    package_name: Google.Cloud.Translation.V3Beta1
   ruby:
     package_name: Google::Cloud::Translation::V3beta1
   php:
@@ -158,7 +158,7 @@ interfaces:
     field_name_patterns:
       parent: location
     long_running:
-      return_type: google.longrunning.Operation
+      return_type: google.cloud.translation.v3beta1.BatchTranslateResponse
       metadata_type: google.cloud.translation.v3beta1.BatchTranslateMetadata
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
@@ -179,7 +179,7 @@ interfaces:
     field_name_patterns:
       parent: location
     long_running:
-      return_type: google.longrunning.Operation
+      return_type: google.cloud.translation.v3beta1.CreateGlossaryResponse
       metadata_type: google.cloud.translation.v3beta1.CreateGlossaryMetadata
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
@@ -230,7 +230,7 @@ interfaces:
     field_name_patterns:
       name: glossary
     long_running:
-      return_type: google.longrunning.Operation
+      return_type: google.cloud.translation.v3beta1.DeleteGlossaryResponse
       metadata_type: google.cloud.translation.v3beta1.DeleteGlossaryMetadata
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
