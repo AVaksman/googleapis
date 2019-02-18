@@ -179,7 +179,7 @@ interfaces:
     field_name_patterns:
       parent: location
     long_running:
-      return_type: google.cloud.translation.v3beta1.CreateGlossaryResponse
+      return_type: google.cloud.translation.v3beta1.Glossary
       metadata_type: google.cloud.translation.v3beta1.CreateGlossaryMetadata
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
