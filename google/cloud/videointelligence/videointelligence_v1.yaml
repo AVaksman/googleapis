@@ -5,6 +5,7 @@ title: Cloud Video Intelligence API
 
 apis:
 - name: google.cloud.videointelligence.v1.VideoIntelligenceService
+- name: google.cloud.videointelligence.v1.StreamingVideoIntelligenceService
 
 types:
 - name: google.cloud.videointelligence.v1.AnnotateVideoResponse
@@ -27,6 +28,8 @@ backend:
     deadline: 600.0
   - selector: google.cloud.videointelligence.v1.VideoIntelligenceService.AnnotateVideo
     deadline: 600.0
+  - selector: google.cloud.videointelligence.v1.StreamingVideoIntelligenceService.AnnotateVideo
+    deadline: 900.0
 
 http:
   rules:
