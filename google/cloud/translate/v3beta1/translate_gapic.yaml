@@ -150,6 +150,7 @@ interfaces:
     timeout_millis: 60000
   - name: BatchTranslateText
     required_fields:
+    - source_language_code
     - target_language_codes
     - input_configs
     - output_config

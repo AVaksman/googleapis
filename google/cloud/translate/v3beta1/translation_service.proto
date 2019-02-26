@@ -398,8 +398,7 @@ message BatchTranslateTextRequest {
   // Otherwise 400 is returned.
   string parent = 1;
 
-  // Optional. Source language code.
-  // If missing, source language is identified automatically.
+  // Required. Source language code.
   string source_language_code = 2;
 
   // Required. Specify up to 10 language codes here.
