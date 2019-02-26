@@ -1,4 +1,4 @@
-// Copyright 2018 Google LLC.
+// Copyright 2019 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,9 +18,8 @@ syntax = "proto3";
 package google.cloud.translation.v3beta1;
 
 import "google/api/annotations.proto";
-import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
 import "google/longrunning/operations.proto";
+import "google/protobuf/timestamp.proto";
 
 option cc_enable_arenas = true;
 option go_package = "google.golang.org/genproto/googleapis/cloud/translation/v3beta1;translation";
@@ -207,7 +206,7 @@ message DetectLanguageRequest {
   //
   // The other supported format is
   // /projects/{project-id}/locations/{location-id}/models/language-detection/{model-id}
-  // Currently the only supported model-id is 'general'.
+  // Currently the only supported model-id is 'default'.
   string name = 4;
 
   // Required. The source of the document from which to detect the language.
@@ -265,8 +264,8 @@ message SupportedLanguages {
 message SupportedLanguage {
   // Supported language code, generally consisting of its ISO 639-1
   // identifier, for example, 'en', 'ja'. In certain cases, BCP-47 codes
-  // including language and region identifiers are returned (for example, 'zh-TW'
-  // and 'zh-CN')
+  // including language and region identifiers are returned (for example,
+  // 'zh-TW' and 'zh-CN')
   string language_code = 1;
 
   // Human readable name of the language localized in the display language
@@ -297,12 +296,13 @@ message InputConfig {
   // Required. Specify the input.
   oneof source {
     // Required. Google Cloud Storage location for the source input.
-    // This can be a single file (for example, `gs://translation-test/input.tsv`)
-    // or a wildcard (for example, `gs://translation-test/*`). If a file
-    // extension is `.csv`/`.tsv`, it can contain either one or two columns. The
-    // first column (optional) is the id of the text request. If the first
-    // column is missing, we use the row number (0-based) from the input file as
-    // the ID in the output file. The second column is the actual text to be
+    // This can be a single file (for example,
+    // `gs://translation-test/input.tsv`) or a wildcard (for example,
+    // `gs://translation-test/*`). If a file extension is `.csv`/`.tsv`, it can
+    // contain either one or two columns. The first column (optional) is the id
+    // of the text request. If the first column is missing, we use the row
+    // number (0-based) from the input file as the ID in the output file. The
+    // second column is the actual text to be
     //  translated. We recommend each row be <= 10K Unicode codepoints,
     // otherwise an error might be returned.
     //
@@ -422,6 +422,7 @@ message BatchTranslateTextRequest {
   // Required. Input configurations.
   // The total number of files matched should be <= 1000.
   // The total content size should be <= 100M Unicode codepoints.
+  // The files must use UTF-8 encoding.
   repeated InputConfig input_configs = 5;
 
   // Required. Output configuration.
@@ -556,7 +557,8 @@ message Glossary {
     // Invalid.
     GLOSSARY_TYPE_UNSPECIFIED = 0;
 
-    // A single language pair, for example, CSV file with source=>target mapping.
+    // A single language pair, for example, CSV file with source=>target
+    // mapping.
     UNIDIRECTIONAL = 1;
 
     // Any language pair from a set of supported languages, for example, GTT
