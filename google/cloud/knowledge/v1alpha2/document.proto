@@ -1,4 +1,4 @@
-// Copyright 2018 Google LLC.
+// Copyright 2019 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import "google/api/annotations.proto";
 import "google/longrunning/operations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "google/rpc/status.proto";
 
 option cc_enable_arenas = true;
 option go_package = "google.golang.org/genproto/googleapis/cloud/knowledge/v1alpha2;knowledge";
@@ -94,6 +96,16 @@ service Documents {
 
 // A document resource.
 message Document {
+  message ReloadStatus {
+    // Output only. The time of a reload attempt.
+    // This reload may have been triggered automatically or manually and may
+    // not have succeeded.
+    google.protobuf.Timestamp time = 1;
+
+    // Output only. The status of a reload attempt or the initial load.
+    google.rpc.Status status = 2;
+  }
+
   // An enum indicates the knowledge type of a document content.
   enum KnowledgeType {
     // The type is unspecified or arbitrary.
@@ -152,6 +164,29 @@ message Document {
   // from the call to `QueryKnowledgeBase` method.
   // The max size of a `key` or a `value` of the metadata is 1024 bytes.
   map<string, string> metadata = 7;
+
+  // Optional. If true, we try to automatically reload the document every day
+  // (at a time picked by the system). If false or unspecified, we don't try
+  // to automatically reload the document.
+  //
+  // Currently you can only enable automatic reload for documents sourced from
+  // a public url, see `source` field for the source types.
+  //
+  // Reload status can be tracked in `latest_reload_status`. If a reload
+  // fails, we will keep the document unchanged.
+  //
+  // If a reload fails with internal errors, the system will try to reload the
+  // document on the next day.
+  // If a reload fails with non-retriable errors (e.g. PERMISION_DENIED), the
+  // system will not try to reload the document anymore. You need to manually
+  // reload the document successfully by calling `ReloadDocument` and clear the
+  // errors.
+  bool enable_auto_reload = 9;
+
+  // Output only. The time and status of the latest reload.
+  // This reload may have been triggered automatically or manually
+  // and may not have succeeded.
+  ReloadStatus latest_reload_status = 10;
 }
 
 // Request message for [KnowledgeService.CreateDocument][].

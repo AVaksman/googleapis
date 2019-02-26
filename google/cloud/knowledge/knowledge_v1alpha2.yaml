@@ -1,7 +1,7 @@
 type: google.api.Service
 config_version: 3
 name: knowledge.googleapis.com
-title: Google Cloud Knowledge API
+title: Cloud Knowledge API
 
 apis:
 - name: google.cloud.knowledge.v1alpha2.Documents
@@ -10,8 +10,8 @@ apis:
 - name: google.cloud.knowledge.v1alpha2.QuestionAnswerEntries
 
 types:
-- name: google.cloud.knowledge.v1alpha2.OperationMetadata
 - name: google.cloud.knowledge.v1alpha2.BatchUpdateQuestionAnswerEntriesResponse
+- name: google.cloud.knowledge.v1alpha2.OperationMetadata
 
 documentation:
   summary: |-
@@ -70,6 +70,22 @@ backend:
     deadline: 60.0
   - selector: google.cloud.knowledge.v1alpha2.QuestionAnswerEntries.ListQuestionAnswerEntries
     deadline: 60.0
+
+http:
+  rules:
+  - selector: google.longrunning.Operations.ListOperations
+    get: '/v1alpha2/{name=projects/*}/operations'
+
+  - selector: google.longrunning.Operations.GetOperation
+    get: '/v1alpha2/{name=projects/*/operations/*}'
+
+  - selector: google.longrunning.Operations.DeleteOperation
+    delete: '/v1alpha2/{name=projects/*/operations/*}'
+
+  - selector: google.longrunning.Operations.CancelOperation
+    post: '/v1alpha2/{name=projects/*/operations/*}:cancel'
+    body: '*'
+
 
 authentication:
   rules:

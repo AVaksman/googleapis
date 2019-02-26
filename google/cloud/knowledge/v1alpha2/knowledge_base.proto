@@ -1,4 +1,4 @@
-// Copyright 2018 Google LLC.
+// Copyright 2019 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,11 +18,10 @@ syntax = "proto3";
 package google.cloud.knowledge.v1alpha2;
 
 import "google/api/annotations.proto";
-import "google/cloud/knowledge/v1alpha2/document.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/field_mask.proto";
-import "google/protobuf/struct.proto";
+import "google/cloud/knowledge/v1alpha2/document.proto";
 
 option cc_enable_arenas = true;
 option go_package = "google.golang.org/genproto/googleapis/cloud/knowledge/v1alpha2;knowledge";
@@ -120,6 +119,10 @@ message Answer {
   // document.
   string question = 7;
 
+  // The name of the document from which the answer originates, in the format of
+  // "projects/{project_id}/locations/{location_id}/knowledgeBases/{knowledge_base_id}/documents/{document_id}"
+  string document = 8;
+
   // The name of query record, in the format of
   // "projects/{project_id}/locations/{locations_id}/queryRecords/{query_record_id}"
   string query_record = 10;
@@ -129,6 +132,7 @@ message Answer {
 message CreateKnowledgeBaseRequest {
   // The name of the knowledge base parent, which has the format of
   // "projects/{project_id}/locations/{location_id}".
+  // Currently only supported location ID is "global".
   string parent = 1;
 
   // The knowledge base to create.
@@ -213,9 +217,11 @@ message QueryKnowledgeBasesRequest {
   // FAQ, the filter should be specified as "knowledge_types:FAQ".
   string filter = 6;
 
-  // Confidence threshold override. If this value is not provided (i.e. equals
-  // to 0.0), the default threshold is applied. Setting the override to a
-  // negative value removes the threshold.
+  // Confidence threshold override. Drop emantic_match_results and qa_results
+  // with confidence lower than confidence_threshold_override. The default
+  // threshold is 0.4. If this value is not provided (i.e. equals to 0.0), the
+  // default threshold is applied. Setting the override to a negative value
+  // removes the threshold.
   float confidence_threshold_override = 7;
 }
 

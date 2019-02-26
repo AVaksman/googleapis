@@ -1,4 +1,4 @@
-// Copyright 2018 Google LLC.
+// Copyright 2019 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ option java_package = "com.google.cloud.knowledge.v1alpha2";
 // Query records are for users to send knowledge service feedback on query
 // results. They are created by the server, and each query record represents
 // one pair of query and answer result. Resource IDs of query record are
-// returned in the responses of queries. With the IDs, uesrs can use the update
+// returned in the responses of queries. With the IDs, users can use the update
 // method to send the server their feedback for each individual query result.
 service QueryRecords {
   // Gets a query record. Returns NOT_FOUND if the query record does not exist.
@@ -80,6 +80,9 @@ message QueryRecord {
 
   // Expected score for each answer.
   ConfidenceOverride confidence_override = 4;
+
+  // Feedback of the document for each answer.
+  DocumentFeedback document_feedback = 5;
 }
 
 message KnowledgeBaseQuery {
@@ -130,13 +133,37 @@ message ConfidenceOverride {
   // answer.confidence.
   //
   // A typical workflow for users to send Knowledge Service feedback is:
-  // 1. A user send Knowledge Service a query.
+  // 1. A user sends Knowledge Service a query.
   // 2. Together with the answers, query_id and query_records are generated
   //    and returned to the user.
   // 3. The user uses the query id and query records to call the
   //    `UpdateQueryRecord` method to send Knowledge Service feedback about
   //    a specific answer that they believe is wrong.
   CorrectnessLevel correctness_level = 2;
+}
+
+// Message for the feedback of the document.
+message DocumentFeedback {
+  // Whether or not the document is correct.
+  //
+  // For example, assume that there is a document with the following content
+  // in a knowledge base:
+  // "Items must be returned/exchanged within 60 days of the purchase date."
+  // The ground truth is "No return or exchange is allowed."
+  // Given a query: "Can I return the package in 2 days once received?"
+  // For an answer "Items must be returned/exchanged within 60 days of the
+  // purchase date.", `correctness` should be `INCORRECT`.
+  Correctness correctness = 3;
+}
+
+enum Correctness {
+  CORRECTNESS_UNSPECIFIED = 0;
+
+  // The content of a document is incorrect.
+  INCORRECT = 1;
+
+  // The content of a document is correct.
+  CORRECT = 2;
 }
 
 // Request message for [QueryRecordService.GetQueryRecord][].
