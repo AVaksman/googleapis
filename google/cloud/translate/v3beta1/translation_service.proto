@@ -288,7 +288,7 @@ message GcsSource {
 // Input configuration.
 message InputConfig {
   // Optional. Can be "text/plain" or "text/html".
-  // For `.tsv` or `.csv`, "text/html" is used if mime_type is missing.
+  // For `.tsv`, "text/html" is used if mime_type is missing.
   // For `.html`, this field must be "text/html" or empty.
   // For `.txt`, this field must be "text/plain" or empty.
   string mime_type = 1;
@@ -298,7 +298,7 @@ message InputConfig {
     // Required. Google Cloud Storage location for the source input.
     // This can be a single file (for example,
     // `gs://translation-test/input.tsv`) or a wildcard (for example,
-    // `gs://translation-test/*`). If a file extension is `.csv`/`.tsv`, it can
+    // `gs://translation-test/*`). If a file extension is `.tsv`, it can
     // contain either one or two columns. The first column (optional) is the id
     // of the text request. If the first column is missing, we use the row
     // number (0-based) from the input file as the ID in the output file. The
@@ -328,7 +328,7 @@ message OutputConfig {
     // generate at most 2 * n output files. (n is the # of target_language_codes
     // in the BatchTranslateTextRequest).
     //
-    // Output files (csv/tsv) generated are compliant with RFC 4180 except that
+    // Output files (tsv) generated are compliant with RFC 4180 except that
     // record delimiters are '\n' instead of '\r\n'. We don't provide any way to
     // change record delimiters.
     //
@@ -354,7 +354,7 @@ message OutputConfig {
     // The format of translations_file (for target language code 'trg') is:
     // gs://translation_test/a_b_c_'trg'_translations.[extension]
     //
-    // If the input file extension is csv/tsv, the output has the following
+    // If the input file extension is tsv, the output has the following
     // columns:
     // Column 1: ID of the request provided in the input, if it's not
     // provided in the input, then the input row number is used (0-based).
@@ -372,7 +372,7 @@ message OutputConfig {
     // The format of translations_file (for target language code 'trg') is:
     // gs://translation_test/a_b_c_'trg'_errors.[extension]
     //
-    // If the input file extension is tsv/csv, translations_file has the
+    // If the input file extension is tsv, translations_file has the
     // following Column 1: ID of the request provided in the input, if it's not
     // provided in the input, then the input row number is used (0-based).
     // Column 2: source sentence.
