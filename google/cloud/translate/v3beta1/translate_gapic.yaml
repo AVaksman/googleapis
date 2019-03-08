@@ -41,8 +41,6 @@ interfaces:
     entity_name: location
   - name_pattern: projects/{project}/locations/{location}/glossaries/{glossary}
     entity_name: glossary
-  - name_pattern: projects/{project}/locations/{location}/models/{model_path=**}
-    entity_name: model_path
   # Definition for retryable codes.
   retry_codes_def:
   - name: idempotent
@@ -118,35 +116,38 @@ interfaces:
   methods:
   - name: TranslateText
     required_fields:
+    - contents
     - target_language_code
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
-      model: model_path
+      parent: location
     timeout_millis: 60000
   - name: DetectLanguage
     flattening:
       groups:
       - parameters:
-        - name
+        - parent
+        - model
         - mime_type
     required_fields:
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
-      name: location
+      parent: location
     timeout_millis: 60000
   - name: GetSupportedLanguages
     flattening:
       groups:
       - parameters:
+        - parent
         - display_language_code
-        - name
+        - model
     required_fields:
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
-      name: location
+      parent: location
     timeout_millis: 60000
   - name: BatchTranslateText
     required_fields:
@@ -194,7 +195,6 @@ interfaces:
         - parent
         - filter
     required_fields:
-    - parent
     page_streaming:
       request:
         page_size_field: page_size

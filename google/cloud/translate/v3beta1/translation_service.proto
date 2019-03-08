@@ -33,7 +33,7 @@ service TranslationService {
   // Translates input text and returns translated text.
   rpc TranslateText(TranslateTextRequest) returns (TranslateTextResponse) {
     option (google.api.http) = {
-      post: "/v3beta1/{model=projects/*/locations/*/models/**}:translateText"
+      post: "/v3beta1/{parent=projects/*/locations/*}:translateText"
       body: "*"
     };
   }
@@ -41,22 +41,15 @@ service TranslationService {
   // Detects the language of text within a request.
   rpc DetectLanguage(DetectLanguageRequest) returns (DetectLanguageResponse) {
     option (google.api.http) = {
-      post: "/v3beta1/{name=projects/*/locations/*}:detectLanguage"
+      post: "/v3beta1/{parent=projects/*/locations/*}:detectLanguage"
       body: "*"
-      additional_bindings {
-        post: "/v3beta1/{name=projects/*/locations/*/models/language-detection/*}:detectLanguage"
-        body: "*"
-      }
     };
   }
 
   // Returns a list of supported languages for translation.
   rpc GetSupportedLanguages(GetSupportedLanguagesRequest) returns (SupportedLanguages) {
     option (google.api.http) = {
-      get: "/v3beta1/{name=projects/*/locations/*}/supportedLanguages"
-      additional_bindings {
-        get: "/v3beta1/{name=projects/*/locations/*/models/**}/supportedLanguages"
-      }
+      get: "/v3beta1/{parent=projects/*/locations/*}/supportedLanguages"
     };
   }
 
@@ -123,14 +116,10 @@ message TranslateTextGlossaryConfig {
 
 // The request message for synchronous translation.
 message TranslateTextRequest {
-  // The source of the text to translate.
-  oneof source {
-    // Required. The content of the input in string format.
-    // We recommend using a shorter string (<=10k characters. that is, Unicode
-    // codepoints).
-    // Please use BatchTranslateText for larger text.
-    string content = 1;
-  }
+  // Required. The content of the input in string format.
+  // We recommend the total contents to be less than 30k codepoints.
+  // Please use BatchTranslateText for larger text.
+  repeated string contents = 1;
 
   // Optional. The format of the source text, for example, "text/html",
   //  "text/plain". If left blank, the MIME type is assumed to be "text/html".
@@ -147,20 +136,28 @@ message TranslateTextRequest {
   // text, set to one of the language codes listed in Language Support.
   string target_language_code = 5;
 
+  // Optional. Only used when making regionalized call.
+  // Format:
+  // projects/{project-id}/locations/{location-id}.
+  //
+  // Only custom model/glossary within the same location-id can be used.
+  // Otherwise 400 is returned.
+  string parent = 8;
+
   // Optional. The `model` type requested for this translation.
   //
   // The format  depends on model type:
   // 1. Custom models:
-  // /projects/{project-id}/locations/{location-id}/models/{model-id}.
+  // projects/{project-id}/locations/{location-id}/models/{model-id}.
   // 2. General (built-in) models:
-  // /projects/{project-id}/locations/{location-id}/models/general/nmt
-  // /projects/{project-id}/locations/{location-id}/models/general/base
+  // projects/{project-id}/locations/{location-id}/models/general/nmt
+  // projects/{project-id}/locations/{location-id}/models/general/base
   //
   // For global (non-regionalized) requests, use {location-id} 'global'.
   // For example,
-  // /projects/{project-id}/locations/global/models/general/nmt
+  // projects/{project-id}/locations/global/models/general/nmt
   //
-  // If missing, the system decides which model to use.
+  // If missing, the system decides which google base model to use.
   string model = 6;
 
   // Optional. Glossary to be applied. The glossary needs to be in the same
@@ -170,18 +167,14 @@ message TranslateTextRequest {
 
 // The main language translation response message.
 message TranslateTextResponse {
-  // Text translation response with no glossary applied.
-  Translation translation = 1;
+  // Text translation responses with no glossary applied.
+  // This field has the same length as `contents` in TranslateTextRequest.
+  repeated Translation translations = 1;
 
-  // The BCP-47 language code of source text in the initial request, detected
-  // automatically, if no source language was passed within the initial
-  // request. If the source language was passed, auto-detection of the language
-  // does not occur and this field will be empty.
-  string detected_language_code = 2;
-
-  // Text translation response if a glossary is provided in the request.
+  // Text translation responses if a glossary is provided in the request.
   // This could be the same as 'translation' above if no terms apply.
-  Translation glossary_translation = 3;
+  // This field has the same length as `contents` in TranslateTextRequest.
+  repeated Translation glossary_translations = 3;
 }
 
 // A single translation response.
@@ -193,21 +186,30 @@ message Translation {
   // This is same as `model` provided in the request.
   string model = 2;
 
+  // The BCP-47 language code of source text in the initial request, detected
+  // automatically, if no source language was passed within the initial
+  // request. If the source language was passed, auto-detection of the language
+  // does not occur and this field will be empty.
+  string detected_language_code = 4;
+
   // The `glossary_config` used for this translation.
   TranslateTextGlossaryConfig glossary_config = 3;
 }
 
 // The request message for language detection.
 message DetectLanguageRequest {
-  // Optional. Used for making regionalized calls.
-  // Format: /projects/{project-id}/locations/{location-id}.
-  // For global calls, use /projects/{project-id}/locations/global.
-  // If missing, the call is treated as a global call.
+  // Optional. Only used when making regionalized call.
+  // Format:
+  // projects/{project-id}/locations/{location-id}.
   //
-  // The other supported format is
-  // /projects/{project-id}/locations/{location-id}/models/language-detection/{model-id}
-  // Currently the only supported model-id is 'default'.
-  string name = 4;
+  // Only custom model within the same location-id can be used.
+  // Otherwise 400 is returned.
+  string parent = 5;
+
+  // Optional. The language detection model to be used.
+  // projects/{project-id}/locations/{location-id}/models/language-detection/{model-id}
+  // If not specified, default will be used.
+  string model = 4;
 
   // Required. The source of the document from which to detect the language.
   oneof source {
@@ -239,17 +241,29 @@ message DetectLanguageResponse {
 
 // The request message for discovering supported languages.
 message GetSupportedLanguagesRequest {
+  // Optional. Used for making regionalized calls.
+  // Format: projects/{project-id}/locations/{location-id}.
+  // For global calls, use projects/{project-id}/locations/global.
+  // If missing, the call is treated as a global call.
+  //
+  // Only custom model within the same location-id can be used.
+  // Otherwise 400 is returned.
+  string parent = 3;
+
   // Optional. The language to use to return localized, human readable names
   // of supported languages. If missing, default language is ENGLISH.
   string display_language_code = 1;
 
-  // Optional. The `name` can be in one of two formats:
-  // 1. Location: 'projects/*/locations/*'. Returns all languages supported
-  // by Cloud Translation API.
-  // 2. Model name: 'projects/*/locations/*/models/**'. Returns languages
-  // supported by the specified model.
-  // If missing, case 1 is used.
-  string name = 2;
+  // Optional. Get supported languages of this model.
+  // The format depends on model type:
+  // 1. Custom models:
+  // projects/{project-id}/locations/{location-id}/models/{model-id}.
+  // 2. General (built-in) models:
+  // projects/{project-id}/locations/{location-id}/models/general/nmt
+  // projects/{project-id}/locations/{location-id}/models/general/base
+  // Returns languages supported by the specified model.
+  // If missing, we get supported languages of Google general NMT model.
+  string model = 2;
 }
 
 // The response message for discovering supported languages.
@@ -337,7 +351,8 @@ message OutputConfig {
     // gs://translation-test/index.csv) The index file is generated/updated as
     // new files are being translated. The format is:
     //
-    // input_file,target_language_code,translations_file,errors_file
+    // input_file,target_language_code,translations_file,errors_file,
+    // glossary_translations_file,glossary_errors_file
     //
     // input_file is one file we matched using gcs_source.input_uri.
     // target_language_code is provided in the request.
@@ -345,6 +360,9 @@ message OutputConfig {
     // errors_file contains the errors during processing of the file. (details
     // below). Both translations_file and errors_file could be empty
     // strings if we have no content to output.
+    // glossary_translations_file,glossary_errors_file are always empty string
+    // if input_file is tsv. They could also be empty if we have no content to
+    // output.
     //
     // Once a row is present in index.csv, the input/output matching never
     // changes. Callers should also expect all the content in input_file are
@@ -367,12 +385,14 @@ message OutputConfig {
     // no glossary applied.
     //
     // If input file extension is a txt or html, the translation is directly
-    // written to the output file.
+    // written to the output file. If glossary is requested, a separate
+    // glossary_translations_file has format of
+    // gs://translation_test/a_b_c_'trg'_glossary_translations.[extension]
     //
-    // The format of translations_file (for target language code 'trg') is:
+    // The format of errors file (for target language code 'trg') is:
     // gs://translation_test/a_b_c_'trg'_errors.[extension]
     //
-    // If the input file extension is tsv, translations_file has the
+    // If the input file extension is tsv, errors_file has the
     // following Column 1: ID of the request provided in the input, if it's not
     // provided in the input, then the input row number is used (0-based).
     // Column 2: source sentence.
@@ -380,10 +400,9 @@ message OutputConfig {
     // Column 4 (only present if a glossary is provided in the request):
     // Error when applying the glossary.
     //
-    // If the input file extension is txt or html, the errors_file contains at
-    // most 2 lines. The first line contains the error details when translating
-    // the input without using a glossary. The second line (if a glossary is
-    // provided in the input) contains the error when applying a glossary.
+    // If the input file extension is txt or html, glossary_error_file will be
+    // generated that contains error details. glossary_error_file has format of
+    // gs://translation_test/a_b_c_'trg'_glossary_errors.[extension]
     GcsDestination gcs_destination = 1;
   }
 }
@@ -392,7 +411,7 @@ message OutputConfig {
 message BatchTranslateTextRequest {
   // Optional. Only used when making regionalized call.
   // Format:
-  // /projects/{project-id}/locations/{location-id}.
+  // projects/{project-id}/locations/{location-id}.
   //
   // Only custom models/glossaries within the same location-id can be used.
   // Otherwise 400 is returned.
@@ -410,10 +429,10 @@ message BatchTranslateTextRequest {
   //
   // The value format depends on model type:
   // 1. Custom models:
-  // /projects/{project-id}/locations/{location-id}/models/{model-id}.
+  // projects/{project-id}/locations/{location-id}/models/{model-id}.
   // 2. General (built-in) models:
-  // /projects/{project-id}/locations/{location-id}/models/general/nmt
-  // /projects/{project-id}/locations/{location-id}/models/general/base
+  // projects/{project-id}/locations/{location-id}/models/general/nmt
+  // projects/{project-id}/locations/{location-id}/models/general/base
   //
   // If the map is empty or a specific model is
   // not requested for a language pair, then default google model is used.
@@ -447,7 +466,7 @@ message BatchTranslateMetadata {
 
     // The batch is processed, and at least one item has been successfully
     // processed.
-    SUCCESSFUL = 2;
+    SUCCEEDED = 2;
 
     // The batch is done and no item has been successfully processed.
     FAILED = 3;
@@ -552,26 +571,9 @@ message Glossary {
     repeated string language_codes = 1;
   }
 
-  // Glossary type.
-  enum GlossaryType {
-    // Invalid.
-    GLOSSARY_TYPE_UNSPECIFIED = 0;
-
-    // A single language pair, for example, CSV file with source=>target
-    // mapping.
-    UNIDIRECTIONAL = 1;
-
-    // Any language pair from a set of supported languages, for example, GTT
-    // glossaries.
-    EQUIVALENT_TERMS_SET = 2;
-  }
-
   // Required. The resource name of the glossary. Glossary names have the form
   // `projects/{project-id}/locations/{location-id}/glossaries/{glossary-id}`.
   string name = 1;
-
-  // Required. Glossary type.
-  GlossaryType type = 2;
 
   // Languages supported by the glossary.
   oneof languages {
@@ -661,7 +663,7 @@ message CreateGlossaryMetadata {
     RUNNING = 1;
 
     // The glossary has been successfully created.
-    SUCCESSFUL = 2;
+    SUCCEEDED = 2;
 
     // Failed to create the glossary.
     FAILED = 3;
@@ -696,7 +698,7 @@ message DeleteGlossaryMetadata {
     RUNNING = 1;
 
     // The glossary was successfully deleted.
-    SUCCESSFUL = 2;
+    SUCCEEDED = 2;
 
     // Failed to delete the glossary.
     FAILED = 3;
