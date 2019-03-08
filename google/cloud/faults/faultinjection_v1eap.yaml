@@ -1,0 +1,36 @@
+type: google.api.Service
+config_version: 3
+name: faultinjection.googleapis.com
+title: GCP Fault Injection API
+
+apis:
+- name: google.cloud.faults.v1eap.FaultInjectionService
+
+documentation:
+  summary: The API for GCP Fault Injection tests.
+  overview: |-
+    # Introduction
+
+    This is the GCP Fault Injection service. It allows controlled
+    fault-injection testing of development and production systems. (-- #
+    Introduction
+
+    Internal site: go/catzilla --)
+
+backend:
+  rules:
+  - selector: google.cloud.faults.v1eap.FaultInjectionService.ListTasks
+    deadline: 30.0
+  - selector: google.cloud.faults.v1eap.FaultInjectionService.CreateTask
+    deadline: 30.0
+  - selector: google.cloud.faults.v1eap.FaultInjectionService.GetTask
+    deadline: 30.0
+  - selector: google.cloud.faults.v1eap.FaultInjectionService.CancelTask
+    deadline: 30.0
+
+authentication:
+  rules:
+  - selector: '*'
+    oauth:
+      canonical_scopes: |-
+        https://www.googleapis.com/auth/cloud-platform

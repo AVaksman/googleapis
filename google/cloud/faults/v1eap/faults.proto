@@ -1,4 +1,4 @@
-// Copyright 2018 Google LLC
+// Copyright 2019 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,12 +11,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
 
 syntax = "proto3";
 
 package google.cloud.faults.v1eap;
 
 import "google/api/annotations.proto";
+import "google/protobuf/duration.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
@@ -30,6 +32,13 @@ option objc_class_prefix = "GCFLT";
 option php_namespace = "Google\\Cloud\\Faults\\V1eap";
 
 
+// Google Fault Injection Service v1eap.
+//
+// This service allows users to send and manage Fault Injection Tasks.
+// * The service works with a collection of cloud projects, named: `/projects/*`
+// * Each project has a collection of available tasks, named: `/tasks/*`
+// * As such, Tasks instances are resources of the form:
+//   `/projects/{project_id}/tasks/{task_id}`
 service FaultInjectionService {
   // Lists Tasks.
   rpc ListTasks(ListTasksRequest) returns (ListTasksResponse) {
@@ -62,6 +71,7 @@ service FaultInjectionService {
   }
 }
 
+// A Fault Injection Service Task.
 message Task {
   // Describes the task state.
   enum State {
@@ -112,9 +122,9 @@ message Task {
   // Last update time of the state.
   google.protobuf.Timestamp update_time = 9;
 
-  // Human readable message describing details about the executing task.
+  // Human readable messages describing details about the executing task.
   // If failed, detailed error messages will be logged here.
-  string message = 10;
+  google.protobuf.Struct messages = 11;
 }
 
 // Request message for FaultInjectionService.CreateTask.
@@ -130,7 +140,7 @@ message CreateTaskRequest {
 // Request message for FaultInjectionService.GetTask.
 message GetTaskRequest {
   // The name of the Task to retrieve, including the project, e.g.,
-  //  // "projects/*/tasks/*".
+  // "projects/*/tasks/*".
   string name = 1;
 }
 
