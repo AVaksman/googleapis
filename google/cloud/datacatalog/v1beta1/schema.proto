@@ -1,4 +1,4 @@
-// Copyright 2018 Google LLC.
+// Copyright 2019 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,8 +22,7 @@ option go_package = "google.golang.org/genproto/googleapis/cloud/datacatalog/v1b
 option java_multiple_files = true;
 option java_package = "com.google.cloud.datacatalog";
 
-
-// Represents a schema (e.g. Bigquery, GoogleSQL, Avro schema).
+// Represents a schema (e.g. BigQuery, GoogleSQL, Avro schema).
 message Schema {
   // Maps column name to the schema of that column. A maximum of 10,000 columns
   // can be specified.
@@ -40,7 +39,8 @@ message ColumnSchema {
   string description = 2;
 
   // A column's mode indicates whether the values in this column are
-  // required, nullable, etc.
+  // required, nullable, etc. Only 'NULLABLE', 'REQUIRED' and 'REPEATED' are
+  // supported, default mode is 'NULLABLE'.
   string mode = 3;
 
   // Maps nested column name to the schema of that column.

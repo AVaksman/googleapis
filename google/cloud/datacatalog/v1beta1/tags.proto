@@ -1,4 +1,4 @@
-// Copyright 2018 Google LLC.
+// Copyright 2019 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ syntax = "proto3";
 
 package google.cloud.datacatalog.v1beta1;
 
+import "google/protobuf/timestamp.proto";
+
 option cc_enable_arenas = true;
 option go_package = "google.golang.org/genproto/googleapis/cloud/datacatalog/v1beta1;datacatalog";
 option java_multiple_files = true;
@@ -26,13 +28,20 @@ option java_package = "com.google.cloud.datacatalog";
 // the specifications within their Tag Template.
 message Tag {
   // The resource name of the tag in URL format. For example,
-  // "projects/foo/datasets/bar/entries/baz/tags/t", where "t" is a
-  // system-generated identifier.
+  // projects/{project_id}/locations/{location}/entrygroups/{entry_group_id}/entries/{entry_id}/tags/{tag_id}",
+  // where tag_id is a system-generated identifier.
   string name = 1;
 
   // The resource name of the tag template that this tag uses. For example,
-  // "projects/a/tagTemplates/b".
+  // projects/{project_id}/tagTemplates/{tag_template_id}. This field cannot be
+  // modified after creation.
   string template = 2;
+
+  // Output only.
+  // The display name of the tag template. This field is only populated in the
+  // response of
+  // [ListTags][google.cloud.datacatalog.v1beta1.DataCatalog.ListTags] method.
+  string template_display_name = 5;
 
   // The scope within the parent resource that this tag is attached to. If not
   // provided, the tag is attached to the parent resource itself. Deleting the
@@ -41,8 +50,11 @@ message Tag {
   oneof scope {
     // Resources like Entry can have schemas associated with them. This scope
     // allows users to attach tags to an individual column based on that schema.
+    //
     // For attaching a tag to a nested column, use '.' to separate the column
-    // names: "outer_column.inner_column". For columns with '.' in their names,
+    // names: "outer_column.inner_column".
+    //
+    // For columns with '.' in their names,
     // wrap the name in '`': "`my.column`", "`outer.column`.inner_column".
     string column = 4;
   }
@@ -60,14 +72,21 @@ message TagField {
 
   // The value of this field.
   oneof kind {
-    // Holds the value for the tag field with double type.
+    // Holds the value for a tag field with double type.
     double double_value = 2;
 
-    // Holds the value for the tag field with string type.
+    // Holds the value for a tag field with string type.
     string string_value = 3;
 
-    // Holds the value for the tag field with boolean type.
+    // Holds the value for a tag field with boolean type.
     bool bool_value = 4;
+
+    // Holds the value for a tag field with timestamp type.
+    google.protobuf.Timestamp timestamp_value = 5;
+
+    // Holds the value for a tag field with enum type. This value must be
+    // one of the allowed values in the definition of this enum.
+    string enum_value = 6;
   }
 }
 
@@ -82,22 +101,26 @@ message TagField {
 // A Tag Template also allows you to make Tags using that template visible only
 // to a certain group of users.
 message TagTemplate {
-  // The resource name of the tag template in URL format. For example,
-  // "projects/a/tagTemplates/b".
+  // Output only. The resource name of the tag template in URL format. For
+  // example, projects/{project_id}/tagTemplates/{tag_template_id}.
   string name = 1;
 
   // The display name for this template.
   string display_name = 2;
 
-  // Map of field name to the settings for the field. This map is an exhaustive
-  // list of allowed fields, and must contain at least one field. A template is
-  // limited to a maximum of 500 fields. Field names must match the following
-  // regex pattern: /[A-Za-z0-9$-_]+/
-  map<string, TagFieldTemplate> fields = 3;
+  // Map of tag template field ids to the settings for the field.
+  // This map is an exhaustive list of allowed fields. This map must contain at
+  // least one field and at most 100 fields.
+  //
+  // The keys to this map are tag template field ids. Field ids can contain
+  // letters (both uppercase and lowercase), numbers (0-9), underscores (_) and
+  // dashes (-). Field ids must be at least 1 character long and at most 100
+  // characters long. Field ids must start with a letter or number.
+  map<string, TagTemplateField> fields = 3;
 }
 
 // The template for an individual field within a TagTemplate.
-message TagFieldTemplate {
+message TagTemplateField {
   // The display name for this field.
   string display_name = 1;
 
@@ -106,6 +129,21 @@ message TagFieldTemplate {
 }
 
 message FieldType {
+  message EnumType {
+    // The set of allowed values for this enum. Any value in a TagField that
+    // uses this enum type must be one of these values.
+    //
+    // Enum values can contain letters (both uppercase and lowercase), numbers
+    // (0-9), underscores (_), dashes (-) and spaces ( ). Enum values must be at
+    // least 1 character long and at most 100 characters long. Enum values must
+    // start with a letter or number.
+    //
+    // The enum values listed here must not contain duplicates. When comparing
+    // enum values for duplicates, spaces and underscores are considered
+    // equivalent and uppercase and lowercase letters are considered equivalent.
+    repeated string allowed_values = 1;
+  }
+
   enum PrimitiveType {
     // This is the default invalid value for a type.
     PRIMITIVE_TYPE_UNSPECIFIED = 0;
@@ -118,9 +156,16 @@ message FieldType {
 
     // A boolean value.
     BOOL = 3;
+
+    // A timestamp.
+    TIMESTAMP = 4;
   }
 
   oneof type_decl {
-    PrimitiveType primitive_type = 2;
+    // Represents primitive types - string, bool etc.
+    PrimitiveType primitive_type = 1;
+
+    // Represents an enum type.
+    EnumType enum_type = 2;
   }
 }

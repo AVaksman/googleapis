@@ -39,14 +39,18 @@ interfaces:
   collections:
   - name_pattern: projects/{project}
     entity_name: project
-  - name_pattern: projects/{project}/datasets/{dataset}
-    entity_name: dataset
-  - name_pattern: projects/{project}/datasets/{dataset}/entries/{entry}
+  - name_pattern: projects/{project}/locations/{location}
+    entity_name: location
+  - name_pattern: projects/{project}/locations/{location}/entryGroups/{entry_group}
+    entity_name: entry_group
+  - name_pattern: projects/{project}/locations/{location}/entryGroups/{entry_group}/entries/{entry}
     entity_name: entry
-  - name_pattern: projects/{project}/datasets/{dataset}/entries/{entry}/tags/{tag}
+  - name_pattern: projects/{project}/locations/{location}/entryGroups/{entry_group}/entries/{entry}/tags/{tag}
     entity_name: tag
   - name_pattern: projects/{project}/tagTemplates/{tag_template}
     entity_name: tag_template
+  - name_pattern: projects/{project}/tagTemplates/{tag_template}/fields/{field}
+    entity_name: field
   # Definition for retryable codes.
   retry_codes_def:
   - name: idempotent
@@ -126,6 +130,7 @@ interfaces:
       - parameters:
         - query
         - order_by
+        - exclude_gcp_public_datasets
     required_fields:
     - query
     page_streaming:
@@ -137,44 +142,113 @@ interfaces:
         resources_field: results
     retry_codes_name: idempotent
     retry_params_name: default
-    timeout_millis: 10000
-  - name: LookupEntry
-    flattening:
-      groups:
-      - parameters:
-        - full_resource_name
-    required_fields:
-    - full_resource_name
-    retry_codes_name: idempotent
-    retry_params_name: default
     timeout_millis: 60000
-  - name: ListEntries
+  - name: CreateEntryGroup
     flattening:
       groups:
       - parameters:
         - parent
+        - entry_group_id
+        - entry_group
     required_fields:
     - parent
-    page_streaming:
-      request:
-        page_size_field: page_size
-        token_field: page_token
-      response:
-        token_field: next_page_token
-        resources_field: entries
+    - entry_group_id
+    - entry_group
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: location
+    timeout_millis: 60000
+  - name: GetEntryGroup
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
-      parent: dataset
+      name: entry_group
+    timeout_millis: 60000
+  - name: DeleteEntryGroup
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: entry_group
+    timeout_millis: 60000
+  - name: CreateEntry
+    flattening:
+      groups:
+      - parameters:
+        - parent
+        - entry_id
+        - entry
+    required_fields:
+    - parent
+    - entry_id
+    - entry
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: entry_group
+    timeout_millis: 60000
+  - name: UpdateEntry
+    flattening:
+      groups:
+      - parameters:
+        - entry
+    required_fields:
+    - entry
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      entry.name: entry
+    timeout_millis: 60000
+  - name: DeleteEntry
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: entry
+    timeout_millis: 60000
+  - name: GetEntry
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: entry
+    timeout_millis: 60000
+  - name: LookupEntry
+    retry_codes_name: idempotent
+    retry_params_name: default
     timeout_millis: 60000
   - name: CreateTagTemplate
     flattening:
       groups:
       - parameters:
         - parent
+        - tag_template_id
         - tag_template
     required_fields:
     - parent
+    - tag_template_id
     - tag_template
     retry_codes_name: non_idempotent
     retry_params_name: default
@@ -198,28 +272,12 @@ interfaces:
       groups:
       - parameters:
         - tag_template
-        - update_mask
     required_fields:
     - tag_template
-    - update_mask
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
       tag_template.name: tag_template
-    timeout_millis: 60000
-  - name: MutateTagTemplate
-    flattening:
-      groups:
-      - parameters:
-        - name
-        - mutation
-    required_fields:
-    - name
-    - mutation
-    retry_codes_name: non_idempotent
-    retry_params_name: default
-    field_name_patterns:
-      name: tag_template
     timeout_millis: 60000
   - name: DeleteTagTemplate
     flattening:
@@ -232,6 +290,62 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: tag_template
+    timeout_millis: 60000
+  - name: CreateTagTemplateField
+    flattening:
+      groups:
+      - parameters:
+        - parent
+        - tag_template_field_id
+        - tag_template_field
+    required_fields:
+    - parent
+    - tag_template_field_id
+    - tag_template_field
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: tag_template
+    timeout_millis: 60000
+  - name: UpdateTagTemplateField
+    flattening:
+      groups:
+      - parameters:
+        - name
+        - tag_template_field
+    required_fields:
+    - name
+    - tag_template_field
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: field
+    timeout_millis: 60000
+  - name: RenameTagTemplateField
+    flattening:
+      groups:
+      - parameters:
+        - name
+        - new_tag_template_field_id
+    required_fields:
+    - name
+    - new_tag_template_field_id
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: field
+    timeout_millis: 60000
+  - name: DeleteTagTemplateField
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: field
     timeout_millis: 60000
   - name: CreateTag
     flattening:
@@ -248,15 +362,12 @@ interfaces:
       parent: entry
     timeout_millis: 60000
   - name: UpdateTag
-    # params.
     flattening:
       groups:
       - parameters:
         - tag
-        - update_mask
     required_fields:
     - tag
-    - update_mask
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
@@ -279,10 +390,8 @@ interfaces:
       groups:
       - parameters:
         - parent
-        - full_resource_name
-        - filter
     required_fields:
-    - full_resource_name
+    - parent
     page_streaming:
       request:
         page_size_field: page_size
@@ -316,6 +425,20 @@ interfaces:
         - resource
     required_fields:
     - resource
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      resource: tag_template
+    timeout_millis: 60000
+  - name: TestIamPermissions
+    flattening:
+      groups:
+      - parameters:
+        - resource
+        - permissions
+    required_fields:
+    - resource
+    - permissions
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:

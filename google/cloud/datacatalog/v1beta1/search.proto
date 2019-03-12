@@ -1,4 +1,4 @@
-// Copyright 2018 Google LLC.
+// Copyright 2019 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,42 +18,50 @@ syntax = "proto3";
 package google.cloud.datacatalog.v1beta1;
 
 import "google/api/annotations.proto";
-import "google/cloud/datacatalog/v1beta1/table_spec.proto";
+import "google/protobuf/timestamp.proto";
 
 option cc_enable_arenas = true;
 option go_package = "google.golang.org/genproto/googleapis/cloud/datacatalog/v1beta1;datacatalog";
 option java_multiple_files = true;
 option java_package = "com.google.cloud.datacatalog";
 
-
 // A result that appears in the response of a search request. Each result
 // captures details of one entry that matches the search.
 message SearchCatalogResult {
-  // Type of the entry.
-  EntryType entry_type = 1;
+  // Type of the search result. This field can be used to determine which Get
+  // method to call to fetch the full resource.
+  SearchResultType search_result_type = 1;
 
-  // Subtype of the Cloud Data Catalog entry. For certain entry types e.g.
-  // 'TABLE', there can be extra type information to tell them apart e.g. table
-  // from BigQuery, table from Spanner.
-  oneof subtype {
-    // Table source type.
-    TableSourceType table_source_type = 2;
-  }
+  // Sub-type of the search result. This is a dot-delimited description of the
+  // resource's full type, and is the same as the value callers would provide in
+  // the "type" search facet.  Examples: "entry.table", "entry.dataStream",
+  // "tagTemplate"
+  string search_result_subtype = 2;
+
+  // The relative resource name of the resource in URL format.
+  // Examples:
+  // "projects/{project_id}/locations/{location_id}/entryGroups/{entry_group_id}/entries/{entry_id}".
+  // "projects/{project_id}/tagTemplates/{tag_template_id}".
+  string relative_resource_name = 3;
 
   // The full name of the cloud resource the entry belongs to. See:
   // https://cloud.google.com/apis/design/resource_names#full_resource_name
   // Example:
   // "//bigquery.googleapis.com/projects/projectId/datasets/datasetId/tables/tableId".
-  string full_resource_name = 4;
+  string linked_resource = 4;
 }
 
-// Entry resources in Cloud Data Catalog can be of different types e.g. Bigquery
-// Table entry is of type 'TABLE', pubsub topics is of type 'DATA_STREAM'. This
-// enum describes all the possible types Cloud Data Catalog contains.
-enum EntryType {
-  // Default unknown type
-  ENTRY_TYPE_UNSPECIFIED = 0;
+// The different types of resources that can be returned in search.
+enum SearchResultType {
+  // Default unknown type.
+  SEARCH_RESULT_TYPE_UNSPECIFIED = 0;
 
-  // The type of entry that has a GoogleSQL schema, including logical views.
-  TABLE = 2;
+  // An [Entry][google.cloud.datacatalog.v1beta1.Entry].
+  ENTRY = 1;
+
+  // A [TagTemplate][google.cloud.datacatalog.v1beta1.TagTemplate].
+  TAG_TEMPLATE = 2;
+
+  // An [EntryGroup][google.cloud.datacatalog.v1beta1.EntryGroup].
+  ENTRY_GROUP = 3;
 }

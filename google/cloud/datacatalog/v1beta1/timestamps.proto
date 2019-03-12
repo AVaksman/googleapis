@@ -17,25 +17,22 @@ syntax = "proto3";
 
 package google.cloud.datacatalog.v1beta1;
 
+import "google/protobuf/timestamp.proto";
+
 option cc_enable_arenas = true;
 option go_package = "google.golang.org/genproto/googleapis/cloud/datacatalog/v1beta1;datacatalog";
 option java_multiple_files = true;
 option java_package = "com.google.cloud.datacatalog";
 
-// Describes a BigQuery table.
-message BigQueryTableSpec {
-  // The table source type.
-  TableSourceType table_source_type = 1;
-}
+// Timestamps about this resource according to a particular system.
+message SystemTimestamps {
+  // Output only. The creation time of the resource within the given system.
+  google.protobuf.Timestamp create_time = 1;
 
-// Table source type.
-enum TableSourceType {
-  // Default unknown type.
-  TABLE_SOURCE_TYPE_UNSPECIFIED = 0;
+  // Output only. The last-modified time of the resource within the given
+  // system.
+  google.protobuf.Timestamp update_time = 2;
 
-  // Table view.
-  BIGQUERY_VIEW = 2;
-
-  // BigQuery native table.
-  BIGQUERY_TABLE = 5;
+  // Output only. The expiration time of the resource within the given system.
+  google.protobuf.Timestamp expire_time = 3;
 }
