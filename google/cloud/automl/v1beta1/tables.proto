@@ -131,6 +131,35 @@ message TablesModelMetadata {
   // data_type - Output only.
   repeated ColumnSpec input_feature_column_specs = 3;
 
+  // Objective function the model is optimizing towards. The training process
+  // creates a model that maximizes/minimizes the value of the objective
+  // function over the validation set.
+  //
+  // The supported optimization objectives depend on the prediction_type.
+  // If the field is not set, a default objective function is used.
+  //
+  // CLASSIFICATION_BINARY:
+  //   "MAXIMIZE_AU_ROC" (default) - Maximize the area under the receiver
+  //                                 operating characteristic (ROC) curve.
+  //   "MINIMIZE_LOG_LOSS" - Minimize log loss.
+  //   "MAXIMIZE_AU_PRC" - Maximize the area under the precision-recall curve.
+  //
+  // CLASSIFICATION_MULTI_CLASS :
+  //   "MINIMIZE_LOG_LOSS" (default) - Minimize log loss.
+  //
+  // CLASSIFICATION_MULTI_LABEL:
+  //   "MINIMIZE_LOG_LOSS" (default) - Minimize log loss.
+  //
+  // REGRESSION:
+  //   "MINIMIZE_RMSE" (default) - Minimize root-mean-squared error (RMSE).
+  //   "MINIMIZE_MAE" - Minimize mean-absolute error (MAE).
+  //   "MINIMIZE_RMSLE" - Minimize root-mean-squared log error (RMSLE).
+  //
+  // FORECASTING:
+  //   "MINIMIZE_RMSE" (default) - Minimize root-mean-squared error (RMSE).
+  //   "MINIMIZE_MAE" - Minimize mean-absolute error (MAE).
+  string optimization_objective = 4;
+
   // Output only. Auxiliary information for each of the
   // input_feature_column_specs, with respect to this particular model.
   repeated TablesModelColumnInfo tables_model_column_info = 5;

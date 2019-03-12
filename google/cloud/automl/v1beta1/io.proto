@@ -255,27 +255,6 @@ message InputConfig {
 // The formats are represented in EBNF with commas being literal and with
 // non-terminal symbols defined near the end of this comment. The formats are:
 //
-//  *  For Image Classification:
-//         CSV file(s) with each line having just a single column:
-//           GCS_FILE_PATH
-//           which leads to image of up to 30MB in size. Supported
-//           extensions: .JPEG, .GIF, .PNG. This path is treated as the ID in
-//           the Batch predict output.
-//         Three sample rows:
-//           gs://folder/image1.jpeg
-//           gs://folder/image2.gif
-//           gs://folder/image3.png
-//
-//  *  For Image Object Detection:
-//         CSV file(s) with each line having just a single column:
-//           GCS_FILE_PATH
-//           which leads to image of up to 30MB in size. Supported
-//           extensions: .JPEG, .GIF, .PNG. This path is treated as the ID in
-//           the Batch predict output.
-//         Three sample rows:
-//           gs://folder/image1.jpeg
-//           gs://folder/image2.gif
-//           gs://folder/image3.png
 //  *  For Video Classification:
 //         CSV file(s) with each line in format:
 //           GCS_FILE_PATH,TIME_SEGMENT_START,TIME_SEGMENT_END
@@ -287,6 +266,7 @@ message InputConfig {
 //           gs://folder/video1.mp4,10,40
 //           gs://folder/video1.mp4,20,60
 //           gs://folder/vid2.mov,0,inf
+//
 //  * For Text Extraction
 //         .JSONL (i.e. JSON Lines) file(s) which either provide text in-line or
 //         as documents (for a single BatchPredict call only one of the these
@@ -498,49 +478,6 @@ message OutputConfig {
 // where timestamp is in YYYY-MM-DDThh:mm:ss.sssZ ISO-8601 format. The contents
 // of it depend on the ML problem the predictions are made for.
 //
-//  *  For Image Classification:
-//         In the created directory files `image_classification_1.jsonl`,
-//         `image_classification_2.jsonl`,...,`image_classification_N.jsonl`
-//         will be created, where N may be 1, and depends on the
-//         total number of the successfully predicted images and annotations.
-//         A single image will be listed only once with all its annotations,
-//         and its annotations will never be split across files.
-//         Each .JSONL file will contain, per line, a JSON representation of a
-//         proto that wraps image's "ID" : "<id_value>" followed by a list of
-//         zero or more AnnotationPayload protos (called annotations), which
-//         have classification detail populated.
-//         If prediction for any image failed (partially or completely), then an
-//         additional `errors_1.jsonl`, `errors_2.jsonl`,..., `errors_N.jsonl`
-//         files will be created (N depends on total number of failed
-//         predictions). These files will have a JSON representation of a proto
-//         that wraps the same "ID" : "<id_value>" but here followed by
-//         exactly one
-//
-// [`google.rpc.Status`](https:
-// //github.com/googleapis/googleapis/blob/master/google/rpc/status.proto)
-//         containing only `code` and `message`fields.
-//
-//  *  For Image Object Detection:
-//         In the created directory files `image_object_detection_1.jsonl`,
-//         `image_object_detection_2.jsonl`,...,`image_object_detection_N.jsonl`
-//         will be created, where N may be 1, and depends on the
-//         total number of the successfully predicted images and annotations.
-//         Each .JSONL file will contain, per line, a JSON representation of a
-//         proto that wraps image's "ID" : "<id_value>" followed by a list of
-//         zero or more AnnotationPayload protos (called annotations), which
-//         have image_object_detection detail populated. A single image will
-//         be listed only once with all its annotations, and its annotations
-//         will never be split across files.
-//         If prediction for any image failed (partially or completely), then
-//         additional `errors_1.jsonl`, `errors_2.jsonl`,..., `errors_N.jsonl`
-//         files will be created (N depends on total number of failed
-//         predictions). These files will have a JSON representation of a proto
-//         that wraps the same "ID" : "<id_value>" but here followed by
-//         exactly one
-//
-// [`google.rpc.Status`](https:
-// //github.com/googleapis/googleapis/blob/master/google/rpc/status.proto)
-//         containing only `code` and `message`fields.
 //  *  For Video Classification:
 //         In the created directory a video_classification.csv file, and a .JSON
 //         file per each video classification requested in the input (i.e. each
