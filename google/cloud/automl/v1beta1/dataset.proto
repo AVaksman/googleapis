@@ -57,6 +57,9 @@ message Dataset {
     // Metadata for a dataset used for text extraction.
     TextExtractionDatasetMetadata text_extraction_dataset_metadata = 28;
 
+    // Metadata for a dataset used for text sentiment.
+    TextSentimentDatasetMetadata text_sentiment_dataset_metadata = 30;
+
     // Metadata for a dataset used for Tables.
     TablesDatasetMetadata tables_dataset_metadata = 33;
   }

@@ -69,6 +69,9 @@ message Model {
 
     // Metadata for Tables models.
     TablesModelMetadata tables_model_metadata = 24;
+
+    // Metadata for text sentiment models.
+    TextSentimentModelMetadata text_sentiment_model_metadata = 22;
   }
 
   // Output only.

@@ -53,6 +53,9 @@ message AnnotationPayload {
     // Annotation details for text extraction.
     TextExtractionAnnotation text_extraction = 6;
 
+    // Annotation details for text sentiment.
+    TextSentimentAnnotation text_sentiment = 7;
+
     // Annotation details for Tables.
     TablesAnnotation tables = 10;
   }

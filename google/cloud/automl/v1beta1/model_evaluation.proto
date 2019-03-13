@@ -54,6 +54,9 @@ message ModelEvaluation {
     // Model evaluation metrics for image object detection.
     ImageObjectDetectionEvaluationMetrics image_object_detection_evaluation_metrics = 12;
 
+    // Evaluation metrics for text sentiment models.
+    TextSentimentEvaluationMetrics text_sentiment_evaluation_metrics = 11;
+
     // Evaluation metrics for text extraction models.
     TextExtractionEvaluationMetrics text_extraction_evaluation_metrics = 13;
   }

@@ -180,6 +180,15 @@ option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 //         An imported table must have between 2 and 1,000 columns, inclusive,
 //         and between 1,000 and 10,000,000 rows, inclusive.
 //
+//  *  For Text Sentiment:
+//         CSV file(s) with each line in format:
+//           ML_USE,TEXT_SNIPPET,SENTIMENT
+//           TEXT_SNIPPET must have up to 500 characters.
+//         Three sample rows:
+//         TRAIN,"@freewrytin God is way too good for Claritin",2
+//         TRAIN,"I need Claritin so bad",3
+//         TEST,"Thank god for Claritin.",4
+//
 //  Definitions:
 //  ML_USE = "TRAIN" | "VALIDATE" | "TEST" | "UNASSIGNED"
 //           Describes how the given example (file) should be used for model
@@ -216,6 +225,23 @@ option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 //                microsecond precision. "inf" is allowed, and it means the end
 //                of the example.
 //  TEXT_SNIPPET = A content of a text snippet, UTF-8 encoded.
+//  SENTIMENT = An integer between 0 and
+//              Dataset.text_sentiment_dataset_metadata.sentiment_max
+//              (inclusive). Describes the ordinal of the sentiment - higher
+//              value means a more positive sentiment. All the values are
+//              completely relative, i.e. neither 0 needs to mean a negative or
+//              neutral sentiment nor sentiment_max needs to mean a positive one
+//              - it is just required that 0 is the least positive sentiment
+//              in the data, and sentiment_max is the  most positive one.
+//              The SENTIMENT shouldn't be confused with "score" or "magnitude"
+//              from the previous Natural Language Sentiment Analysis API.
+//              All SENTIMENT values between 0 and sentiment_max must be
+//              represented in the imported data. On prediction the same 0 to
+//              sentiment_max range will be used. The difference between
+//              neighboring sentiment values needs not to be uniform, e.g. 1 and
+//              2 may be similar whereas the difference between 2 and 3 may be
+//              huge.
+//
 //  Errors:
 //  If any of the provided CSV files can't be parsed or if more than certain
 //  percent of CSV rows cannot be processed then the operation fails and
