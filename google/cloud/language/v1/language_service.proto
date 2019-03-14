@@ -144,7 +144,6 @@ message Sentence {
 // as salience and mentions, with entities.
 message Entity {
   // The type of the entity.
-  // Next ID: 14
   enum Type {
     // Unknown
     UNKNOWN = 0;
