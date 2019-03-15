@@ -4,27 +4,35 @@ name: bigquery.googleapis.com
 title: BigQuery API
 
 apis:
-- name: google.cloud.bigquery.v2.ModelService
+  - name: google.cloud.bigquery.v2.ModelService
 
 types:
-- name: google.cloud.bigquery.v2.LocationMetadata
+  - name: google.cloud.bigquery.v2.LocationMetadata
 
 documentation:
   summary: 'A data platform for customers to create, manage, share and query data.'
 
 authentication:
   rules:
-  - selector: '*'
-    oauth:
-      canonical_scopes: |-
-        https://www.googleapis.com/auth/bigquery,
-        https://www.googleapis.com/auth/cloud-platform,
-        https://www.googleapis.com/auth/cloud-platform.read-only
-  - selector: |-
-      google.cloud.bigquery.v2.ModelService.DeleteModel,
-      google.cloud.bigquery.v2.ModelService.PatchModel
-    oauth:
-      canonical_scopes: |-
-        https://www.googleapis.com/auth/bigquery,
-        https://www.googleapis.com/auth/cloud-platform
-
+    - selector: google.cloud.bigquery.v2.ModelService.DeleteModel
+      oauth:
+        canonical_scopes: |-
+          https://www.googleapis.com/auth/bigquery,
+          https://www.googleapis.com/auth/cloud-platform
+    - selector: google.cloud.bigquery.v2.ModelService.GetModel
+      oauth:
+        canonical_scopes: |-
+          https://www.googleapis.com/auth/bigquery,
+          https://www.googleapis.com/auth/cloud-platform,
+          https://www.googleapis.com/auth/cloud-platform.read-only
+    - selector: google.cloud.bigquery.v2.ModelService.ListModels
+      oauth:
+        canonical_scopes: |-
+          https://www.googleapis.com/auth/bigquery,
+          https://www.googleapis.com/auth/cloud-platform,
+          https://www.googleapis.com/auth/cloud-platform.read-only
+    - selector: google.cloud.bigquery.v2.ModelService.PatchModel
+      oauth:
+        canonical_scopes: |-
+          https://www.googleapis.com/auth/bigquery,
+          https://www.googleapis.com/auth/cloud-platform
