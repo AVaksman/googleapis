@@ -24,14 +24,17 @@ option java_package = "com.google.cloud.datacatalog";
 
 // Represents a schema (e.g. BigQuery, GoogleSQL, Avro schema).
 message Schema {
-  // Maps column name to the schema of that column. A maximum of 10,000 columns
-  // can be specified.
-  map<string, ColumnSchema> columns = 1;
+  // Schema of columns. A maximum of 10,000 columns and sub-columns can be
+  // specified.
+  repeated ColumnSchema columns = 2;
 }
 
 // Representation of a column within a schema. Columns could be nested inside
 // other columns.
 message ColumnSchema {
+  // Required. Name of the column.
+  string column = 6;
+
   // Required. Type of the column.
   string type = 1;
 
@@ -43,6 +46,6 @@ message ColumnSchema {
   // supported, default mode is 'NULLABLE'.
   string mode = 3;
 
-  // Maps nested column name to the schema of that column.
-  map<string, ColumnSchema> columns = 4;
+  // Schema of sub-columns.
+  repeated ColumnSchema columns = 5;
 }
