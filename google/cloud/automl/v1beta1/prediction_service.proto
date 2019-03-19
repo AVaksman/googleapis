@@ -21,6 +21,7 @@ import "google/api/annotations.proto";
 import "google/cloud/automl/v1beta1/annotation_payload.proto";
 import "google/cloud/automl/v1beta1/data_items.proto";
 import "google/cloud/automl/v1beta1/io.proto";
+import "google/cloud/automl/v1beta1/operations.proto";
 import "google/longrunning/operations.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;automl";
