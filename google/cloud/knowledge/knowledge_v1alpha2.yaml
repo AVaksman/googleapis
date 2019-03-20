@@ -4,14 +4,14 @@ name: knowledge.googleapis.com
 title: Cloud Knowledge API
 
 apis:
-- name: google.cloud.knowledge.v1alpha2.Documents
-- name: google.cloud.knowledge.v1alpha2.KnowledgeBases
-- name: google.cloud.knowledge.v1alpha2.QueryRecords
-- name: google.cloud.knowledge.v1alpha2.QuestionAnswerEntries
+  - name: google.cloud.knowledge.v1alpha2.Documents
+  - name: google.cloud.knowledge.v1alpha2.KnowledgeBases
+  - name: google.cloud.knowledge.v1alpha2.QueryRecords
+  - name: google.cloud.knowledge.v1alpha2.QuestionAnswerEntries
 
 types:
-- name: google.cloud.knowledge.v1alpha2.BatchUpdateQuestionAnswerEntriesResponse
-- name: google.cloud.knowledge.v1alpha2.OperationMetadata
+  - name: google.cloud.knowledge.v1alpha2.BatchUpdateQuestionAnswerEntriesResponse
+  - name: google.cloud.knowledge.v1alpha2.OperationMetadata
 
 documentation:
   summary: |-
@@ -20,76 +20,88 @@ documentation:
 
 backend:
   rules:
-  - selector: google.longrunning.Operations.ListOperations
-    deadline: 60.0
-  - selector: google.longrunning.Operations.GetOperation
-    deadline: 60.0
-  - selector: google.longrunning.Operations.DeleteOperation
-    deadline: 60.0
-  - selector: google.longrunning.Operations.CancelOperation
-    deadline: 60.0
-  - selector: google.longrunning.Operations.WaitOperation
-    deadline: 60.0
-  - selector: google.cloud.knowledge.v1alpha2.Documents.CreateDocument
-    deadline: 60.0
-  - selector: google.cloud.knowledge.v1alpha2.Documents.UpdateDocument
-    deadline: 60.0
-  - selector: google.cloud.knowledge.v1alpha2.Documents.ReloadDocument
-    deadline: 60.0
-  - selector: google.cloud.knowledge.v1alpha2.Documents.GetDocument
-    deadline: 60.0
-  - selector: google.cloud.knowledge.v1alpha2.Documents.ListDocuments
-    deadline: 60.0
-  - selector: google.cloud.knowledge.v1alpha2.Documents.DeleteDocument
-    deadline: 60.0
-  - selector: google.cloud.knowledge.v1alpha2.KnowledgeBases.CreateKnowledgeBase
-    deadline: 60.0
-  - selector: google.cloud.knowledge.v1alpha2.KnowledgeBases.UpdateKnowledgeBase
-    deadline: 60.0
-  - selector: google.cloud.knowledge.v1alpha2.KnowledgeBases.ListKnowledgeBases
-    deadline: 60.0
-  - selector: google.cloud.knowledge.v1alpha2.KnowledgeBases.GetKnowledgeBase
-    deadline: 60.0
-  - selector: google.cloud.knowledge.v1alpha2.KnowledgeBases.DeleteKnowledgeBase
-    deadline: 60.0
-  - selector: google.cloud.knowledge.v1alpha2.KnowledgeBases.QueryKnowledgeBases
-    deadline: 60.0
-  - selector: google.cloud.knowledge.v1alpha2.QueryRecords.GetQueryRecord
-    deadline: 60.0
-  - selector: google.cloud.knowledge.v1alpha2.QueryRecords.ListQueryRecords
-    deadline: 60.0
-  - selector: google.cloud.knowledge.v1alpha2.QueryRecords.UpdateQueryRecord
-    deadline: 60.0
-  - selector: google.cloud.knowledge.v1alpha2.QueryRecords.DeleteQueryRecord
-    deadline: 60.0
-  - selector: google.cloud.knowledge.v1alpha2.QuestionAnswerEntries.GetQuestionAnswerEntry
-    deadline: 60.0
-  - selector: google.cloud.knowledge.v1alpha2.QuestionAnswerEntries.UpdateQuestionAnswerEntry
-    deadline: 60.0
-  - selector: google.cloud.knowledge.v1alpha2.QuestionAnswerEntries.BatchUpdateQuestionAnswerEntries
-    deadline: 60.0
-  - selector: google.cloud.knowledge.v1alpha2.QuestionAnswerEntries.ListQuestionAnswerEntries
-    deadline: 60.0
+    - selector: google.longrunning.Operations.ListOperations
+      deadline: 60.0
+    - selector: google.longrunning.Operations.GetOperation
+      deadline: 60.0
+    - selector: google.longrunning.Operations.DeleteOperation
+      deadline: 60.0
+    - selector: google.longrunning.Operations.CancelOperation
+      deadline: 60.0
+    - selector: google.longrunning.Operations.WaitOperation
+      deadline: 60.0
+    - selector: google.cloud.knowledge.v1alpha2.Documents.CreateDocument
+      deadline: 60.0
+    - selector: google.cloud.knowledge.v1alpha2.Documents.UpdateDocument
+      deadline: 60.0
+    - selector: google.cloud.knowledge.v1alpha2.Documents.ReloadDocument
+      deadline: 60.0
+    - selector: google.cloud.knowledge.v1alpha2.Documents.GetDocument
+      deadline: 60.0
+    - selector: google.cloud.knowledge.v1alpha2.Documents.ListDocuments
+      deadline: 60.0
+    - selector: google.cloud.knowledge.v1alpha2.Documents.DeleteDocument
+      deadline: 60.0
+    - selector: google.cloud.knowledge.v1alpha2.KnowledgeBases.CreateKnowledgeBase
+      deadline: 60.0
+    - selector: google.cloud.knowledge.v1alpha2.KnowledgeBases.UpdateKnowledgeBase
+      deadline: 60.0
+    - selector: google.cloud.knowledge.v1alpha2.KnowledgeBases.ListKnowledgeBases
+      deadline: 60.0
+    - selector: google.cloud.knowledge.v1alpha2.KnowledgeBases.GetKnowledgeBase
+      deadline: 60.0
+    - selector: google.cloud.knowledge.v1alpha2.KnowledgeBases.DeleteKnowledgeBase
+      deadline: 60.0
+    - selector: google.cloud.knowledge.v1alpha2.KnowledgeBases.QueryKnowledgeBases
+      deadline: 60.0
+    - selector: google.cloud.knowledge.v1alpha2.QueryRecords.GetQueryRecord
+      deadline: 60.0
+    - selector: google.cloud.knowledge.v1alpha2.QueryRecords.ListQueryRecords
+      deadline: 60.0
+    - selector: google.cloud.knowledge.v1alpha2.QueryRecords.UpdateQueryRecord
+      deadline: 60.0
+    - selector: google.cloud.knowledge.v1alpha2.QueryRecords.DeleteQueryRecord
+      deadline: 60.0
+    - selector: google.cloud.knowledge.v1alpha2.QuestionAnswerEntries.GetQuestionAnswerEntry
+      deadline: 60.0
+    - selector: google.cloud.knowledge.v1alpha2.QuestionAnswerEntries.UpdateQuestionAnswerEntry
+      deadline: 60.0
+    - selector: google.cloud.knowledge.v1alpha2.QuestionAnswerEntries.BatchUpdateQuestionAnswerEntries
+      deadline: 60.0
+    - selector: google.cloud.knowledge.v1alpha2.QuestionAnswerEntries.ListQuestionAnswerEntries
+      deadline: 60.0
 
 http:
   rules:
-  - selector: google.longrunning.Operations.ListOperations
-    get: '/v1alpha2/{name=projects/*}/operations'
-
-  - selector: google.longrunning.Operations.GetOperation
-    get: '/v1alpha2/{name=projects/*/operations/*}'
-
-  - selector: google.longrunning.Operations.DeleteOperation
-    delete: '/v1alpha2/{name=projects/*/operations/*}'
-
-  - selector: google.longrunning.Operations.CancelOperation
-    post: '/v1alpha2/{name=projects/*/operations/*}:cancel'
-    body: '*'
-
+    - selector: google.longrunning.Operations.CancelOperation
+      post: '/v1alpha2/{name=projects/*/operations/*}:cancel'
+      body: '*'
+    - selector: google.longrunning.Operations.DeleteOperation
+      delete: '/v1alpha2/{name=projects/*/operations/*}'
+    - selector: google.longrunning.Operations.GetOperation
+      get: '/v1alpha2/{name=projects/*/operations/*}'
+    - selector: google.longrunning.Operations.ListOperations
+      get: '/v1alpha2/{name=projects/*}/operations'
 
 authentication:
   rules:
-  - selector: '*'
-    oauth:
-      canonical_scopes: |-
-        https://www.googleapis.com/auth/cloud-platform
+    - selector: 'google.cloud.knowledge.v1alpha2.Documents.*'
+      oauth:
+        canonical_scopes: |-
+          https://www.googleapis.com/auth/cloud-platform
+    - selector: 'google.cloud.knowledge.v1alpha2.KnowledgeBases.*'
+      oauth:
+        canonical_scopes: |-
+          https://www.googleapis.com/auth/cloud-platform
+    - selector: 'google.cloud.knowledge.v1alpha2.QueryRecords.*'
+      oauth:
+        canonical_scopes: |-
+          https://www.googleapis.com/auth/cloud-platform
+    - selector: 'google.cloud.knowledge.v1alpha2.QuestionAnswerEntries.*'
+      oauth:
+        canonical_scopes: |-
+          https://www.googleapis.com/auth/cloud-platform
+    - selector: 'google.longrunning.Operations.*'
+      oauth:
+        canonical_scopes: |-
+          https://www.googleapis.com/auth/cloud-platform

@@ -18,10 +18,10 @@ syntax = "proto3";
 package google.cloud.knowledge.v1alpha2;
 
 import "google/api/annotations.proto";
+import "google/cloud/knowledge/v1alpha2/document.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/field_mask.proto";
-import "google/cloud/knowledge/v1alpha2/document.proto";
 
 option cc_enable_arenas = true;
 option go_package = "google.golang.org/genproto/googleapis/cloud/knowledge/v1alpha2;knowledge";
@@ -217,12 +217,11 @@ message QueryKnowledgeBasesRequest {
   // FAQ, the filter should be specified as "knowledge_types:FAQ".
   string filter = 6;
 
-  // Confidence threshold override. Drop emantic_match_results and qa_results
-  // with confidence lower than confidence_threshold_override. The default
-  // threshold is 0.4. If this value is not provided (i.e. equals to 0.0), the
-  // default threshold is applied. Setting the override to a negative value
-  // removes the threshold.
-  float confidence_threshold_override = 7;
+  // Confidence threshold. Drop emantic_match_results and qa_results with
+  // confidence lower than confidence_threshold. The default threshold is 0.4.
+  // If this value is not provided (i.e. equals to 0.0), the default threshold
+  // is applied. Setting the override to a negative value removes the threshold.
+  float confidence_threshold = 7;
 }
 
 // Describes the response to a query to multiple knowledge bases.

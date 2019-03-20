@@ -123,6 +123,10 @@ message Document {
     // Documents for which unstructured text is extracted and used for
     // question answering.
     EXTRACTIVE_QA = 2;
+
+    // Documents for which unstructured text is extracted and used to match
+    // queries that are semantically similar.
+    SEMANTIC_MATCH = 4;
   }
 
   // The document resource name, which has the format of
