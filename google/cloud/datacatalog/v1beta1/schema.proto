@@ -24,6 +24,8 @@ option java_package = "com.google.cloud.datacatalog";
 
 // Represents a schema (e.g. BigQuery, GoogleSQL, Avro schema).
 message Schema {
+  reserved 1;
+
   // Schema of columns. A maximum of 10,000 columns and sub-columns can be
   // specified.
   repeated ColumnSchema columns = 2;
@@ -32,6 +34,8 @@ message Schema {
 // Representation of a column within a schema. Columns could be nested inside
 // other columns.
 message ColumnSchema {
+  reserved 4;
+
   // Required. Name of the column.
   string column = 6;
 
@@ -46,6 +50,10 @@ message ColumnSchema {
   // supported, default mode is 'NULLABLE'.
   string mode = 3;
 
+  // Schema of sub-columns. This field is deprecated, use subcolumns instead.
+  // Only one of {columns, subcolumns} should be set.
+  repeated ColumnSchema columns = 5 [deprecated=true];
+
   // Schema of sub-columns.
-  repeated ColumnSchema columns = 5;
+  repeated ColumnSchema subcolumns = 7;
 }
