@@ -1,4 +1,4 @@
-// Copyright 2018 Google LLC.
+// Copyright 2019 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -144,7 +144,7 @@ message Feature {
 
     // Compute attributes of objects detected in the image. Four domains of
     // objects are supported. Please select via Feature.model (required):
-    // "builtin/apparel", "builtin/car", "builtin/food" or "builtin/wildlife".
+    // "builtin/apparel", "builtin/car" or "builtin/food".
     OBJECT_ATTRIBUTES = 21;
 
     // Run quality optimization algorithms. There are three types of operations:
@@ -155,6 +155,9 @@ message Feature {
 
     // Run barcode detection and recognition.
     BARCODE_DETECTION = 23;
+
+    // Run domain label detection.
+    DOMAIN_LABEL_DETECTION = 24;
 
     // Run document parsing algorithms to extract structured data such as tables
     // and forms. The results are found in `full_text_annotation` -> `page` ->
@@ -844,6 +847,12 @@ message QualityOptimizationParams {
   QualityScoreConfig quality_score_config = 4;
 }
 
+// Parameters for domain label detection request.
+message DomainLabelDetectionParams {
+  // The domain specific label set provided by customer.
+  repeated string domain_specific_labels = 1;
+}
+
 // Image context and/or feature-specific parameters.
 message ImageContext {
   // Not used.
@@ -873,6 +882,10 @@ message ImageContext {
 
   // Parameters for image quality optimizations.
   QualityOptimizationParams quality_optimization_params = 13;
+
+  // Domain label detection parameters that holds details about the user
+  // provided label set and relevant information.
+  DomainLabelDetectionParams domain_label_detection_params = 14;
 
   // Parameters for document parsing.
   DocumentParsingParams document_parsing_params = 15;
@@ -983,6 +996,9 @@ message AnnotateImageResponse {
 
   // If present, localized barcode detection has completed successfully.
   repeated LocalizedBarcodeAnnotation localized_barcode_annotations = 26;
+
+  // If present, domain label detection has completed successfully.
+  repeated EntityAnnotation domain_label_annotations = 27;
 }
 
 // Response to a single file annotation request. A file may contain one or more
@@ -1148,16 +1164,23 @@ message GcsSource {
 
 // The Google Cloud Storage location where the output will be written to.
 message GcsDestination {
-  // Google Cloud Storage URI where the results will be stored. Results will
-  // be in JSON format and preceded by its corresponding input URI. This field
-  // can either represent a single file, or a prefix for multiple outputs.
-  // Prefixes must end in a `/`.
+  // Google Cloud Storage URI prefix where the results will be stored. Results
+  // will be in JSON format and preceded by its corresponding input URI prefix.
+  // This field can either represent a gcs file prefix or gcs directory. In
+  // either case, the uri should be unique because in order to get all of the
+  // output files, you will need to do a wildcard gcs search on the uri prefix
+  // you provide.
   //
   // Examples:
   //
-  // *    File: gs://bucket-name/filename.json
-  // *    Prefix: gs://bucket-name/prefix/here/
-  // *    File: gs://bucket-name/prefix/here
+  // *    File Prefix: gs://bucket-name/here/filenameprefix   The output files
+  // will be created in gs://bucket-name/here/ and the names of the
+  // output files will begin with "filenameprefix".
+  //
+  // *    Directory Prefix: gs://bucket-name/some/location/   The output files
+  // will be created in gs://bucket-name/some/location/ and the names of the
+  // output files could be anything because there was no filename prefix
+  // specified.
   //
   // If multiple outputs, each response is still AnnotateFileResponse, each of
   // which contains some subset of the full list of AnnotateImageResponse.

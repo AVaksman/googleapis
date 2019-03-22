@@ -4,16 +4,16 @@ name: vision.googleapis.com
 title: Cloud Vision API
 
 apis:
-- name: google.cloud.vision.v1.ProductSearch
-- name: google.cloud.vision.v1.ImageAnnotator
+  - name: google.cloud.vision.v1.ImageAnnotator
+  - name: google.cloud.vision.v1.ProductSearch
 
 types:
-- name: google.cloud.vision.v1.AnnotateFileResponse
-- name: google.cloud.vision.v1.AsyncBatchAnnotateFilesResponse
-- name: google.cloud.vision.v1.AsyncBatchAnnotateImagesResponse
-- name: google.cloud.vision.v1.BatchOperationMetadata
-- name: google.cloud.vision.v1.ImportProductSetsResponse
-- name: google.cloud.vision.v1.OperationMetadata
+  - name: google.cloud.vision.v1.AnnotateFileResponse
+  - name: google.cloud.vision.v1.AsyncBatchAnnotateFilesResponse
+  - name: google.cloud.vision.v1.AsyncBatchAnnotateImagesResponse
+  - name: google.cloud.vision.v1.BatchOperationMetadata
+  - name: google.cloud.vision.v1.ImportProductSetsResponse
+  - name: google.cloud.vision.v1.OperationMetadata
 
 documentation:
   summary: |-
@@ -23,16 +23,27 @@ documentation:
 
 http:
   rules:
-  - selector: google.longrunning.Operations.GetOperation
-    get: '/v1/{name=operations/*}'
-    additional_bindings:
-    - get: '/v1/{name=locations/*/operations/*}'
-
+    - selector: google.longrunning.Operations.GetOperation
+      get: '/v1/{name=projects/*/operations/*}'
+      additional_bindings:
+        - get: '/v1/{name=projects/*/locations/*/operations/*}'
+        - get: '/v1/{name=operations/*}'
+        - get: '/v1/{name=locations/*/operations/*}'
 
 authentication:
   rules:
-  - selector: '*'
-    oauth:
-      canonical_scopes: |-
-        https://www.googleapis.com/auth/cloud-platform,
-        https://www.googleapis.com/auth/cloud-vision
+    - selector: 'google.cloud.vision.v1.ImageAnnotator.*'
+      oauth:
+        canonical_scopes: |-
+          https://www.googleapis.com/auth/cloud-platform,
+          https://www.googleapis.com/auth/cloud-vision
+    - selector: 'google.cloud.vision.v1.ProductSearch.*'
+      oauth:
+        canonical_scopes: |-
+          https://www.googleapis.com/auth/cloud-platform,
+          https://www.googleapis.com/auth/cloud-vision
+    - selector: 'google.longrunning.Operations.*'
+      oauth:
+        canonical_scopes: |-
+          https://www.googleapis.com/auth/cloud-platform,
+          https://www.googleapis.com/auth/cloud-vision

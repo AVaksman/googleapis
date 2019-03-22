@@ -1,4 +1,4 @@
-// Copyright 2018 Google LLC.
+// Copyright 2019 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -106,7 +106,7 @@ service ProductSearch {
   //
   // Possible errors:
   //
-  // * Returns NOT_FOUND if the ProductSet does not exist.
+  // none
   rpc DeleteProductSet(DeleteProductSetRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1/{name=projects/*/locations/*/productSets/*}"
@@ -180,7 +180,7 @@ service ProductSearch {
   //
   // Possible errors:
   //
-  // * Returns NOT_FOUND if the product does not exist.
+  // none
   rpc DeleteProduct(DeleteProductRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1/{name=projects/*/locations/*/products/*}"
@@ -223,7 +223,7 @@ service ProductSearch {
   //
   // Possible errors:
   //
-  // * Returns NOT_FOUND if the reference image does not exist.
+  // none
   rpc DeleteReferenceImage(DeleteReferenceImageRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1/{name=projects/*/locations/*/products/*/referenceImages/*}"
@@ -273,7 +273,7 @@ service ProductSearch {
   //
   // Possible errors:
   //
-  // * Returns NOT_FOUND If the Product is not found under the ProductSet.
+  // none
   rpc RemoveProductFromProductSet(RemoveProductFromProductSetRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       post: "/v1/{name=projects/*/locations/*/productSets/*}:removeProduct"
@@ -378,7 +378,8 @@ message ProductSet {
 
   // Output only. The time at which this ProductSet was last indexed. Query
   // results will reflect all updates before this time. If this ProductSet has
-  // never been indexed, this field is 0.
+  // never been indexed, this timestamp is the default value
+  // "1970-01-01T00:00:00Z".
   //
   // This field is ignored when creating a ProductSet.
   google.protobuf.Timestamp index_time = 3;
