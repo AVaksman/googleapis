@@ -155,6 +155,7 @@ interfaces:
     field_name_patterns:
       name: any_path
     timeout_millis: 60000
+    resource_name_treatment: STATIC_TYPES
   - name: ListDocuments
     required_fields:
     - parent
@@ -210,6 +211,7 @@ interfaces:
     field_name_patterns:
       name: any_path
     timeout_millis: 60000
+    resource_name_treatment: STATIC_TYPES
   - name: BatchGetDocuments
     required_fields:
     - database
@@ -264,7 +266,7 @@ interfaces:
     required_fields:
     - parent
     retry_codes_name: idempotent
-    retry_params_name: default
+    retry_params_name: streaming
     field_name_patterns:
       parent: document_root
       parent: any_path
@@ -307,3 +309,10 @@ interfaces:
       parent: document_root
       parent: any_path
     timeout_millis: 60000
+resource_name_generation:
+- message_name: GetDocumentRequest
+  field_entity_map:
+    name: any_path
+- message_name: DeleteDocumentRequest
+  field_entity_map:
+    name: any_path
