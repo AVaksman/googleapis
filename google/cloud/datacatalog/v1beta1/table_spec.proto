@@ -26,6 +26,10 @@ option java_package = "com.google.cloud.datacatalog";
 message BigQueryTableSpec {
   // The table source type.
   TableSourceType table_source_type = 1;
+
+  // Table view specification. This field should only be populated if
+  // table_source_type is BIGQUERY_VIEW.
+  ViewSpec view_spec = 2;
 }
 
 // Table source type.
@@ -38,4 +42,10 @@ enum TableSourceType {
 
   // BigQuery native table.
   BIGQUERY_TABLE = 5;
+}
+
+// Table view specification.
+message ViewSpec {
+  // The query that defines the table view.
+  string view_query = 1;
 }

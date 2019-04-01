@@ -32,19 +32,15 @@ interfaces:
   # The entity_name is the name to be used as a basis for generated methods and
   # classes.
   collections:
-  - name_pattern: projects/{project}
-    entity_name: project
   - name_pattern: projects/{project}/locations/{location}
     entity_name: location
-  - name_pattern: projects/{project}/locations/{location}/entryGroups/{entry_group}
-    entity_name: entry_group
   - name_pattern: projects/{project}/locations/{location}/entryGroups/{entry_group}/entries/{entry}
     entity_name: entry
   - name_pattern: projects/{project}/locations/{location}/entryGroups/{entry_group}/entries/{entry}/tags/{tag}
     entity_name: tag
-  - name_pattern: projects/{project}/tagTemplates/{tag_template}
+  - name_pattern: projects/{project}/locations/{location}/tagTemplates/{tag_template}
     entity_name: tag_template
-  - name_pattern: projects/{project}/tagTemplates/{tag_template}/fields/{field}
+  - name_pattern: projects/{project}/locations/{location}/tagTemplates/{tag_template}/fields/{field}
     entity_name: field
   # Definition for retryable codes.
   retry_codes_def:
@@ -123,11 +119,13 @@ interfaces:
     flattening:
       groups:
       - parameters:
+        - scope
         - query
         - order_by
-        - exclude_gcp_public_datasets
     required_fields:
+    - scope
     - query
+    - order_by
     page_streaming:
       request:
         page_size_field: page_size
@@ -135,64 +133,8 @@ interfaces:
       response:
         token_field: next_page_token
         resources_field: results
-    retry_codes_name: idempotent
-    retry_params_name: default
-    timeout_millis: 60000
-  - name: CreateEntryGroup
-    flattening:
-      groups:
-      - parameters:
-        - parent
-        - entry_group_id
-        - entry_group
-    required_fields:
-    - parent
-    - entry_group_id
-    - entry_group
     retry_codes_name: non_idempotent
     retry_params_name: default
-    field_name_patterns:
-      parent: location
-    timeout_millis: 60000
-  - name: GetEntryGroup
-    flattening:
-      groups:
-      - parameters:
-        - name
-    required_fields:
-    - name
-    retry_codes_name: idempotent
-    retry_params_name: default
-    field_name_patterns:
-      name: entry_group
-    timeout_millis: 60000
-  - name: DeleteEntryGroup
-    flattening:
-      groups:
-      - parameters:
-        - name
-    required_fields:
-    - name
-    retry_codes_name: idempotent
-    retry_params_name: default
-    field_name_patterns:
-      name: entry_group
-    timeout_millis: 60000
-  - name: CreateEntry
-    flattening:
-      groups:
-      - parameters:
-        - parent
-        - entry_id
-        - entry
-    required_fields:
-    - parent
-    - entry_id
-    - entry
-    retry_codes_name: non_idempotent
-    retry_params_name: default
-    field_name_patterns:
-      parent: entry_group
     timeout_millis: 60000
   - name: UpdateEntry
     flattening:
@@ -205,18 +147,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       entry.name: entry
-    timeout_millis: 60000
-  - name: DeleteEntry
-    flattening:
-      groups:
-      - parameters:
-        - name
-    required_fields:
-    - name
-    retry_codes_name: idempotent
-    retry_params_name: default
-    field_name_patterns:
-      name: entry
     timeout_millis: 60000
   - name: GetEntry
     flattening:
@@ -248,7 +178,7 @@ interfaces:
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
-      parent: project
+      parent: location
     timeout_millis: 60000
   - name: GetTagTemplate
     flattening:
@@ -267,6 +197,7 @@ interfaces:
       groups:
       - parameters:
         - tag_template
+        - update_mask
     required_fields:
     - tag_template
     retry_codes_name: non_idempotent
