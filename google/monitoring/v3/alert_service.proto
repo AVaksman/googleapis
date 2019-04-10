@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc.
+// Copyright 2019 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
 
 syntax = "proto3";
 
@@ -28,7 +29,6 @@ option java_outer_classname = "AlertServiceProto";
 option java_package = "com.google.monitoring.v3";
 option php_namespace = "Google\\Cloud\\Monitoring\\V3";
 
-
 // The AlertPolicyService API is used to manage (list, create, delete,
 // edit) alert policies in Stackdriver Monitoring. An alerting policy is
 // a description of the conditions under which some aspect of your
@@ -40,31 +40,45 @@ option php_namespace = "Google\\Cloud\\Monitoring\\V3";
 // [Cloud Console](https://console.cloud.google.com/).
 service AlertPolicyService {
   // Lists the existing alerting policies for the project.
-  rpc ListAlertPolicies(ListAlertPoliciesRequest) returns (ListAlertPoliciesResponse) {
-    option (google.api.http) = { get: "/v3/{name=projects/*}/alertPolicies" };
+  rpc ListAlertPolicies(ListAlertPoliciesRequest)
+      returns (ListAlertPoliciesResponse) {
+    option (google.api.http) = {
+      get: "/v3/{name=projects/*}/alertPolicies"
+    };
   }
 
   // Gets a single alerting policy.
   rpc GetAlertPolicy(GetAlertPolicyRequest) returns (AlertPolicy) {
-    option (google.api.http) = { get: "/v3/{name=projects/*/alertPolicies/*}" };
+    option (google.api.http) = {
+      get: "/v3/{name=projects/*/alertPolicies/*}"
+    };
   }
 
   // Creates a new alerting policy.
   rpc CreateAlertPolicy(CreateAlertPolicyRequest) returns (AlertPolicy) {
-    option (google.api.http) = { post: "/v3/{name=projects/*}/alertPolicies" body: "alert_policy" };
+    option (google.api.http) = {
+      post: "/v3/{name=projects/*}/alertPolicies"
+      body: "alert_policy"
+    };
   }
 
   // Deletes an alerting policy.
-  rpc DeleteAlertPolicy(DeleteAlertPolicyRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = { delete: "/v3/{name=projects/*/alertPolicies/*}" };
+  rpc DeleteAlertPolicy(DeleteAlertPolicyRequest)
+      returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v3/{name=projects/*/alertPolicies/*}"
+    };
   }
 
   // Updates an alerting policy. You can either replace the entire policy with
   // a new one or replace only certain fields in the current alerting policy by
-  // specifying the fields to be updated via `"updateMask"`. Returns the
+  // specifying the fields to be updated via `updateMask`. Returns the
   // updated alerting policy.
   rpc UpdateAlertPolicy(UpdateAlertPolicyRequest) returns (AlertPolicy) {
-    option (google.api.http) = { patch: "/v3/{alert_policy.name=projects/*/alertPolicies/*}" body: "alert_policy" };
+    option (google.api.http) = {
+      patch: "/v3/{alert_policy.name=projects/*/alertPolicies/*}"
+      body: "alert_policy"
+    };
   }
 }
 
@@ -77,7 +91,7 @@ message CreateAlertPolicyRequest {
   // policy will be written, not the name of the created policy. The alerting
   // policy that is returned will have a name that contains a normalized
   // representation of this name as a prefix but adds a suffix of the form
-  // "/alertPolicies/[POLICY_ID]", identifying the policy in the container.
+  // `/alertPolicies/[POLICY_ID]`, identifying the policy in the container.
   string name = 3;
 
   // The requested alerting policy. You should omit the `name` field in this
@@ -102,18 +116,24 @@ message ListAlertPoliciesRequest {
   //
   // Note that this field names the parent container in which the alerting
   // policies to be listed are stored. To retrieve a single alerting policy
-  // by name, use the [GetAlertPolicy][] operation, instead.
+  // by name, use the
+  // [GetAlertPolicy][google.monitoring.v3.AlertPolicyService.GetAlertPolicy]
+  // operation, instead.
   string name = 4;
 
   // If provided, this field specifies the criteria that must be met by
-  // alert policies to be included in the response. For more details, see
-  // [sorting and
-  // filtering](/monitoring/alpha-alerting/docs/sorting-and-filtering.md).
+  // alert policies to be included in the response.
+  //
+  // For more details, see [sorting and
+  // filtering](/monitoring/api/v3/sorting-and-filtering).
   string filter = 5;
 
   // A comma-separated list of fields by which to sort the result. Supports
-  // the same set of field references as the `"filter"`. Entries can be
+  // the same set of field references as the `filter` field. Entries can be
   // prefixed with a minus sign to sort by the field in descending order.
+  //
+  // For more details, see [sorting and
+  // filtering](/monitoring/api/v3/sorting-and-filtering).
   string order_by = 6;
 
   // The maximum number of results to return in a single response.
@@ -143,20 +163,22 @@ message UpdateAlertPolicyRequest {
   // value of the corresponding field in the supplied policy (`alert_policy`),
   // or to the field's default value if the field is not in the supplied
   // alerting policy.  Fields not listed retain their previous value.
-  // Presently, the `"updateMask"` field may list only `"disabled"`,
-  // `"notification_channels", or both of those fields together.
+  //
+  // Examples of valid field masks include `display_name`, `documentation`,
+  // `documentation.content`, `documentation.mime_type`, `user_labels`,
+  // `user_label.nameofkey`, `enabled`, `conditions`, `combiner`, etc.
   //
   // If this field is empty, then the supplied alerting policy replaces the
   // existing policy. It is the same as deleting the existing policy and
   // adding the supplied policy, except for the following:
   //
-  // +   The new policy will have the same [ALERT_POLICY_ID] as the former
+  // +   The new policy will have the same `[ALERT_POLICY_ID]` as the former
   //     policy. This gives you continuity with the former policy in your
   //     notifications and incidents.
-  // +   Conditions in the new policy will keep their former [CONDITION_ID] if
+  // +   Conditions in the new policy will keep their former `[CONDITION_ID]` if
   //     the supplied condition includes the `name` field with that
-  //     [CONDITION_ID]. If the supplied condition omits the `name` field,
-  //     then a new [CONDITION_ID] is created.
+  //     `[CONDITION_ID]`. If the supplied condition omits the `name` field,
+  //     then a new `[CONDITION_ID]` is created.
   google.protobuf.FieldMask update_mask = 2;
 
   // Required. The updated alerting policy or the updated values for the

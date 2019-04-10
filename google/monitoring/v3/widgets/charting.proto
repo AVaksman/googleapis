@@ -1,0 +1,165 @@
+// Copyright 2019 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.monitoring.v3.widgets;
+
+import "google/monitoring/v3/widgets/common.proto";
+import "google/protobuf/duration.proto";
+
+option csharp_namespace = "Google.Cloud.Monitoring.V3.Widgets";
+option go_package = "google.golang.org/genproto/googleapis/monitoring/v3/widgets;widgets";
+option java_multiple_files = true;
+option java_outer_classname = "ChartingWidgetsProto";
+option java_package = "com.google.monitoring.v3.widgets";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3\\Widgets";
+
+// A chart that displays data using an X axis and one or more Y axes.
+message XYChart {
+  // Groups a data source with plotting options.
+  message DataSet {
+    // Parameters needed to obtain data for the chart.
+    oneof source {
+      // Filter parameters to fetch time series.
+      TimeSeriesFilter time_series_filter = 1;
+
+      // Parameters to fetch a ratio between two time series filters.
+      TimeSeriesFilterRatio time_series_filter_ratio = 4;
+    }
+
+    // The Y axis to use for plotting these data. This field is currently
+    // unused by the Stackdriver Monitoring application.
+    TargetAxis target_axis = 2;
+
+    // How this data should be plotted on the chart.
+    PlotType plot_type = 3;
+  }
+
+  // Defines a constant horizontal line.
+  message ConstantLine {
+    // The identifier for the constant line in the legend.
+    string label = 1;
+
+    // The value at which the constant line is plotted.
+    float value = 2;
+
+    // The Y axis to use for plotting the constant.
+    TargetAxis target_axis = 3;
+  }
+
+  // An axis identifier.
+  enum TargetAxis {
+    // The y1_axis.
+    Y1 = 0;
+
+    // The y2_axis. This field is currently unused by the Stackdriver
+    // Monitoring application.
+    Y2 = 1;
+  }
+
+  // The data displayed in this chart.
+  repeated DataSet data_sets = 1;
+
+  // The duration used to display a comparison chart. A comparison chart shows
+  // values from two time periods simultaneously (e.g., week-over-week metrics).
+  // The duration must be positive, and it can only be applied to charts with
+  // data sets of LINE plot type.
+  google.protobuf.Duration timeshift_duration = 7;
+
+  // Constant lines that are displayed in this chart. This field is currently
+  // unused by the Stackdriver Monitoring application.
+  repeated ConstantLine constant_lines = 2;
+
+  // Additional options that control chart display. This field is currently
+  // unused by the Stackdriver Monitoring application.
+  ChartOptions options = 3;
+
+  // The X axis properties.
+  Axis x_axis = 6;
+
+  // The primary Y axis properties.
+  Axis y1_axis = 4;
+
+  // The optional secondary Y axis properties. This field is currently unused
+  // by the Stackdriver Monitoring application.
+  Axis y2_axis = 5;
+}
+
+// A chart axis.
+message Axis {
+  // Types of scales used in axes.
+  enum Scale {
+    // Linear scale.
+    LINEAR = 0;
+
+    // Logarithmic scale (base 10).
+    LOG10 = 1;
+  }
+
+  // The label of the axis. This field is currently
+  // unused by the Stackdriver Monitoring application.
+  string label = 1;
+
+  // The axis scale. By default, a linear scale is used.
+  Scale scale = 2;
+}
+
+// Options to control how a chart is rendered.
+message ChartOptions {
+  // Chart mode options.
+  enum Mode {
+    // The chart distinguishes data series using color.
+    COLOR = 0;
+
+    // The chart uses the Stackdriver x-ray mode, in which each
+    // data set is plotted using the same semi-transparent color.
+    X_RAY = 1;
+
+    // The chart displays the Stackdriver stats mode.
+    STATS = 2;
+  }
+
+  // The chart mode.
+  Mode mode = 1;
+
+  // When true, the chart should not be displayed when there is no
+  // data to display.
+  bool hide_on_no_data = 2;
+}
+
+// An enumeration of the types of plotting strategies for data sets.
+enum PlotType {
+  // The data is plotted as a set of lines (one line per series).
+  LINE = 0;
+
+  // The data is plotted as a set of filled areas (one area per series),
+  // with the areas stacked vertically (the base of each area is the top of
+  // its predecessor, and the base of the first area is the X axis). Since
+  // the areas do not overlap, each is filled with an opaque color.
+  STACKED_AREA = 1;
+
+  // The data is plotted as a set of rectangular boxes (one box per series),
+  // with the boxes stacked vertically (the base of each box is the top of its
+  // predecessor, and the base of the first box is the X axis). Since the boxes
+  // do not overlap, each is filled with an opaque color.
+  STACKED_BAR = 2;
+
+  // The data is plotted as a heatmap. The series being plotted must have a
+  // DISTRIBUTION value type. The value of each bucket in the distribution is
+  // displayed as a color. This type is not currently available in the
+  // Stackdriver Monitoring application.
+  HEATMAP = 3;
+}

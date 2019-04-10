@@ -15,30 +15,18 @@ language_settings:
     package_name: Google\Cloud\Monitoring\V3
   nodejs:
     package_name: monitoring.v3
-    domain_layer_location: google-cloud
-collections:
-- name_pattern: projects/{project}
-  entity_name: project
-  # C#: Already GA, do not use common resource name for 'project'
-- name_pattern: projects/{project}/metricDescriptors/{metric_descriptor=**}
-  entity_name: metric_descriptor
-- name_pattern: projects/{project}/monitoredResourceDescriptors/{monitored_resource_descriptor}
-  entity_name: monitored_resource_descriptor
-- name_pattern: projects/{project}/groups/{group}
-  entity_name: group
 interfaces:
 - name: google.monitoring.v3.AlertPolicyService
   collections:
   - name_pattern: projects/{project}
     entity_name: project
-    # C#: Already GA, do not use common resource name for 'project'
   - name_pattern: projects/{project}/alertPolicies/{alert_policy}
     entity_name: alert_policy
   retry_codes_def:
   - name: idempotent
     retry_codes:
-    - UNAVAILABLE
     - DEADLINE_EXCEEDED
+    - UNAVAILABLE
   - name: non_idempotent
     retry_codes: []
   retry_params_def:
@@ -69,7 +57,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: project
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: GetAlertPolicy
     flattening:
@@ -82,7 +69,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: alert_policy
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: CreateAlertPolicy
     flattening:
@@ -97,7 +83,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: project
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: DeleteAlertPolicy
     flattening:
@@ -110,7 +95,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: alert_policy
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: UpdateAlertPolicy
     flattening:
@@ -124,20 +108,111 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       alert_policy.name: alert_policy
-    resource_name_treatment: STATIC_TYPES
+    timeout_millis: 60000
+- name: google.monitoring.v3.DashboardService
+  collections:
+  - name_pattern: dashboards/{dashboard}
+    entity_name: dashboard
+  - name_pattern: projects/{project}
+    entity_name: project
+  - name_pattern: projects/{project}/dashboards/{dashboard}
+    entity_name: user_created_dashboard
+  retry_codes_def:
+  - name: idempotent
+    retry_codes:
+    - DEADLINE_EXCEEDED
+    - UNAVAILABLE
+  - name: non_idempotent
+    retry_codes: []
+  retry_params_def:
+  - name: default
+    initial_retry_delay_millis: 100
+    retry_delay_multiplier: 1.3
+    max_retry_delay_millis: 60000
+    initial_rpc_timeout_millis: 20000
+    rpc_timeout_multiplier: 1
+    max_rpc_timeout_millis: 20000
+    total_timeout_millis: 600000
+  methods:
+  - name: CreateDashboard
+    flattening:
+      groups:
+      - parameters:
+        - parent
+        - dashboard
+    required_fields:
+    - parent
+    - dashboard
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: project
+    timeout_millis: 60000
+  - name: ListDashboards
+    flattening:
+      groups:
+      - parameters:
+        - parent
+    required_fields:
+    - parent
+    page_streaming:
+      request:
+        page_size_field: page_size
+        token_field: page_token
+      response:
+        token_field: next_page_token
+        resources_field: dashboards
+    retry_codes_name: idempotent
+    retry_params_name: default
+    timeout_millis: 60000
+  - name: GetDashboard
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: dashboard
+    timeout_millis: 60000
+  - name: DeleteDashboard
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: user_created_dashboard
+    timeout_millis: 60000
+  - name: UpdateDashboard
+    flattening:
+      groups:
+      - parameters:
+        - dashboard
+        - update_mask
+    required_fields:
+    - dashboard
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      dashboard.name: user_created_dashboard
     timeout_millis: 60000
 - name: google.monitoring.v3.GroupService
   collections:
   - name_pattern: projects/{project}
     entity_name: project
-    # C#: Already GA, do not use common resource name for 'project'
   - name_pattern: projects/{project}/groups/{group}
     entity_name: group
   retry_codes_def:
   - name: idempotent
     retry_codes:
-    - UNAVAILABLE
     - DEADLINE_EXCEEDED
+    - UNAVAILABLE
   - name: non_idempotent
     retry_codes: []
   retry_params_def:
@@ -151,7 +226,10 @@ interfaces:
     total_timeout_millis: 600000
   methods:
   - name: ListGroups
-    # Removing flattening until we figure out how to deal with oneof
+    flattening:
+      groups:
+      - parameters:
+        - name
     required_fields:
     - name
     page_streaming:
@@ -165,7 +243,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: project
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: GetGroup
     flattening:
@@ -178,7 +255,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: group
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: CreateGroup
     flattening:
@@ -193,7 +269,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: project
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: UpdateGroup
     flattening:
@@ -206,7 +281,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       group.name: group
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: DeleteGroup
     flattening:
@@ -219,13 +293,14 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: group
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: ListGroupMembers
     flattening:
       groups:
       - parameters:
         - name
+        - filter
+        - interval
     required_fields:
     - name
     page_streaming:
@@ -239,26 +314,20 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: group
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
 - name: google.monitoring.v3.MetricService
-  smoke_test:
-    method: ListMonitoredResourceDescriptors
-    init_fields:
-    - name%project=$PROJECT_ID
   collections:
   - name_pattern: projects/{project}
     entity_name: project
-    # C#: Already GA, do not use common resource name for 'project'
-  - name_pattern: projects/{project}/metricDescriptors/{metric_descriptor=**}
-    entity_name: metric_descriptor
+  - name_pattern: projects/{project}/metricDescriptors/{metric_descriptor_path=**}
+    entity_name: metric_descriptor_path
   - name_pattern: projects/{project}/monitoredResourceDescriptors/{monitored_resource_descriptor}
     entity_name: monitored_resource_descriptor
   retry_codes_def:
   - name: idempotent
     retry_codes:
-    - UNAVAILABLE
     - DEADLINE_EXCEEDED
+    - UNAVAILABLE
   - name: non_idempotent
     retry_codes: []
   retry_params_def:
@@ -289,7 +358,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: project
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: GetMonitoredResourceDescriptor
     flattening:
@@ -302,7 +370,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: monitored_resource_descriptor
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: ListMetricDescriptors
     flattening:
@@ -322,7 +389,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: project
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: GetMetricDescriptor
     flattening:
@@ -334,8 +400,7 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
-      name: metric_descriptor
-    resource_name_treatment: STATIC_TYPES
+      name: metric_descriptor_path
     timeout_millis: 60000
   - name: CreateMetricDescriptor
     flattening:
@@ -350,7 +415,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: project
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: DeleteMetricDescriptor
     flattening:
@@ -362,22 +426,13 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
-      name: metric_descriptor
-    resource_name_treatment: STATIC_TYPES
+      name: metric_descriptor_path
     timeout_millis: 60000
   - name: ListTimeSeries
-    flattening:
-      groups:
-      - parameters:
-        - name
-        - filter
-        - interval
-        - view
     required_fields:
     - name
     - filter
     - interval
-    - view
     page_streaming:
       request:
         page_size_field: page_size
@@ -389,7 +444,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: project
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: CreateTimeSeries
     flattening:
@@ -404,13 +458,11 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: project
-    resource_name_treatment: STATIC_TYPES
-    timeout_millis: 60000
+    timeout_millis: 12000
 - name: google.monitoring.v3.NotificationChannelService
   collections:
   - name_pattern: projects/{project}
     entity_name: project
-    # C#: Already GA, do not use common resource name for 'project'
   - name_pattern: projects/{project}/notificationChannelDescriptors/{notification_channel_descriptor}
     entity_name: notification_channel_descriptor
   - name_pattern: projects/{project}/notificationChannels/{notification_channel}
@@ -418,8 +470,8 @@ interfaces:
   retry_codes_def:
   - name: idempotent
     retry_codes:
-    - UNAVAILABLE
     - DEADLINE_EXCEEDED
+    - UNAVAILABLE
   - name: non_idempotent
     retry_codes: []
   retry_params_def:
@@ -450,7 +502,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: project
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: GetNotificationChannelDescriptor
     flattening:
@@ -463,7 +514,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: notification_channel_descriptor
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: ListNotificationChannels
     flattening:
@@ -483,7 +533,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: project
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: GetNotificationChannel
     flattening:
@@ -496,7 +545,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: notification_channel
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: CreateNotificationChannel
     flattening:
@@ -511,7 +559,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: project
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: UpdateNotificationChannel
     flattening:
@@ -531,14 +578,12 @@ interfaces:
       groups:
       - parameters:
         - name
-        - force
     required_fields:
     - name
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
       name: notification_channel
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: SendNotificationChannelVerificationCode
     surface_treatments:
@@ -577,14 +622,13 @@ interfaces:
   collections:
   - name_pattern: projects/{project}
     entity_name: project
-    # C#: Already GA, do not use common resource name for 'project'
   - name_pattern: projects/{project}/uptimeCheckConfigs/{uptime_check_config}
     entity_name: uptime_check_config
   retry_codes_def:
   - name: idempotent
     retry_codes:
-    - UNAVAILABLE
     - DEADLINE_EXCEEDED
+    - UNAVAILABLE
   - name: non_idempotent
     retry_codes: []
   retry_params_def:
@@ -615,7 +659,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       parent: project
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: GetUptimeCheckConfig
     flattening:
@@ -628,7 +671,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: uptime_check_config
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: CreateUptimeCheckConfig
     flattening:
@@ -643,12 +685,12 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       parent: project
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: UpdateUptimeCheckConfig
     flattening:
       groups:
       - parameters:
+        - update_mask
         - uptime_check_config
     required_fields:
     - uptime_check_config
@@ -668,7 +710,6 @@ interfaces:
     retry_params_name: default
     field_name_patterns:
       name: uptime_check_config
-    resource_name_treatment: STATIC_TYPES
     timeout_millis: 60000
   - name: ListUptimeCheckIps
     page_streaming:
@@ -681,92 +722,3 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     timeout_millis: 60000
-resource_name_generation:
-- message_name: Group
-  field_entity_map:
-    name: group
-    parent_name: group
-- message_name: ListGroupsRequest
-  field_entity_map:
-    name: project
-    children_of_group: group
-    ancestors_of_group: group
-    descendants_of_group: group
-- message_name: GetGroupRequest
-  field_entity_map:
-    name: group
-- message_name: CreateGroupRequest
-  field_entity_map:
-    name: project
-- message_name: DeleteGroupRequest
-  field_entity_map:
-    name: group
-- message_name: ListGroupMembersRequest
-  field_entity_map:
-    name: group
-- message_name: ListMonitoredResourceDescriptorsRequest
-  field_entity_map:
-    name: project
-- message_name: GetMonitoredResourceDescriptorRequest
-  field_entity_map:
-    name: monitored_resource_descriptor
-- message_name: ListMetricDescriptorsRequest
-  field_entity_map:
-    name: project
-- message_name: GetMetricDescriptorRequest
-  field_entity_map:
-    name: metric_descriptor
-- message_name: CreateMetricDescriptorRequest
-  field_entity_map:
-    name: project
-- message_name: DeleteMetricDescriptorRequest
-  field_entity_map:
-    name: metric_descriptor
-- message_name: ListTimeSeriesRequest
-  field_entity_map:
-    name: project
-- message_name: CreateTimeSeriesRequest
-  field_entity_map:
-    name: project
-- message_name: ListAlertPoliciesRequest
-  field_entity_map:
-    name: project
-- message_name: GetAlertPolicyRequest
-  field_entity_map:
-    name: alert_policy
-- message_name: CreateAlertPolicyRequest
-  field_entity_map:
-    name: project
-- message_name: DeleteAlertPolicyRequest
-  field_entity_map:
-    name: alert_policy
-- message_name: GetNotificationChannelDescriptorRequest
-  field_entity_map:
-    name: notification_channel_descriptor
-- message_name: ListNotificationChannelDescriptorsRequest
-  field_entity_map:
-    name: project
-- message_name: ListNotificationChannelsRequest
-  field_entity_map:
-    name: project
-- message_name: GetNotificationChannelRequest
-  field_entity_map:
-    name: notification_channel
-- message_name: CreateNotificationChannelRequest
-  field_entity_map:
-    name: project
-- message_name: DeleteNotificationChannelRequest
-  field_entity_map:
-    name: notification_channel
-- message_name: GetUptimeCheckConfigRequest
-  field_entity_map:
-    name: uptime_check_config
-- message_name: ListUptimeCheckConfigsRequest
-  field_entity_map:
-    parent: project
-- message_name: CreateUptimeCheckConfigRequest
-  field_entity_map:
-    parent: project
-- message_name: DeleteUptimeCheckConfigRequest
-  field_entity_map:
-    name: uptime_check_config

@@ -1,0 +1,71 @@
+// Copyright 2019 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/annotations.proto";
+import "google/monitoring/v3/widgets/charting.proto";
+import "google/monitoring/v3/widgets/widget.proto";
+import "google/protobuf/duration.proto";
+
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "google.golang.org/genproto/googleapis/monitoring/v3;monitoring";
+option java_multiple_files = true;
+option java_outer_classname = "DashboardProto";
+option java_package = "com.google.monitoring.v3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+
+// A Google Stackdriver dashboard. Dashboards define the content and layout
+// of pages in the web application.
+message Dashboard {
+  // Options that are applied by default to all widgets (where applicable).
+  message DefaultOptions {
+    // The suggested time span to display when the dashboard is first loaded.
+    google.protobuf.Duration time_span = 3;
+
+    // The options applied to all charts unless overridden in the chart
+    // definition.
+    google.monitoring.v3.widgets.ChartOptions chart_options = 2;
+  }
+
+  // The resource name of the dashboard. The format is one of
+  // `"dashboards/{dashboard_id}"` (for system dashboards) or
+  // `"projects/{project_id_or_number}/dashboards/{dashboard_id}"`
+  // (for custom dashboards).
+  //
+  // If this field is provided during the initial dashboard creation, the
+  // `dashboard_id` portion of the name will be extracted and used as an
+  // identifier. If empty, an identifier will be automatically generated.
+  string name = 1;
+
+  // The mutable, human-readable name.
+  string display_name = 2;
+
+  // The most recent revision number of the dashboard. This value is incremented
+  // by the server when a dashboard is updated. When a dashboard update is
+  // attempted, the value of this field must match the authoritative value
+  // known to the server. This invariant disallows concurrent updates
+  // and prevents updates from writing stale data. The field is ignored during
+  // dashboard creation.
+  int64 revision = 6;
+
+  // The root content displayed by this dashboard.
+  google.monitoring.v3.widgets.Widget root = 4;
+
+  // The options applied to the dashboard at load time.
+  DefaultOptions default_options = 5;
+}

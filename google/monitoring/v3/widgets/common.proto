@@ -1,0 +1,190 @@
+// Copyright 2019 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.monitoring.v3.widgets;
+
+import "google/monitoring/v3/common.proto";
+import "google/protobuf/duration.proto";
+
+option csharp_namespace = "Google.Cloud.Monitoring.V3.Widgets";
+option go_package = "google.golang.org/genproto/googleapis/monitoring/v3/widgets;widgets";
+option java_multiple_files = true;
+option java_outer_classname = "CommonWidgetsProto";
+option java_package = "com.google.monitoring.v3.widgets";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3\\Widgets";
+
+// A filter that defines a subset of time series data that is displayed in a
+// widget. Time series data is fetched using the
+// [`ListTimeSeries`](/monitoring/api/ref_v3/rest/v3/projects.timeSeries/list)
+// method.
+//
+// For example, to fetch the disk write throughput for each GCE instance, use
+// the following JSON filter:
+//
+//    {
+//      filter: "resource.type = \"gce_instance\" AND metric.type =
+//      \"compute.googleapis.com/instance/disk/write_bytes_count\"",
+//      perSeriesAligner: "ALIGN_RATE",
+//      crossSeriesReducer: "REDUCE_SUM",
+//      groupByFields: ["metric.label.instance_name"]
+//    }
+//
+// This filter will reduce the multiple streams (one per disk) into a single
+// stream for each instance. If instead we wanted to find the per-zone maximum
+// write throughput, we would need to apply a second
+// reduction step. The first step, as above, produces one stream for each
+// instance by combining data from all attached disks. The second reduction
+// groups away the instances, producing the a single times series for each
+// zone.
+//
+//    {
+//      filter: "resource.type = \"gce_instance\" AND metric.type =
+//      \"compute.googleapis.com/instance/disk/write_bytes_count\"",
+//      perSeriesAligner: "ALIGN_RATE",
+//      crossSeriesReducer: "REDUCE_SUM",
+//      groupByFields: ["metric.label.instance_name", "resource.label.zone"],
+//      secondaryCrossSeriesReducer: "REDUCE_MAX",
+//      secondaryGroupByFields: ["resource.label.zone"],
+//    }
+message TimeSeriesFilter {
+  // The [monitoring filter](/monitoring/api/v3/filters) that identifies the
+  // metric types, resources, and projects to query. This field is required.
+  string filter = 1;
+
+  // The approach to be used to align individual time series. This field is
+  // required.
+  google.monitoring.v3.Aggregation.Aligner per_series_aligner = 2;
+
+  // The approach to be used to combine time series. This field is
+  // required if `groupByFields` or `secondaryCrossSeriesReducer` is present.
+  google.monitoring.v3.Aggregation.Reducer cross_series_reducer = 3;
+
+  // The optional set of time series fields to preserve when a cross-series
+  // reducer is specified. Any field not specified is aggregated away. Must be
+  // non-empty if `secondaryCrossSeriesReducer` is present. See
+  // [`groupByFields`](/monitoring/api/ref_v3/rest/v3/projects.timeSeries/list#Aggregation)
+  // for details.
+  repeated string group_by_fields = 4;
+
+  // The approach to be used to combine time series after the primary reduction.
+  // This field is required if `secondaryGroupByFields` is present.
+  //
+  // This field is not allowed when the filter is used in a
+  // `TimeSeriesFilterRatio`.
+  google.monitoring.v3.Aggregation.Reducer secondary_cross_series_reducer = 8;
+
+  // The optional set of time series fields to preserve when the secondary
+  // cross-series reducer is specified.
+  //
+  // This field is not allowed when the filter is used in a
+  // `TimeSeriesFilterRatio`.
+  repeated string secondary_group_by_fields = 9;
+
+  // Selects an optional time series filter.
+  oneof OutputFilter {
+    // Ranking based time series filter.
+    google.monitoring.v3.PickTimeSeriesFilter pick_time_series_filter = 5;
+  }
+
+  // The unit of data contained in fetched time series. If non-empty, this unit
+  // will override any unit that accompanies fetched data. The format is the
+  // same as the
+  // [`unit`](/monitoring/api/ref_v3/rest/v3/projects.metricDescriptors)
+  // field in `MetricDescriptor`.
+  //
+  // This field is currently unused by the Stackdriver Monitoring application.
+  string unit_override = 6;
+
+  // The lower bound on the frequency at which data points are published in
+  // the time series. An application that fetches time series using this filter
+  // may use the frequency as a hint to select an appropriate alignment period.
+  // For example, if the data is published once every 10 minutes it would not
+  // make sense to fetch and align data at one minute intervals. This field is
+  // optional, and exists only as a hint to the application rendering the
+  // dashboard.
+  //
+  // This field is currently unused by the Stackdriver Monitoring application.
+  google.protobuf.Duration min_alignment_period = 7;
+}
+
+// A pair of time series filters that define a ratio computation. The output
+// time series is the pair-wise division of each aligned element from the
+// numerator and denominator time series.
+message TimeSeriesFilterRatio {
+  // The numerator time series. The `numeratorFilter` is not allowed to have
+  // secondary aggregation or output filters. See `pickTimeSeriesFilter` for
+  // filtering time series after computing the ratio.
+  TimeSeriesFilter numerator_filter = 1;
+
+  // The denominator time series. The `denominatorFilter` is not allowed to have
+  // secondary aggregation or output filters. See `pickTimeSeriesFilter` for
+  // filtering time series after computing the ratio.
+  TimeSeriesFilter denominator_filter = 2;
+
+  // Selects an optional filter that is applied to the time series after
+  // computing the ratio.
+  oneof OutputTimeSeriesFilter {
+    // Ranking based time series filter.
+    google.monitoring.v3.PickTimeSeriesFilter pick_time_series_filter = 3;
+  }
+}
+
+// Defines a threshold for some actual value - often arising from a metric
+// query.
+message Threshold {
+  // The state engendered if the threshold is crossed. This categorizes the
+  // seriousness of the threshold.
+  enum Category {
+    // This should not be used. A category must be specified.
+    CATEGORY_UNSPECIFIED = 0;
+
+    // If the threshold is crossed, it is in at least a warning state.
+    // This is out-ranked by a critical state coming from another threshold. If
+    // two thesholds are crossed, the state is the more extreme of the two.
+    WARNING = 1;
+
+    // If the threshold is crossed, it is in a danger state.
+    DANGER = 2;
+  }
+
+  // Whether the threshold is considered crossed by an actual value above or
+  // below its threshold value.
+  enum TriggerDirection {
+    // This should not be used. A trigger direction must be specified.
+    TRIGGER_DIRECTION_UNSPECIFIED = 0;
+
+    // The threshold will be considered crossed if the actual value is above
+    // the threshold value. The default.
+    ABOVE = 1;
+
+    // The threshold will be considered crossed if the actual value is below
+    // the threshold value.
+    BELOW = 2;
+  }
+
+  // A label for the threshold - currently not displayed.
+  string label = 1;
+
+  // The value of the threshold.
+  double value = 2;
+
+  // The category for this threshold.
+  Category category = 3;
+
+  // The trigger direction for the current threshold.
+  TriggerDirection trigger_direction = 4;
+}

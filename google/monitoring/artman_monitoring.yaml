@@ -2,36 +2,34 @@ common:
   api_name: monitoring
   api_version: v3
   organization_name: google-cloud
-  service_yaml: monitoring.yaml
-  gapic_yaml: v3/monitoring_gapic.yaml
-  src_proto_paths:
-  - v3
   proto_deps:
   - name: google-common-protos
+  src_proto_paths:
+  - v3
+  - v3/widgets
+  service_yaml: monitoring.yaml
+  gapic_yaml: v3/monitoring_gapic.yaml
 artifacts:
+- name: gapic_config
+  type: GAPIC_CONFIG
 - name: java_gapic
   type: GAPIC
   language: JAVA
 - name: python_gapic
   type: GAPIC
   language: PYTHON
-- name: php_gapic
-  type: GAPIC
-  language: PHP
-- name: ruby_gapic
-  type: GAPIC
-  language: RUBY
-- name: go_gapic
-  type: GAPIC
-  language: GO
-- name: csharp_gapic
-  type: GAPIC
-  language: CSHARP
 - name: nodejs_gapic
   type: GAPIC
   language: NODEJS
-  release_level: BETA
-  package_version:
-    grpc_dep_lower_bound: 0.3.0
-- name: gapic_config
-  type: GAPIC_CONFIG
+- name: php_gapic
+  type: GAPIC
+  language: PHP
+- name: go_gapic
+  type: GAPIC
+  language: GO
+- name: ruby_gapic
+  type: GAPIC
+  language: RUBY
+- name: csharp_gapic
+  type: GAPIC
+  language: CSHARP

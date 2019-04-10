@@ -15,22 +15,13 @@
 
 syntax = "proto3";
 
-package google.monitoring.v3;
+package google.monitoring.v3.widgets;
 
-import "google/protobuf/timestamp.proto";
+import "google/monitoring/v3/widgets/common.proto";
 
-option csharp_namespace = "Google.Cloud.Monitoring.V3";
-option go_package = "google.golang.org/genproto/googleapis/monitoring/v3;monitoring";
+option csharp_namespace = "Google.Cloud.Monitoring.V3.Widgets";
+option go_package = "google.golang.org/genproto/googleapis/monitoring/v3/widgets;widgets";
 option java_multiple_files = true;
-option java_outer_classname = "MutationRecordProto";
-option java_package = "com.google.monitoring.v3";
-option php_namespace = "Google\\Cloud\\Monitoring\\V3";
-
-// Describes a change made to a configuration.
-message MutationRecord {
-  // When the change occurred.
-  google.protobuf.Timestamp mutate_time = 1;
-
-  // The email address of the user making the change.
-  string mutated_by = 2;
-}
+option java_outer_classname = "TabularWidgetsProto";
+option java_package = "com.google.monitoring.v3.widgets";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3\\Widgets";
