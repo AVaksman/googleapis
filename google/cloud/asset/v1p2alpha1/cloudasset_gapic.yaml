@@ -16,9 +16,20 @@ language_settings:
     package_name: Google\Cloud\Asset\V1p2alpha1
   nodejs:
     package_name: asset.v1p2alpha1
+collection_oneofs:
+- oneof_name: feed_oneof
+  collection_names:
+  - project_feed
+  - organization_feed
+  - folder_feed
+- oneof_name: parent_oneof
+  collection_names:
+  - project
+  - organization
+  - folder
 # A list of API interface configurations.
 interfaces:
-# The fully qualified name of the API interface.
+  # The fully qualified name of the API interface.
 - name: google.cloud.asset.v1p2alpha1.AssetService
   # A list of resource collection configurations.
   # Consists of a name_pattern and an entity_name.
@@ -31,8 +42,18 @@ interfaces:
   # The entity_name is the name to be used as a basis for generated methods and
   # classes.
   collections:
-  - name_pattern: {unknown}/{unknown}/feeds/{feed}
-    entity_name: feed
+  - name_pattern: projects/{project}/feeds/{feed}
+    entity_name: project_feed
+  - name_pattern: organizations/{organization}/feeds/{feed}
+    entity_name: organization_feed
+  - name_pattern: folders/{folders}/feeds/{feed}
+    entity_name: folder_feed
+  - name_pattern: projects/{project}
+    entity_name: project
+  - name_pattern: organizations/{organization}
+    entity_name: organization
+  - name_pattern: folders/{folder}
+    entity_name: folder
   # Definition for retryable codes.
   retry_codes_def:
   - name: idempotent
@@ -111,6 +132,8 @@ interfaces:
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
       total_poll_timeout_millis: 300000
+    field_name_patterns:
+      parent: parent_oneof
     timeout_millis: 600000
   - name: BatchGetAssetsHistory
     flattening:
@@ -123,6 +146,8 @@ interfaces:
     - content_type
     retry_codes_name: idempotent
     retry_params_name: default
+    field_name_patterns:
+      parent: parent_oneof
     timeout_millis: 600000
   - name: CreateFeed
     flattening:
@@ -135,6 +160,8 @@ interfaces:
     - feed
     retry_codes_name: non_idempotent
     retry_params_name: default
+    field_name_patterns:
+      parent: parent_oneof
     timeout_millis: 30000
   - name: GetFeed
     flattening:
@@ -146,7 +173,7 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
-      name: feed
+      name: feed_oneof
     timeout_millis: 10000
   - name: ListFeeds
     flattening:
@@ -157,6 +184,8 @@ interfaces:
     - parent
     retry_codes_name: idempotent
     retry_params_name: default
+    field_name_patterns:
+      parent: parent_oneof
     timeout_millis: 10000
   - name: UpdateFeed
     flattening:
@@ -169,7 +198,7 @@ interfaces:
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
-      feed.name: feed
+      feed.name: feed_oneof
     timeout_millis: 30000
   - name: DeleteFeed
     flattening:
@@ -181,5 +210,5 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
-      name: feed
+      name: feed_oneof
     timeout_millis: 30000
