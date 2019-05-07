@@ -1,4 +1,4 @@
-// Copyright 2018 Google LLC.
+// Copyright 2019 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,14 +18,15 @@ syntax = "proto3";
 package google.cloud.automl.v1beta1;
 
 import "google/api/annotations.proto";
+import "google/api/resource.proto";
 import "google/cloud/automl/v1beta1/annotation_payload.proto";
+import "google/cloud/automl/v1beta1/annotation_spec.proto";
 import "google/cloud/automl/v1beta1/column_spec.proto";
 import "google/cloud/automl/v1beta1/dataset.proto";
 import "google/cloud/automl/v1beta1/image.proto";
 import "google/cloud/automl/v1beta1/io.proto";
 import "google/cloud/automl/v1beta1/model.proto";
 import "google/cloud/automl/v1beta1/model_evaluation.proto";
-import "google/cloud/automl/v1beta1/operations.proto";
 import "google/cloud/automl/v1beta1/table_spec.proto";
 import "google/longrunning/operations.proto";
 import "google/protobuf/field_mask.proto";
@@ -35,7 +36,6 @@ option java_multiple_files = true;
 option java_outer_classname = "AutoMlProto";
 option java_package = "com.google.cloud.automl.v1beta1";
 option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
-
 
 // AutoML Server API.
 //
@@ -93,7 +93,8 @@ service AutoMl {
     };
   }
 
-  // Imports data into a dataset. For Tables this method can only be called on an empty Dataset.
+  // Imports data into a dataset.
+  // For Tables this method can only be called on an empty Dataset.
   //
   // For Tables:
   // *   A
@@ -210,8 +211,8 @@ service AutoMl {
   // same parameters has no effect. Deploying with different parametrs
   // (as e.g. changing
   //
-  // [node_number][google.cloud.automl.v1beta1.ImageObjectDetectionModelDeploymentMetadata.node_number]
-  // ) will update the deployment without pausing the model's availability.
+  // [node_number][google.cloud.automl.v1beta1.ImageObjectDetectionModelDeploymentMetadata.node_number])
+  //  will reset the deployment state without pausing the model's availability.
   //
   // Only applicable for Text Classification, Image Object Detection and Tables;
   // all other domains manage deployment automatically.

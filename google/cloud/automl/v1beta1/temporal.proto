@@ -1,4 +1,4 @@
-// Copyright 2018 Google LLC.
+// Copyright 2019 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,14 +17,34 @@ syntax = "proto3";
 
 package google.cloud.automl.v1beta1;
 
-import "google/api/annotations.proto";
 import "google/protobuf/duration.proto";
+import "google/api/annotations.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;automl";
 option java_multiple_files = true;
 option java_package = "com.google.cloud.automl.v1beta1";
 option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 
+// Represents a unit of time granularity.
+enum TimeGranularityUnit {
+  // Should not be used.
+  TIME_GRANULARITY_UNIT_UNSPECIFIED = 0;
+
+  // A period of 60 minutes.
+  HOUR = 1;
+
+  // A period of 24 hours.
+  DAY = 2;
+
+  // A period of 7 days.
+  WEEK = 3;
+
+  // A period of one calendar month.
+  MONTH = 4;
+
+  // A period of 12 calendar months.
+  YEAR = 5;
+}
 
 // A time period inside of an example that has a time dimension (e.g. video).
 message TimeSegment {
@@ -35,4 +55,13 @@ message TimeSegment {
   // End of the time segment (exclusive), represented as the duration since the
   // example start.
   google.protobuf.Duration end_time_offset = 2;
+}
+
+// A duration of time expressed in time granularity units.
+message TimeGranularity {
+  // The unit of this time period.
+  TimeGranularityUnit unit = 1;
+
+  // The number of units per period, e.g. 3 weeks or 2 months.
+  int64 quantity = 2;
 }
