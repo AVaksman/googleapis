@@ -41,6 +41,7 @@ interfaces:
   retry_codes_def:
   - name: idempotent
     retry_codes:
+    - DEADLINE_EXCEEDED
     - UNAVAILABLE
   - name: non_idempotent
     retry_codes: []
@@ -232,6 +233,7 @@ interfaces:
   retry_codes_def:
   - name: idempotent
     retry_codes:
+    - DEADLINE_EXCEEDED
     - UNAVAILABLE
   - name: non_idempotent
     retry_codes: []
@@ -401,6 +403,7 @@ interfaces:
   retry_codes_def:
   - name: idempotent
     retry_codes:
+    - DEADLINE_EXCEEDED
     - UNAVAILABLE
   - name: non_idempotent
     retry_codes: []
@@ -548,6 +551,7 @@ interfaces:
   retry_codes_def:
   - name: idempotent
     retry_codes:
+    - DEADLINE_EXCEEDED
     - UNAVAILABLE
   - name: non_idempotent
     retry_codes: []

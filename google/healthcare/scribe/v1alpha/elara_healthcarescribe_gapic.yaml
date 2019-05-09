@@ -42,6 +42,7 @@ interfaces:
   - name: idempotent
     retry_codes:
     - UNAVAILABLE
+    - DEADLINE_EXCEEDED
     - RESOURCE_EXHAUSTED
   - name: non_idempotent
     retry_codes: []
