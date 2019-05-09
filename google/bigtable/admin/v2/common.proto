@@ -38,3 +38,18 @@ enum StorageType {
   // Magnetic drive (HDD) storage should be used.
   HDD = 2;
 }
+
+// Encapsulates progress related information for a Cloud Bigtable long
+// running operation.
+message OperationProgress {
+  // Percent completion of the operation.
+  // Values are between 0 and 100 inclusive.
+  int32 progress_percent = 1;
+
+  // Time the request was received.
+  google.protobuf.Timestamp start_time = 2;
+
+  // If set, the time at which this operation failed or was completed
+  // successfully.
+  google.protobuf.Timestamp end_time = 3;
+}

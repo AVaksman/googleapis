@@ -157,16 +157,17 @@ message Cluster {
 // A configuration object describing how Cloud Bigtable should treat traffic
 // from a particular end user application.
 message AppProfile {
-  // Read/write requests may be routed to any cluster in the instance, and will
-  // fail over to another cluster in the event of transient errors or delays.
-  // Choosing this option sacrifices read-your-writes consistency to improve
-  // availability.
+  // Read/write requests are routed to the nearest cluster in the instance, and
+  // will fail over to the nearest cluster that is available in the event of
+  // transient errors or delays. Clusters in a region are considered
+  // equidistant. Choosing this option sacrifices read-your-writes consistency
+  // to improve availability.
   message MultiClusterRoutingUseAny {
 
   }
 
   // Unconditionally routes all read/write requests to a specific cluster.
-  // This option preserves read-your-writes consistency, but does not improve
+  // This option preserves read-your-writes consistency but does not improve
   // availability.
   message SingleClusterRouting {
     // The cluster to which read/write requests should be routed.
@@ -196,10 +197,10 @@ message AppProfile {
   // Optional long form description of the use case for this AppProfile.
   string description = 3;
 
-  // The routing policy for all read/write requests which use this app profile.
+  // The routing policy for all read/write requests that use this app profile.
   // A value must be explicitly set.
   oneof routing_policy {
-    // Use a multi-cluster routing policy that may pick any cluster.
+    // Use a multi-cluster routing policy.
     MultiClusterRoutingUseAny multi_cluster_routing_use_any = 5;
 
     // Use a single-cluster routing policy.

@@ -17,6 +17,7 @@ syntax = "proto3";
 
 package google.bigtable.admin.v2;
 
+import "google/api/resource.proto";
 import "google/bigtable/admin/v2/common.proto";
 import "google/longrunning/operations.proto";
 import "google/protobuf/field_mask.proto";
@@ -24,6 +25,9 @@ import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/bigtable/admin/v2;admin";
+option java_multiple_files = true;
+option java_outer_classname = "BackupProto";
+option java_package = "com.google.bigtable.admin.v2";
 
 // A backup of a Cloud Bigtable table.
 message Backup {
@@ -56,7 +60,7 @@ message Backup {
   // operation. Name of the table from which this backup was created. This needs
   // to be in the same instance as the backup. Values are of the form
   // `projects/<project>/instances/<instance>/tables/<table>`.
-  string table = 2;
+  string source_table = 2;
 
   // Required for the [CreateBackup][google.bigtable.admin.v2.BigtableTableAdmin.CreateBackup]
   // operation. The expiration time of the backup, with microseconds
@@ -90,8 +94,9 @@ message CreateBackupRequest {
   // of the form `projects/<project>/instances/<instance>/clusters/<cluster>`.
   string parent = 1;
 
-  // Required. The id of the backup to be created. The `backup_id` appended to
-  // `parent` forms the full backup name of the form
+  // Required. The id of the backup to be created. The `backup_id` along with
+  // the parent `parent` are combined as <parent>/backups/<backup_id> to create
+  // the full backup name, of the form:
   // `projects/<project>/instances/<instance>/clusters/<cluster>/backups/<backup_id>`.
   // This string must be between 1 and 50 characters in length and match the
   // regex [_a-zA-Z0-9][-_.a-zA-Z0-9]*.
@@ -99,6 +104,22 @@ message CreateBackupRequest {
 
   // Required. The backup to create.
   Backup backup = 3;
+}
+
+// Metadata type for the operation returned by
+// [CreateBackup][google.bigtable.admin.v2.BigtableTableAdmin.CreateBackup].
+message CreateBackupMetadata {
+  // The name of the backup being created.
+  string name = 1;
+
+  // The name of the table the backup is created from.
+  string source_table = 2;
+
+  // The time at which this operation started.
+  google.protobuf.Timestamp start_time = 3;
+
+  // If set, the time at which this operation finished.
+  google.protobuf.Timestamp end_time = 4;
 }
 
 // The request for [UpdateBackup][google.bigtable.admin.v2.BigtableTableAdmin.UpdateBackup].
