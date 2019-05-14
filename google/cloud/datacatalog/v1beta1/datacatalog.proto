@@ -33,13 +33,13 @@ option go_package = "google.golang.org/genproto/googleapis/cloud/datacatalog/v1b
 option java_multiple_files = true;
 option java_package = "com.google.cloud.datacatalog";
 
-// Cloud Data Catalog is a service that allows clients to discover,
-// manage, and understand their Google Cloud data resources.
+// The Data Catalog API service allows clients to discover, understand, and
+// manage their data.
 //
 // To learn more about concepts and find how-to guides see
 // https://cloud.google.com/data-catalog/docs/.
 service DataCatalog {
-  // Searches Cloud Data Catalog for multiple resources like entries, tags that
+  // Searches Data Catalog for multiple resources like entries, tags that
   // match a query.
   //
   // This is a custom method
@@ -47,7 +47,7 @@ service DataCatalog {
   // the complete resource, only the resource identifier and high level
   // fields. Clients can subsequentally call Get methods.
   //
-  // See [Cloud Data Catalog Search
+  // See [Data Catalog Search
   // Syntax](/data-catalog/docs/how-to/search-reference)
   rpc SearchCatalog(SearchCatalogRequest) returns (SearchCatalogResponse) {
     option (google.api.http) = {
@@ -73,7 +73,7 @@ service DataCatalog {
 
   // Get an entry by target resource name. This method allows clients to use
   // the resource name from the source Google Cloud Platform service to get the
-  // Cloud Data Catalog Entry.
+  // Data Catalog Entry.
   rpc LookupEntry(LookupEntryRequest) returns (Entry) {
     option (google.api.http) = {
       get: "/v1beta1/entries:lookup"
@@ -106,14 +106,16 @@ service DataCatalog {
   }
 
   // Deletes a tag template and all tags using the template.
-  rpc DeleteTagTemplate(DeleteTagTemplateRequest) returns (google.protobuf.Empty) {
+  rpc DeleteTagTemplate(DeleteTagTemplateRequest)
+      returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1beta1/{name=projects/*/locations/*/tagTemplates/*}"
     };
   }
 
   // Creates a field in a tag template.
-  rpc CreateTagTemplateField(CreateTagTemplateFieldRequest) returns (TagTemplateField) {
+  rpc CreateTagTemplateField(CreateTagTemplateFieldRequest)
+      returns (TagTemplateField) {
     option (google.api.http) = {
       post: "/v1beta1/{parent=projects/*/locations/*/tagTemplates/*}/fields"
       body: "tag_template_field"
@@ -122,7 +124,8 @@ service DataCatalog {
 
   // Updates a field in a tag template. This method cannot be used to update the
   // field type.
-  rpc UpdateTagTemplateField(UpdateTagTemplateFieldRequest) returns (TagTemplateField) {
+  rpc UpdateTagTemplateField(UpdateTagTemplateFieldRequest)
+      returns (TagTemplateField) {
     option (google.api.http) = {
       patch: "/v1beta1/{name=projects/*/locations/*/tagTemplates/*/fields/*}"
       body: "tag_template_field"
@@ -130,7 +133,8 @@ service DataCatalog {
   }
 
   // Renames a field in a tag template.
-  rpc RenameTagTemplateField(RenameTagTemplateFieldRequest) returns (TagTemplateField) {
+  rpc RenameTagTemplateField(RenameTagTemplateFieldRequest)
+      returns (TagTemplateField) {
     option (google.api.http) = {
       post: "/v1beta1/{name=projects/*/locations/*/tagTemplates/*/fields/*}:rename"
       body: "*"
@@ -138,7 +142,8 @@ service DataCatalog {
   }
 
   // Deletes a field in a tag template and all uses of that field.
-  rpc DeleteTagTemplateField(DeleteTagTemplateFieldRequest) returns (google.protobuf.Empty) {
+  rpc DeleteTagTemplateField(DeleteTagTemplateFieldRequest)
+      returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1beta1/{name=projects/*/locations/*/tagTemplates/*/fields/*}"
     };
@@ -184,7 +189,8 @@ service DataCatalog {
   //
   // Callers must have following Google IAM permission
   // `datacatalog.tagTemplates.setIamPolicy` to set policies on tag templates.
-  rpc SetIamPolicy(google.iam.v1.SetIamPolicyRequest) returns (google.iam.v1.Policy) {
+  rpc SetIamPolicy(google.iam.v1.SetIamPolicyRequest)
+      returns (google.iam.v1.Policy) {
     option (google.api.http) = {
       post: "/v1beta1/{resource=projects/*/locations/*/tagTemplates/*}:setIamPolicy"
       body: "*"
@@ -203,7 +209,8 @@ service DataCatalog {
   //
   // Callers must have following Google IAM permission
   // `datacatalog.tagTemplates.getIamPolicy` to get policies on tag templates.
-  rpc GetIamPolicy(google.iam.v1.GetIamPolicyRequest) returns (google.iam.v1.Policy) {
+  rpc GetIamPolicy(google.iam.v1.GetIamPolicyRequest)
+      returns (google.iam.v1.Policy) {
     option (google.api.http) = {
       post: "/v1beta1/{resource=projects/*/locations/*/tagTemplates/*}:getIamPolicy"
       body: "*"
@@ -212,7 +219,7 @@ service DataCatalog {
 
   // Returns the caller's permissions on a resource.
   // If the resource does not exist, an empty set of permissions is returned
-  // (a `NOT_FOUND` error is not returned).
+  // (We don't return a `NOT_FOUND` error).
   //
   // Supported resource are:
   //   - tag templates.
@@ -222,7 +229,8 @@ service DataCatalog {
   //
   // A caller is not required to have Google IAM permission to make this
   // request.
-  rpc TestIamPermissions(google.iam.v1.TestIamPermissionsRequest) returns (google.iam.v1.TestIamPermissionsResponse) {
+  rpc TestIamPermissions(google.iam.v1.TestIamPermissionsRequest)
+      returns (google.iam.v1.TestIamPermissionsResponse) {
     option (google.api.http) = {
       post: "/v1beta1/{resource=projects/*/locations/*/tagTemplates/*}:testIamPermissions"
       body: "*"
@@ -235,20 +243,29 @@ service DataCatalog {
 message SearchCatalogRequest {
   message Scope {
     // Data Catalog tries to automatically choose the right corpus of data to
-    // search through. If you want to make sure an organization is included,
-    // please add "include_org_ids".
+    // search through. You can ensure an organization is included by adding it
+    // to "include_org_ids". You can ensure a project's org is included with
+    // "include_project_ids". You must specify at least one organization
+    // using "include_org_ids" or "include_project_ids" in all search requests.
     //
-    // List of organizations to search within.
+    // List of organization IDs to search within. To find your organization ID,
+    // follow instructions in
+    // https://cloud.google.com/resource-manager/docs/creating-managing-organization
     repeated string include_org_ids = 2;
 
-    // To exclude/include content from Google Cloud Platform public datasets in
-    // the search results. Google Cloud Platform public datasets are
-    // https://cloud.google.com/public-datasets/. By default, content from
-    // Google Cloud Platform public datasets are included.
-    bool exclude_gcp_public_datasets = 6;
+    // List of project IDs to search within. To learn more about the
+    // distinction between project names/IDs/numbers, go to
+    // https://cloud.google.com/docs/overview/#projects
+    repeated string include_project_ids = 3;
+
+    // If true, include Google Cloud Platform (GCP) public datasets in the
+    // search results. Info on GCP public datasets is available at
+    // https://cloud.google.com/public-datasets/. By default, GCP public
+    // datasets are excluded.
+    bool include_gcp_public_datasets = 7;
   }
 
-  // The scope of this search request.
+  // Required. The scope of this search request.
   Scope scope = 6;
 
   // Required. The query string in search query syntax. The query must be
@@ -258,11 +275,10 @@ message SearchCatalogRequest {
   //
   // * name:x
   // * column:x
-  // * desc:x OR description:y
-  // * column_desc:x OR column_description:x
+  // * description:y
   //
   // Note: Query tokens need to have a minimum of 3 characters for substring
-  // matching to work correctly. See [Cloud Data Catalog Search
+  // matching to work correctly. See [Data Catalog Search
   // Syntax](/data-catalog/docs/how-to/search-reference) for more information.
   string query = 1;
 
@@ -271,19 +287,24 @@ message SearchCatalogRequest {
   // 1000.
   int32 page_size = 2;
 
-  // Specifies which page is requested. If empty then the first page
-  // is returned.
+  // Optional pagination token returned in an earlier
+  // [SearchCatalogResponse.next_page_token][google.cloud.datacatalog.v1beta1.DataCatalog.SearchCatalogResponse.next_page_token];
+  // indicates that this is a continuation of a prior
+  // [SearchCatalog][google.cloud.datacatalog.v1beta1.DataCatalog.SearchCatalog]
+  // call, and that the system should return the next page of data. If empty
+  // then the first page is returned.
   string page_token = 3;
 
-  // Specifies the ordering of results following syntax at
-  // https://cloud.google.com/apis/design/design_patterns#sorting_order. We only
-  // support ordering by a single metrics field and currently supported choices
-  // are:
-  //
-  //  * 'relevance'
-  //  * 'last_access_timestamp'
-  //  * 'last_modified_timestamp' and
-  //  * 'title'.
+  // Specifies the ordering of results, currently supported case-sensitive
+  // choices are:
+  // <ul>
+  //   <li> relevance </li>
+  //   <li> last_access_timestamp [asc|desc], defaults to descending if not
+  //   specified, </li>
+  //   <li> last_modified_timestamp [asc|desc], defaults to descending if not
+  //   specified, </li>
+  //   <li> title [asc|desc], defaults to ascending if not specified. </li>
+  // </ul>
   string order_by = 5;
 }
 
@@ -335,15 +356,24 @@ message LookupEntryRequest {
     // The full name of the Google Cloud Platform resource the Data Catalog
     // entry represents. See:
     // https://cloud.google.com/apis/design/resource_names#full_resource_name
-    // Example:
+    // Full names are case-sensitive.
+    //
+    // Examples:
     // "//bigquery.googleapis.com/projects/projectId/datasets/datasetId/tables/tableId".
+    // "//pubsub.googleapis.com/projects/projectId/topics/topicId"
     string linked_resource = 1;
 
-    // The SQL name of the entry. Example:
+    // The SQL name of the entry. SQL names are case-sensitive.
     //
-    // 1. cloud_pubsub.project_id.topic_id
-    // 2. bigquery.project_id.dataset_id.table_id
-    // 3. datacatalog.project_id.location_id.entry_group_id.entry_id
+    // Examples:
+    // <ul>
+    //   <li>cloud_pubsub.project_id.topic_id</li>
+    //   <li>pubsub.project_id.`topic.id.with.dots`</li>
+    //   <li>bigquery.project_id.dataset_id.table_id</li>
+    //   <li>datacatalog.project_id.location_id.entry_group_id.entry_id</li>
+    // </ul>
+    // *_ids shoud satisfy the standard SQL rules for identifiers.
+    // https://cloud.google.com/bigquery/docs/reference/standard-sql/lexical
     string sql_resource = 3;
   }
 }
@@ -358,12 +388,11 @@ message LookupEntryRequest {
 // also be used to attach flexible metadata, such as a
 // [Tag][google.cloud.datacatalog.v1beta1.Tag].
 message Entry {
-  // Output only. The Data Catalog resource name of the entry in URL format. For
-  // example,
+  // The Data Catalog resource name of the entry in URL format. For example,
   // "projects/{project_id}/locations/{location}/entryGroups/{entry_group_id}/entries/{entry_id}".
   string name = 1;
 
-  // The full name of the cloud resource the entry belongs to. See:
+  // Output only. The full name of the cloud resource the entry belongs to. See:
   // https://cloud.google.com/apis/design/resource_names#full_resource_name
   //
   // Data Catalog supports resources from select Google Cloud Platform systems.
@@ -381,6 +410,11 @@ message Entry {
     // Specification that applies to a BigQuery table. This is only valid on
     // entries of type TABLE.
     BigQueryTableSpec bigquery_table_spec = 12;
+
+    // Specification for a group of BigQuery tables with name pattern
+    // [prefix]YYYYMMDD. Context:
+    // https://cloud.google.com/bigquery/docs/partitioned-tables#partitioning_versus_sharding
+    BigQueryDateShardedSpec bigquery_date_sharded_spec = 15;
   }
 
   // Display information such as title and description.
@@ -395,8 +429,8 @@ message Entry {
   // Schema of the entry.
   Schema schema = 5;
 
-  // Timestamps about the underlying Google Cloud Platform resource -- not about
-  // this Data Catalog Entry.
+  // Output only. Timestamps about the underlying Google Cloud Platform resource
+  // -- not about this Data Catalog Entry.
   SystemTimestamps source_system_timestamps = 7;
 }
 
@@ -446,10 +480,9 @@ message DeleteTagTemplateRequest {
   // "projects/{project_id}/locations/{location}/tagTemplates/{tag_template_id}".
   string name = 1;
 
-  // Set this field to true to force the deletion of all tags using this
-  // template. If this field is set to false (the default value) and the tag
-  // template is already in use, then this RPC will return a Precondition Failed
-  // error.
+  // Required. Currently, this field must always be set to <code>true</code>.
+  // This confirms the deletion of any possible tags using this template.
+  // <code>force = false</code> will be supported in the future.
   bool force = 2;
 }
 
@@ -536,15 +569,18 @@ message RenameTagTemplateFieldRequest {
   string new_tag_template_field_id = 2;
 }
 
-// Entry resources in Cloud Data Catalog can be of different types e.g. BigQuery
+// Entry resources in Data Catalog can be of different types e.g. BigQuery
 // Table entry is of type 'TABLE'. This enum describes all the possible types
-// Cloud Data Catalog contains.
+// Data Catalog contains.
 enum EntryType {
   // Default unknown type
   ENTRY_TYPE_UNSPECIFIED = 0;
 
   // The type of entry that has a GoogleSQL schema, including logical views.
   TABLE = 2;
+
+  // An entry type which is used for streaming entries. Example - Pub/Sub.
+  DATA_STREAM = 3;
 }
 
 // Request message for
@@ -554,10 +590,9 @@ message DeleteTagTemplateFieldRequest {
   // "projects/{project_id}/locations/{location}/tagTemplates/{tag_template_id}/fields/{tag_template_field_id}".
   string name = 1;
 
-  // Set this field to true to force the deletion of all usages of this tag
-  // field. If this field is set to false (the default value) and the tag
-  // template field is already in use, then this RPC will return a Precondition
-  // Failed error.
+  // Required. Currently, this field must always be set to <code>true</code>.
+  // This confirms the deletion of this field from any tags using this field.
+  // <code>force = false</code> will be supported in the future.
   bool force = 2;
 }
 

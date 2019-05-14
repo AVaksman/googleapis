@@ -53,9 +53,6 @@ message Tag {
     //
     // For attaching a tag to a nested column, use '.' to separate the column
     // names: "outer_column.inner_column".
-    //
-    // For columns with '.' in their names,
-    // wrap the name in '`': "`my.column`", "`outer.column`.inner_column".
     string column = 4;
   }
 
@@ -67,7 +64,13 @@ message Tag {
 // Contains the value and supporting information for a field within
 // a [Tag][google.cloud.datacatalog.v1beta1.Tag].
 message TagField {
-  // Output only. The display name of this field.
+  // Holds an enum value.
+  message EnumValue {
+    // The display name of the enum value.
+    string display_name = 1;
+  }
+
+  // The display name of this field.
   string display_name = 1;
 
   // The value of this field.
@@ -86,12 +89,12 @@ message TagField {
 
     // Holds the value for a tag field with enum type. This value must be
     // one of the allowed values in the definition of this enum.
-    string enum_value = 6;
+    EnumValue enum_value = 6;
   }
 }
 
 // Tag Templates provide the basic format of multiple fields which can be
-// attached to Cloud Data Catalog resources as Tags.
+// attached to Data Catalog resources as Tags.
 //
 // Tag Templates can be used as a data glossary as tag templates define the
 // list of acceptable fields that can be applied within a Tag. When a Tag is
@@ -101,8 +104,7 @@ message TagField {
 // A Tag Template also allows you to make Tags using that template visible only
 // to a certain group of users.
 message TagTemplate {
-  // Output only. The resource name of the tag template in URL format. For
-  // example,
+  // The resource name of the tag template in URL format. For example,
   // projects/{project_id}/locations/{location}/tagTemplates/{tag_template_id}.
   string name = 1;
 
@@ -131,18 +133,18 @@ message TagTemplateField {
 
 message FieldType {
   message EnumType {
-    // The set of allowed values for this enum. Any value in a TagField that
-    // uses this enum type must be one of these values.
-    //
-    // Enum values can contain letters (both uppercase and lowercase), numbers
-    // (0-9), underscores (_), dashes (-) and spaces ( ). Enum values must be at
-    // least 1 character long and at most 100 characters long. Enum values must
-    // start with a letter or number.
-    //
-    // The enum values listed here must not contain duplicates. When comparing
-    // enum values for duplicates, spaces and underscores are considered
-    // equivalent and uppercase and lowercase letters are considered equivalent.
-    repeated string allowed_values = 1;
+    message EnumValue {
+      // The display name of the enum value.
+      string display_name = 1;
+    }
+
+    // The set of allowed values for this enum.
+    // This set must not be empty, the display names of the values in this set
+    // must not be empty and the display names of the values must be
+    // case-insensitively unique within this set.
+    // Currently, enum values can only be added to the list of allowed values.
+    // Deletion and renaming of enum values are not supported.
+    repeated EnumValue allowed_values = 1;
   }
 
   enum PrimitiveType {

@@ -49,3 +49,22 @@ message ViewSpec {
   // The query that defines the table view.
   string view_query = 1;
 }
+
+// Spec for a group of BigQuery tables with name pattern [prefix]YYYYMMDD.
+// Context:
+// https://cloud.google.com/bigquery/docs/partitioned-tables#partitioning_versus_sharding
+message BigQueryDateShardedSpec {
+  // The Data Catalog resource name of the dataset entry the current table
+  // belongs to, e.g.
+  // projects/{project_id}/locations/{location}/entrygroups/{entry_group_id}
+  // /entries/{entry_id}
+  string dataset = 1;
+
+  // The table name prefix of the shards. The name of any given shard is
+  // [table_prefix]YYYYMMDD,
+  // e.g. for shard MyTable20180101, the table_prefix is "MyTable"
+  string table_prefix = 2;
+
+  // Total number of shards.
+  int64 shard_count = 3;
+}
