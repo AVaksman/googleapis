@@ -18,7 +18,6 @@ syntax = "proto3";
 package google.bigtable.admin.v2;
 
 import "google/api/annotations.proto";
-import "google/api/resource.proto";
 import "google/bigtable/admin/v2/instance.proto";
 import "google/iam/v1/iam_policy.proto";
 import "google/iam/v1/policy.proto";
