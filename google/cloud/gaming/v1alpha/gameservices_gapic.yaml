@@ -1,0 +1,987 @@
+type: com.google.api.codegen.ConfigProto
+config_schema_version: 1.0.0
+# The settings of generated code in a specific language.
+language_settings:
+  java:
+    package_name: com.google.cloud.gaming.v1alpha
+  python:
+    package_name: google.cloud.gaming_v1alpha.gapic
+  go:
+    package_name: cloud.google.com/go/gaming/apiv1alpha
+  csharp:
+    package_name: Google.Cloud.Gaming.V1alpha
+  ruby:
+    package_name: Google::Cloud::Gaming::V1alpha
+  php:
+    package_name: Google\Cloud\Gaming\V1alpha
+  nodejs:
+    package_name: gaming.v1alpha
+# A list of API interface configurations.
+interfaces:
+# The fully qualified name of the API interface.
+- name: google.cloud.gaming.v1alpha.AllocationPoliciesService
+  # A list of resource collection configurations.
+  # Consists of a name_pattern and an entity_name.
+  # The name_pattern is a pattern to describe the names of the resources of this
+  # collection, using the platform's conventions for URI patterns. A generator
+  # may use this to generate methods to compose and decompose such names. The
+  # pattern should use named placeholders as in `shelves/{shelf}/books/{book}`;
+  # those will be taken as hints for the parameter names of the generated
+  # methods. If empty, no name methods are generated.
+  # The entity_name is the name to be used as a basis for generated methods and
+  # classes.
+  collections:
+  - name_pattern: projects/{project}/locations/{location}
+    entity_name: location
+  - name_pattern: projects/{project}/locations/{location}/allocationPolicies/{allocation_policy}
+    entity_name: allocation_policy
+  # Definition for retryable codes.
+  retry_codes_def:
+  - name: idempotent
+    retry_codes:
+    - DEADLINE_EXCEEDED
+    - UNAVAILABLE
+  - name: non_idempotent
+    retry_codes: []
+  # Definition for retry/backoff parameters.
+  retry_params_def:
+  - name: default
+    initial_retry_delay_millis: 100
+    retry_delay_multiplier: 1.3
+    max_retry_delay_millis: 60000
+    initial_rpc_timeout_millis: 20000
+    rpc_timeout_multiplier: 1
+    max_rpc_timeout_millis: 20000
+    total_timeout_millis: 600000
+  # A list of method configurations.
+  # Common properties:
+  #
+  #   name - The simple name of the method.
+  #
+  #   flattening - Specifies the configuration for parameter flattening.
+  #   Describes the parameter groups for which a generator should produce method
+  #   overloads which allow a client to directly pass request message fields as
+  #   method parameters. This information may or may not be used, depending on
+  #   the target language.
+  #   Consists of groups, which each represent a list of parameters to be
+  #   flattened. Each parameter listed must be a field of the request message.
+  #
+  #   required_fields - Fields that are always required for a request to be
+  #   valid.
+  #
+  #   page_streaming - Specifies the configuration for paging.
+  #   Describes information for generating a method which transforms a paging
+  #   list RPC into a stream of resources.
+  #   Consists of a request and a response.
+  #   The request specifies request information of the list method. It defines
+  #   which fields match the paging pattern in the request. The request consists
+  #   of a page_size_field and a token_field. The page_size_field is the name of
+  #   the optional field specifying the maximum number of elements to be
+  #   returned in the response. The token_field is the name of the field in the
+  #   request containing the page token.
+  #   The response specifies response information of the list method. It defines
+  #   which fields match the paging pattern in the response. The response
+  #   consists of a token_field and a resources_field. The token_field is the
+  #   name of the field in the response containing the next page token. The
+  #   resources_field is the name of the field in the response containing the
+  #   list of resources belonging to the page.
+  #
+  #   retry_codes_name - Specifies the configuration for retryable codes. The
+  #   name must be defined in interfaces.retry_codes_def.
+  #
+  #   retry_params_name - Specifies the configuration for retry/backoff
+  #   parameters. The name must be defined in interfaces.retry_params_def.
+  #
+  #   field_name_patterns - Maps the field name of the request type to
+  #   entity_name of interfaces.collections.
+  #   Specifies the string pattern that the field must follow.
+  #
+  #   timeout_millis - Specifies the default timeout for a non-retrying call. If
+  #   the call is retrying, refer to retry_params_name instead.
+  methods:
+  - name: ListAllocationPolicies
+    flattening:
+      groups:
+      - parameters:
+        - parent
+    required_fields:
+    - parent
+    page_streaming:
+      request:
+        page_size_field: page_size
+        token_field: page_token
+      response:
+        token_field: next_page_token
+        resources_field: allocation_policies
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: location
+    timeout_millis: 120000
+  - name: GetAllocationPolicy
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: allocation_policy
+    timeout_millis: 120000
+  - name: CreateAllocationPolicy
+    flattening:
+      groups:
+      - parameters:
+        - parent
+        - allocation_policy_id
+        - allocation_policy
+    required_fields:
+    - parent
+    - allocation_policy_id
+    - allocation_policy
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: location
+    long_running:
+      return_type: google.cloud.gaming.v1alpha.AllocationPolicy
+      metadata_type: google.protobuf.Empty
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 120000
+  - name: DeleteAllocationPolicy
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: allocation_policy
+    long_running:
+      return_type: google.protobuf.Empty
+      metadata_type: google.protobuf.Empty
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 120000
+  - name: UpdateAllocationPolicy
+    flattening:
+      groups:
+      - parameters:
+        - allocation_policy
+        - update_mask
+    required_fields:
+    - allocation_policy
+    - update_mask
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      allocation_policy.name: allocation_policy
+    long_running:
+      return_type: google.cloud.gaming.v1alpha.AllocationPolicy
+      metadata_type: google.protobuf.Empty
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 120000
+# The fully qualified name of the API interface.
+- name: google.cloud.gaming.v1alpha.GameServerClustersService
+  # A list of resource collection configurations.
+  # Consists of a name_pattern and an entity_name.
+  # The name_pattern is a pattern to describe the names of the resources of this
+  # collection, using the platform's conventions for URI patterns. A generator
+  # may use this to generate methods to compose and decompose such names. The
+  # pattern should use named placeholders as in `shelves/{shelf}/books/{book}`;
+  # those will be taken as hints for the parameter names of the generated
+  # methods. If empty, no name methods are generated.
+  # The entity_name is the name to be used as a basis for generated methods and
+  # classes.
+  collections:
+  - name_pattern: projects/{project}/locations/{location}/realms/{realm}
+    entity_name: realm
+  - name_pattern: projects/{project}/locations/{location}/realms/{realm}/gameServerClusters/{game_server_cluster}
+    entity_name: game_server_cluster
+  # Definition for retryable codes.
+  retry_codes_def:
+  - name: idempotent
+    retry_codes:
+    - DEADLINE_EXCEEDED
+    - UNAVAILABLE
+  - name: non_idempotent
+    retry_codes: []
+  # Definition for retry/backoff parameters.
+  retry_params_def:
+  - name: default
+    initial_retry_delay_millis: 100
+    retry_delay_multiplier: 1.3
+    max_retry_delay_millis: 60000
+    initial_rpc_timeout_millis: 20000
+    rpc_timeout_multiplier: 1
+    max_rpc_timeout_millis: 20000
+    total_timeout_millis: 600000
+  # A list of method configurations.
+  # Common properties:
+  #
+  #   name - The simple name of the method.
+  #
+  #   flattening - Specifies the configuration for parameter flattening.
+  #   Describes the parameter groups for which a generator should produce method
+  #   overloads which allow a client to directly pass request message fields as
+  #   method parameters. This information may or may not be used, depending on
+  #   the target language.
+  #   Consists of groups, which each represent a list of parameters to be
+  #   flattened. Each parameter listed must be a field of the request message.
+  #
+  #   required_fields - Fields that are always required for a request to be
+  #   valid.
+  #
+  #   page_streaming - Specifies the configuration for paging.
+  #   Describes information for generating a method which transforms a paging
+  #   list RPC into a stream of resources.
+  #   Consists of a request and a response.
+  #   The request specifies request information of the list method. It defines
+  #   which fields match the paging pattern in the request. The request consists
+  #   of a page_size_field and a token_field. The page_size_field is the name of
+  #   the optional field specifying the maximum number of elements to be
+  #   returned in the response. The token_field is the name of the field in the
+  #   request containing the page token.
+  #   The response specifies response information of the list method. It defines
+  #   which fields match the paging pattern in the response. The response
+  #   consists of a token_field and a resources_field. The token_field is the
+  #   name of the field in the response containing the next page token. The
+  #   resources_field is the name of the field in the response containing the
+  #   list of resources belonging to the page.
+  #
+  #   retry_codes_name - Specifies the configuration for retryable codes. The
+  #   name must be defined in interfaces.retry_codes_def.
+  #
+  #   retry_params_name - Specifies the configuration for retry/backoff
+  #   parameters. The name must be defined in interfaces.retry_params_def.
+  #
+  #   field_name_patterns - Maps the field name of the request type to
+  #   entity_name of interfaces.collections.
+  #   Specifies the string pattern that the field must follow.
+  #
+  #   timeout_millis - Specifies the default timeout for a non-retrying call. If
+  #   the call is retrying, refer to retry_params_name instead.
+  methods:
+  - name: ListGameServerClusters
+    flattening:
+      groups:
+      - parameters:
+        - parent
+    required_fields:
+    - parent
+    page_streaming:
+      request:
+        page_size_field: page_size
+        token_field: page_token
+      response:
+        token_field: next_page_token
+        resources_field: game_server_clusters
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: realm
+    timeout_millis: 120000
+  - name: GetGameServerCluster
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: game_server_cluster
+    timeout_millis: 120000
+  - name: CreateGameServerCluster
+    flattening:
+      groups:
+      - parameters:
+        - parent
+        - game_server_cluster_id
+        - game_server_cluster
+    required_fields:
+    - parent
+    - game_server_cluster_id
+    - game_server_cluster
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: realm
+    long_running:
+      return_type: google.cloud.gaming.v1alpha.CreateGameServerCluster
+      metadata_type: google.protobuf.Empty
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 120000
+  - name: DeleteGameServerCluster
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: game_server_cluster
+    long_running:
+      return_type: google.protobuf.Empty
+      metadata_type: google.protobuf.Empty
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 120000
+  - name: UpdateGameServerCluster
+    flattening:
+      groups:
+      - parameters:
+        - game_server_cluster
+        - update_mask
+    required_fields:
+    - game_server_cluster
+    - update_mask
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      game_server_cluster.name: game_server_cluster
+    long_running:
+      return_type: google.cloud.gaming.v1alpha.CreateGameServerCluster
+      metadata_type: google.protobuf.Empty
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 120000
+# The fully qualified name of the API interface.
+- name: google.cloud.gaming.v1alpha.GameServerDeploymentsService
+  # A list of resource collection configurations.
+  # Consists of a name_pattern and an entity_name.
+  # The name_pattern is a pattern to describe the names of the resources of this
+  # collection, using the platform's conventions for URI patterns. A generator
+  # may use this to generate methods to compose and decompose such names. The
+  # pattern should use named placeholders as in `shelves/{shelf}/books/{book}`;
+  # those will be taken as hints for the parameter names of the generated
+  # methods. If empty, no name methods are generated.
+  # The entity_name is the name to be used as a basis for generated methods and
+  # classes.
+  collections:
+  - name_pattern: projects/{project}/locations/{location}
+    entity_name: location
+  - name_pattern: projects/{project}/locations/{location}/gameServerDeployments/{game_server_deployment}
+    entity_name: game_server_deployment
+  # Definition for retryable codes.
+  retry_codes_def:
+  - name: idempotent
+    retry_codes:
+    - DEADLINE_EXCEEDED
+    - UNAVAILABLE
+  - name: non_idempotent
+    retry_codes: []
+  # Definition for retry/backoff parameters.
+  retry_params_def:
+  - name: default
+    initial_retry_delay_millis: 100
+    retry_delay_multiplier: 1.3
+    max_retry_delay_millis: 60000
+    initial_rpc_timeout_millis: 20000
+    rpc_timeout_multiplier: 1
+    max_rpc_timeout_millis: 20000
+    total_timeout_millis: 600000
+  # A list of method configurations.
+  # Common properties:
+  #
+  #   name - The simple name of the method.
+  #
+  #   flattening - Specifies the configuration for parameter flattening.
+  #   Describes the parameter groups for which a generator should produce method
+  #   overloads which allow a client to directly pass request message fields as
+  #   method parameters. This information may or may not be used, depending on
+  #   the target language.
+  #   Consists of groups, which each represent a list of parameters to be
+  #   flattened. Each parameter listed must be a field of the request message.
+  #
+  #   required_fields - Fields that are always required for a request to be
+  #   valid.
+  #
+  #   page_streaming - Specifies the configuration for paging.
+  #   Describes information for generating a method which transforms a paging
+  #   list RPC into a stream of resources.
+  #   Consists of a request and a response.
+  #   The request specifies request information of the list method. It defines
+  #   which fields match the paging pattern in the request. The request consists
+  #   of a page_size_field and a token_field. The page_size_field is the name of
+  #   the optional field specifying the maximum number of elements to be
+  #   returned in the response. The token_field is the name of the field in the
+  #   request containing the page token.
+  #   The response specifies response information of the list method. It defines
+  #   which fields match the paging pattern in the response. The response
+  #   consists of a token_field and a resources_field. The token_field is the
+  #   name of the field in the response containing the next page token. The
+  #   resources_field is the name of the field in the response containing the
+  #   list of resources belonging to the page.
+  #
+  #   retry_codes_name - Specifies the configuration for retryable codes. The
+  #   name must be defined in interfaces.retry_codes_def.
+  #
+  #   retry_params_name - Specifies the configuration for retry/backoff
+  #   parameters. The name must be defined in interfaces.retry_params_def.
+  #
+  #   field_name_patterns - Maps the field name of the request type to
+  #   entity_name of interfaces.collections.
+  #   Specifies the string pattern that the field must follow.
+  #
+  #   timeout_millis - Specifies the default timeout for a non-retrying call. If
+  #   the call is retrying, refer to retry_params_name instead.
+  methods:
+  - name: ListGameServerDeployments
+    flattening:
+      groups:
+      - parameters:
+        - parent
+    required_fields:
+    - parent
+    page_streaming:
+      request:
+        page_size_field: page_size
+        token_field: page_token
+      response:
+        token_field: next_page_token
+        resources_field: game_server_deployments
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: location
+    timeout_millis: 120000
+  - name: GetGameServerDeployment
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: game_server_deployment
+    timeout_millis: 120000
+  - name: CreateGameServerDeployment
+    flattening:
+      groups:
+      - parameters:
+        - parent
+        - deployment_id
+        - game_server_deployment
+    required_fields:
+    - parent
+    - deployment_id
+    - game_server_deployment
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: location
+    long_running:
+      return_type: google.cloud.gaming.v1alpha.GameServerDeployment
+      metadata_type: google.protobuf.Empty
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 120000
+  - name: DeleteGameServerDeployment
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: game_server_deployment
+    long_running:
+      return_type: google.protobuf.Empty
+      metadata_type: google.protobuf.Empty
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 120000
+  - name: UpdateGameServerDeployment
+    flattening:
+      groups:
+      - parameters:
+        - game_server_deployment
+        - update_mask
+    required_fields:
+    - game_server_deployment
+    - update_mask
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      game_server_deployment.name: game_server_deployment
+    long_running:
+      return_type: google.cloud.gaming.v1alpha.GameServerDeployment
+      metadata_type: google.protobuf.Empty
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 120000
+  - name: StartRollout
+    flattening:
+      groups:
+      - parameters:
+        - name
+        - new_game_server_template
+    required_fields:
+    - name
+    - new_game_server_template
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: game_server_deployment
+    long_running:
+      return_type: google.cloud.gaming.v1alpha.GameServerDeployment
+      metadata_type: google.protobuf.Empty
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 120000
+  - name: SetRolloutTarget
+    flattening:
+      groups:
+      - parameters:
+        - name
+        - cluster_percentage_selector
+    required_fields:
+    - name
+    - cluster_percentage_selector
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: game_server_deployment
+    long_running:
+      return_type: google.cloud.gaming.v1alpha.GameServerDeployment
+      metadata_type: google.protobuf.Empty
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 120000
+  - name: CommitRollout
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: game_server_deployment
+    long_running:
+      return_type: google.cloud.gaming.v1alpha.GameServerDeployment
+      metadata_type: google.protobuf.Empty
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 120000
+  - name: RevertRollout
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: game_server_deployment
+    long_running:
+      return_type: google.cloud.gaming.v1alpha.GameServerDeployment
+      metadata_type: google.protobuf.Empty
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 120000
+  - name: GetDeploymentTarget
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: game_server_deployment
+    timeout_millis: 120000
+# The fully qualified name of the API interface.
+- name: google.cloud.gaming.v1alpha.RealmsService
+  # A list of resource collection configurations.
+  # Consists of a name_pattern and an entity_name.
+  # The name_pattern is a pattern to describe the names of the resources of this
+  # collection, using the platform's conventions for URI patterns. A generator
+  # may use this to generate methods to compose and decompose such names. The
+  # pattern should use named placeholders as in `shelves/{shelf}/books/{book}`;
+  # those will be taken as hints for the parameter names of the generated
+  # methods. If empty, no name methods are generated.
+  # The entity_name is the name to be used as a basis for generated methods and
+  # classes.
+  collections:
+  - name_pattern: projects/{project}/locations/{location}
+    entity_name: location
+  - name_pattern: projects/{project}/locations/{location}/realms/{realm}
+    entity_name: realm
+  # Definition for retryable codes.
+  retry_codes_def:
+  - name: idempotent
+    retry_codes:
+    - DEADLINE_EXCEEDED
+    - UNAVAILABLE
+  - name: non_idempotent
+    retry_codes: []
+  # Definition for retry/backoff parameters.
+  retry_params_def:
+  - name: default
+    initial_retry_delay_millis: 100
+    retry_delay_multiplier: 1.3
+    max_retry_delay_millis: 60000
+    initial_rpc_timeout_millis: 20000
+    rpc_timeout_multiplier: 1
+    max_rpc_timeout_millis: 20000
+    total_timeout_millis: 600000
+  # A list of method configurations.
+  # Common properties:
+  #
+  #   name - The simple name of the method.
+  #
+  #   flattening - Specifies the configuration for parameter flattening.
+  #   Describes the parameter groups for which a generator should produce method
+  #   overloads which allow a client to directly pass request message fields as
+  #   method parameters. This information may or may not be used, depending on
+  #   the target language.
+  #   Consists of groups, which each represent a list of parameters to be
+  #   flattened. Each parameter listed must be a field of the request message.
+  #
+  #   required_fields - Fields that are always required for a request to be
+  #   valid.
+  #
+  #   page_streaming - Specifies the configuration for paging.
+  #   Describes information for generating a method which transforms a paging
+  #   list RPC into a stream of resources.
+  #   Consists of a request and a response.
+  #   The request specifies request information of the list method. It defines
+  #   which fields match the paging pattern in the request. The request consists
+  #   of a page_size_field and a token_field. The page_size_field is the name of
+  #   the optional field specifying the maximum number of elements to be
+  #   returned in the response. The token_field is the name of the field in the
+  #   request containing the page token.
+  #   The response specifies response information of the list method. It defines
+  #   which fields match the paging pattern in the response. The response
+  #   consists of a token_field and a resources_field. The token_field is the
+  #   name of the field in the response containing the next page token. The
+  #   resources_field is the name of the field in the response containing the
+  #   list of resources belonging to the page.
+  #
+  #   retry_codes_name - Specifies the configuration for retryable codes. The
+  #   name must be defined in interfaces.retry_codes_def.
+  #
+  #   retry_params_name - Specifies the configuration for retry/backoff
+  #   parameters. The name must be defined in interfaces.retry_params_def.
+  #
+  #   field_name_patterns - Maps the field name of the request type to
+  #   entity_name of interfaces.collections.
+  #   Specifies the string pattern that the field must follow.
+  #
+  #   timeout_millis - Specifies the default timeout for a non-retrying call. If
+  #   the call is retrying, refer to retry_params_name instead.
+  methods:
+  - name: ListRealms
+    flattening:
+      groups:
+      - parameters:
+        - parent
+    required_fields:
+    - parent
+    page_streaming:
+      request:
+        page_size_field: page_size
+        token_field: page_token
+      response:
+        token_field: next_page_token
+        resources_field: realms
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: location
+    timeout_millis: 120000
+  - name: GetRealm
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: realm
+    timeout_millis: 120000
+  - name: CreateRealm
+    flattening:
+      groups:
+      - parameters:
+        - parent
+        - realm_id
+        - realm
+    required_fields:
+    - parent
+    - realm_id
+    - realm
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: location
+    long_running:
+      return_type: google.cloud.gaming.v1alpha.Realm
+      metadata_type: google.protobuf.Empty
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 120000
+  - name: DeleteRealm
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: realm
+    long_running:
+      return_type: google.protobuf.Empty
+      metadata_type: google.protobuf.Empty
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 120000
+  - name: UpdateRealm
+    flattening:
+      groups:
+      - parameters:
+        - realm
+        - update_mask
+    required_fields:
+    - realm
+    - update_mask
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      realm.name: realm
+    long_running:
+      return_type: google.cloud.gaming.v1alpha.Realm
+      metadata_type: google.protobuf.Empty
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 120000
+# The fully qualified name of the API interface.
+- name: google.cloud.gaming.v1alpha.ScalingPoliciesService
+  # A list of resource collection configurations.
+  # Consists of a name_pattern and an entity_name.
+  # The name_pattern is a pattern to describe the names of the resources of this
+  # collection, using the platform's conventions for URI patterns. A generator
+  # may use this to generate methods to compose and decompose such names. The
+  # pattern should use named placeholders as in `shelves/{shelf}/books/{book}`;
+  # those will be taken as hints for the parameter names of the generated
+  # methods. If empty, no name methods are generated.
+  # The entity_name is the name to be used as a basis for generated methods and
+  # classes.
+  collections:
+  - name_pattern: projects/{project}/locations/{location}
+    entity_name: location
+  - name_pattern: projects/{project}/locations/{location}/scalingPolicies/{scaling_policy}
+    entity_name: scaling_policy
+  # Definition for retryable codes.
+  retry_codes_def:
+  - name: idempotent
+    retry_codes:
+    - DEADLINE_EXCEEDED
+    - UNAVAILABLE
+  - name: non_idempotent
+    retry_codes: []
+  # Definition for retry/backoff parameters.
+  retry_params_def:
+  - name: default
+    initial_retry_delay_millis: 100
+    retry_delay_multiplier: 1.3
+    max_retry_delay_millis: 60000
+    initial_rpc_timeout_millis: 20000
+    rpc_timeout_multiplier: 1
+    max_rpc_timeout_millis: 20000
+    total_timeout_millis: 600000
+  # A list of method configurations.
+  # Common properties:
+  #
+  #   name - The simple name of the method.
+  #
+  #   flattening - Specifies the configuration for parameter flattening.
+  #   Describes the parameter groups for which a generator should produce method
+  #   overloads which allow a client to directly pass request message fields as
+  #   method parameters. This information may or may not be used, depending on
+  #   the target language.
+  #   Consists of groups, which each represent a list of parameters to be
+  #   flattened. Each parameter listed must be a field of the request message.
+  #
+  #   required_fields - Fields that are always required for a request to be
+  #   valid.
+  #
+  #   page_streaming - Specifies the configuration for paging.
+  #   Describes information for generating a method which transforms a paging
+  #   list RPC into a stream of resources.
+  #   Consists of a request and a response.
+  #   The request specifies request information of the list method. It defines
+  #   which fields match the paging pattern in the request. The request consists
+  #   of a page_size_field and a token_field. The page_size_field is the name of
+  #   the optional field specifying the maximum number of elements to be
+  #   returned in the response. The token_field is the name of the field in the
+  #   request containing the page token.
+  #   The response specifies response information of the list method. It defines
+  #   which fields match the paging pattern in the response. The response
+  #   consists of a token_field and a resources_field. The token_field is the
+  #   name of the field in the response containing the next page token. The
+  #   resources_field is the name of the field in the response containing the
+  #   list of resources belonging to the page.
+  #
+  #   retry_codes_name - Specifies the configuration for retryable codes. The
+  #   name must be defined in interfaces.retry_codes_def.
+  #
+  #   retry_params_name - Specifies the configuration for retry/backoff
+  #   parameters. The name must be defined in interfaces.retry_params_def.
+  #
+  #   field_name_patterns - Maps the field name of the request type to
+  #   entity_name of interfaces.collections.
+  #   Specifies the string pattern that the field must follow.
+  #
+  #   timeout_millis - Specifies the default timeout for a non-retrying call. If
+  #   the call is retrying, refer to retry_params_name instead.
+  methods:
+  - name: ListScalingPolicies
+    flattening:
+      groups:
+      - parameters:
+        - parent
+    required_fields:
+    - parent
+    page_streaming:
+      request:
+        page_size_field: page_size
+        token_field: page_token
+      response:
+        token_field: next_page_token
+        resources_field: scaling_policies
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: location
+    timeout_millis: 120000
+  - name: GetScalingPolicy
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: scaling_policy
+    timeout_millis: 120000
+  - name: CreateScalingPolicy
+    flattening:
+      groups:
+      - parameters:
+        - parent
+        - scaling_policy_id
+        - scaling_policy
+    required_fields:
+    - parent
+    - scaling_policy_id
+    - scaling_policy
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      parent: location
+    long_running:
+      return_type: google.cloud.gaming.v1alpha.ScalingPolicy
+      metadata_type: google.protobuf.Empty
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 120000
+  - name: DeleteScalingPolicy
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    field_name_patterns:
+      name: scaling_policy
+    long_running:
+      return_type: google.protobuf.Empty
+      metadata_type: google.protobuf.Empty
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 120000
+  - name: UpdateScalingPolicy
+    flattening:
+      groups:
+      - parameters:
+        - scaling_policy
+        - update_mask
+    required_fields:
+    - scaling_policy
+    - update_mask
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    field_name_patterns:
+      scaling_policy.name: scaling_policy
+    long_running:
+      return_type: google.cloud.gaming.v1alpha.ScalingPolicy
+      metadata_type: google.protobuf.Empty
+      initial_poll_delay_millis: 500
+      poll_delay_multiplier: 1.5
+      max_poll_delay_millis: 5000
+      total_poll_timeout_millis: 300000
+    timeout_millis: 120000
