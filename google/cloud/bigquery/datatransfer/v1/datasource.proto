@@ -1,4 +1,4 @@
-// Copyright 2018 Google LLC.
+// Copyright 2019 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,15 +19,13 @@ package google.cloud.bigquery.datatransfer.v1;
 
 import "google/api/annotations.proto";
 import "google/cloud/bigquery/datatransfer/v1/datatransfer.proto";
-import "google/cloud/bigquery/datatransfer/v1/resourcestate.proto";
 import "google/cloud/bigquery/datatransfer/v1/transfer.proto";
-import "google/cloud/bigquery/v2/time_partitioning.proto";
-import "google/cloud/bigquery/v2/clustering.proto";
+import "google/protobuf/duration.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/duration.proto";
 import "google/protobuf/wrappers.proto";
+import "google/api/client.proto";
 
 option csharp_namespace = "Google.Cloud.BigQuery.DataTransfer.V1";
 option go_package = "google.golang.org/genproto/googleapis/cloud/bigquery/datatransfer/v1;datatransfer";
@@ -40,6 +38,8 @@ option php_namespace = "Google\\Cloud\\BigQuery\\DataTransfer\\V1";
 // configure transfer of their data from other Google Products into BigQuery.
 // This service exposes methods that should be used by data source backend.
 service DataSourceService {
+  option (google.api.default_host) = "bigquerydatatransfer.googleapis.com";
+
   // Update a transfer run. If successful, resets
   // data_source.update_deadline_seconds timer.
   rpc UpdateTransferRun(UpdateTransferRunRequest) returns (TransferRun) {
@@ -51,8 +51,7 @@ service DataSourceService {
 
   // Log messages for a transfer run. If successful (at least 1 message), resets
   // data_source.update_deadline_seconds timer.
-  rpc LogTransferRunMessages(LogTransferRunMessagesRequest)
-      returns (google.protobuf.Empty) {
+  rpc LogTransferRunMessages(LogTransferRunMessagesRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       post: "/v1/{name=projects/*/locations/*/transferConfigs/*/runs/*}:logMessages"
       body: "*"
@@ -64,8 +63,7 @@ service DataSourceService {
   // jobs for a transfer run. Monitored jobs will be automatically retried
   // and produce log messages when starting and finishing a job.
   // Can be called multiple times for the same transfer run.
-  rpc StartBigQueryJobs(StartBigQueryJobsRequest)
-      returns (google.protobuf.Empty) {
+  rpc StartBigQueryJobs(StartBigQueryJobsRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       post: "/v1/{name=projects/*/locations/*/transferConfigs/*/runs/*}:startBigQueryJobs"
       body: "*"
@@ -94,8 +92,9 @@ service DataSourceService {
   // as the API will create a new OAuth client on behalf of the caller. On the
   // other hand data_source.scopes usually need to be set when there are OAuth
   // scopes that need to be granted by end users.
-  rpc CreateDataSourceDefinition(CreateDataSourceDefinitionRequest)
-      returns (DataSourceDefinition) {
+  // 3. We need a longer deadline due to the 60 seconds SLO from Pub/Sub admin
+  // Operations. This also applies to update and delete data source definition.
+  rpc CreateDataSourceDefinition(CreateDataSourceDefinitionRequest) returns (DataSourceDefinition) {
     option (google.api.http) = {
       post: "/v1/{parent=projects/*/locations/*}/dataSourceDefinitions"
       body: "data_source_definition"
@@ -105,8 +104,7 @@ service DataSourceService {
   // Updates an existing data source definition. If changing
   // supported_location_ids, triggers same effects as mentioned in "Create a
   // data source definition."
-  rpc UpdateDataSourceDefinition(UpdateDataSourceDefinitionRequest)
-      returns (DataSourceDefinition) {
+  rpc UpdateDataSourceDefinition(UpdateDataSourceDefinitionRequest) returns (DataSourceDefinition) {
     option (google.api.http) = {
       patch: "/v1/{data_source_definition.name=projects/*/locations/*/dataSourceDefinitions/*}"
       body: "data_source_definition"
@@ -127,24 +125,21 @@ service DataSourceService {
   // definition back from EU to US, in order to bring all regions to
   // consistency. The final effect is that the data source appears to be
   // 'undeleted' in the US region.
-  rpc DeleteDataSourceDefinition(DeleteDataSourceDefinitionRequest)
-      returns (google.protobuf.Empty) {
+  rpc DeleteDataSourceDefinition(DeleteDataSourceDefinitionRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1/{name=projects/*/locations/*/dataSourceDefinitions/*}"
     };
   }
 
   // Retrieves an existing data source definition.
-  rpc GetDataSourceDefinition(GetDataSourceDefinitionRequest)
-      returns (DataSourceDefinition) {
+  rpc GetDataSourceDefinition(GetDataSourceDefinitionRequest) returns (DataSourceDefinition) {
     option (google.api.http) = {
       get: "/v1/{name=projects/*/locations/*/dataSourceDefinitions/*}"
     };
   }
 
   // Lists supported data source definitions.
-  rpc ListDataSourceDefinitions(ListDataSourceDefinitionsRequest)
-      returns (ListDataSourceDefinitionsResponse) {
+  rpc ListDataSourceDefinitions(ListDataSourceDefinitionsRequest) returns (ListDataSourceDefinitionsResponse) {
     option (google.api.http) = {
       get: "/v1/{parent=projects/*/locations/*}/dataSourceDefinitions"
     };
@@ -381,6 +376,9 @@ message StartBigQueryJobsRequest {
   // are started using data source service account credentials.
   // This may be OAuth token or JWT token.
   bytes user_credentials = 3;
+
+  // The number of BQ Jobs that can run in parallel.
+  int32 max_parallelism = 8;
 }
 
 // A request to finish a run.
