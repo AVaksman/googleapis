@@ -261,6 +261,9 @@ resource_name_generation:
 - message_name: CreateSessionRequest
   field_entity_map:
     database: database
+- message_name: BatchCreateSessionsRequest
+  field_entity_map:
+    database: database
 - message_name: Session
   field_entity_map:
     name: session
