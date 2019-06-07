@@ -19,7 +19,7 @@ language_settings:
     domain_layer_location: google-cloud
 # A list of API interface configurations.
 interfaces:
-  # The fully qualified name of the API interface.
+# The fully qualified name of the API interface.
 - name: google.cloud.datacatalog.v1beta1.DataCatalog
   # A list of resource collection configurations.
   # Consists of a name_pattern and an entity_name.
@@ -112,6 +112,7 @@ interfaces:
       - parameters:
         - scope
         - query
+        - order_by
     required_fields:
     - scope
     - query

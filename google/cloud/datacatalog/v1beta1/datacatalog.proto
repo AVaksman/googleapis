@@ -27,18 +27,19 @@ import "google/iam/v1/iam_policy.proto";
 import "google/iam/v1/policy.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/field_mask.proto";
+import "google/api/client.proto";
 
 option cc_enable_arenas = true;
 option go_package = "google.golang.org/genproto/googleapis/cloud/datacatalog/v1beta1;datacatalog";
 option java_multiple_files = true;
 option java_package = "com.google.cloud.datacatalog";
 
-// The Data Catalog API service allows clients to discover, understand, and
-// manage their data.
-//
-// To learn more about concepts and find how-to guides see
-// https://cloud.google.com/data-catalog/docs/.
+// Data Catalog API service allows clients to discover, understand, and manage
+// their data.
 service DataCatalog {
+  option (google.api.default_host) = "datacatalog.googleapis.com";
+  option (google.api.oauth_scopes) = "https://www.googleapis.com/auth/cloud-platform";
+
   // Searches Data Catalog for multiple resources like entries, tags that
   // match a query.
   //
@@ -106,16 +107,14 @@ service DataCatalog {
   }
 
   // Deletes a tag template and all tags using the template.
-  rpc DeleteTagTemplate(DeleteTagTemplateRequest)
-      returns (google.protobuf.Empty) {
+  rpc DeleteTagTemplate(DeleteTagTemplateRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1beta1/{name=projects/*/locations/*/tagTemplates/*}"
     };
   }
 
   // Creates a field in a tag template.
-  rpc CreateTagTemplateField(CreateTagTemplateFieldRequest)
-      returns (TagTemplateField) {
+  rpc CreateTagTemplateField(CreateTagTemplateFieldRequest) returns (TagTemplateField) {
     option (google.api.http) = {
       post: "/v1beta1/{parent=projects/*/locations/*/tagTemplates/*}/fields"
       body: "tag_template_field"
@@ -124,8 +123,7 @@ service DataCatalog {
 
   // Updates a field in a tag template. This method cannot be used to update the
   // field type.
-  rpc UpdateTagTemplateField(UpdateTagTemplateFieldRequest)
-      returns (TagTemplateField) {
+  rpc UpdateTagTemplateField(UpdateTagTemplateFieldRequest) returns (TagTemplateField) {
     option (google.api.http) = {
       patch: "/v1beta1/{name=projects/*/locations/*/tagTemplates/*/fields/*}"
       body: "tag_template_field"
@@ -133,8 +131,7 @@ service DataCatalog {
   }
 
   // Renames a field in a tag template.
-  rpc RenameTagTemplateField(RenameTagTemplateFieldRequest)
-      returns (TagTemplateField) {
+  rpc RenameTagTemplateField(RenameTagTemplateFieldRequest) returns (TagTemplateField) {
     option (google.api.http) = {
       post: "/v1beta1/{name=projects/*/locations/*/tagTemplates/*/fields/*}:rename"
       body: "*"
@@ -142,8 +139,7 @@ service DataCatalog {
   }
 
   // Deletes a field in a tag template and all uses of that field.
-  rpc DeleteTagTemplateField(DeleteTagTemplateFieldRequest)
-      returns (google.protobuf.Empty) {
+  rpc DeleteTagTemplateField(DeleteTagTemplateFieldRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1beta1/{name=projects/*/locations/*/tagTemplates/*/fields/*}"
     };
@@ -189,8 +185,7 @@ service DataCatalog {
   //
   // Callers must have following Google IAM permission
   // `datacatalog.tagTemplates.setIamPolicy` to set policies on tag templates.
-  rpc SetIamPolicy(google.iam.v1.SetIamPolicyRequest)
-      returns (google.iam.v1.Policy) {
+  rpc SetIamPolicy(google.iam.v1.SetIamPolicyRequest) returns (google.iam.v1.Policy) {
     option (google.api.http) = {
       post: "/v1beta1/{resource=projects/*/locations/*/tagTemplates/*}:setIamPolicy"
       body: "*"
@@ -209,8 +204,7 @@ service DataCatalog {
   //
   // Callers must have following Google IAM permission
   // `datacatalog.tagTemplates.getIamPolicy` to get policies on tag templates.
-  rpc GetIamPolicy(google.iam.v1.GetIamPolicyRequest)
-      returns (google.iam.v1.Policy) {
+  rpc GetIamPolicy(google.iam.v1.GetIamPolicyRequest) returns (google.iam.v1.Policy) {
     option (google.api.http) = {
       post: "/v1beta1/{resource=projects/*/locations/*/tagTemplates/*}:getIamPolicy"
       body: "*"
@@ -229,8 +223,7 @@ service DataCatalog {
   //
   // A caller is not required to have Google IAM permission to make this
   // request.
-  rpc TestIamPermissions(google.iam.v1.TestIamPermissionsRequest)
-      returns (google.iam.v1.TestIamPermissionsResponse) {
+  rpc TestIamPermissions(google.iam.v1.TestIamPermissionsRequest) returns (google.iam.v1.TestIamPermissionsResponse) {
     option (google.api.http) = {
       post: "/v1beta1/{resource=projects/*/locations/*/tagTemplates/*}:testIamPermissions"
       body: "*"
@@ -282,9 +275,8 @@ message SearchCatalogRequest {
   // Syntax](/data-catalog/docs/how-to/search-reference) for more information.
   string query = 1;
 
-  // Number of results in the search page. If <=0 then defaults to 10.
-  // Max limit for page_size is 1000. Throws an invalid argument for page_size >
-  // 1000.
+  // Number of results in the search page. If <=0 then defaults to 10. Max limit
+  // for page_size is 1000. Throws an invalid argument for page_size > 1000.
   int32 page_size = 2;
 
   // Optional pagination token returned in an earlier
@@ -321,11 +313,11 @@ message SearchCatalogResponse {
 // Request message for
 // [UpdateEntry][google.cloud.datacatalog.v1beta1.DataCatalog.UpdateEntry].
 message UpdateEntryRequest {
-  // The updated Entry.
+  // Required. The updated Entry.
   Entry entry = 1;
 
-  // The fields to update on the entry.  If absent or empty, all modifiable
-  // fields are updated.
+  // Optional. The fields to update on the entry.  If absent or empty, all
+  // modifiable fields are updated.
   //
   // Modifiable fields in synced entries:
   //
@@ -350,8 +342,8 @@ message GetEntryRequest {
 // Request message for
 // [LookupEntry][google.cloud.datacatalog.v1beta1.DataCatalog.LookupEntry].
 message LookupEntryRequest {
-  // Represents either the Google Cloud Platform resource or SQL name for a
-  // Google Cloud Platform resource.
+  // Required. Represents either the Google Cloud Platform resource or SQL name
+  // for a Google Cloud Platform resource.
   oneof target_name {
     // The full name of the Google Cloud Platform resource the Data Catalog
     // entry represents. See:
@@ -388,6 +380,8 @@ message LookupEntryRequest {
 // also be used to attach flexible metadata, such as a
 // [Tag][google.cloud.datacatalog.v1beta1.Tag].
 message Entry {
+  // Required when used in
+  // [UpdateEntryRequest][google.cloud.datacatalog.v1beta1.UpdateEntryRequest].
   // The Data Catalog resource name of the entry in URL format. For example,
   // "projects/{project_id}/locations/{location}/entryGroups/{entry_group_id}/entries/{entry_id}".
   string name = 1;
@@ -402,10 +396,10 @@ message Entry {
   // "//bigquery.googleapis.com/projects/projectId/datasets/datasetId/tables/tableId".
   string linked_resource = 9;
 
-  // Type of entry.
+  // Required. Type of entry.
   EntryType type = 2;
 
-  // Type specification information.
+  // Optional. Type specification information.
   oneof type_spec {
     // Specification that applies to a BigQuery table. This is only valid on
     // entries of type TABLE.
@@ -417,16 +411,17 @@ message Entry {
     BigQueryDateShardedSpec bigquery_date_sharded_spec = 15;
   }
 
-  // Display information such as title and description.
-  // A short name to identify the entry, for example,
-  // "Analytics Data - Jan 2011".
+  // Optional. Display information such as title and description. A short name
+  // to identify the entry, for example, "Analytics Data - Jan 2011". Default
+  // value is an empty string.
   string display_name = 3;
 
-  // Entry description, which can consist of several sentences or paragraphs
-  // that describe entry contents.
+  // Optional. Entry description, which can consist of several sentences or
+  // paragraphs that describe entry contents. Default value is an empty string.
   string description = 4;
 
-  // Schema of the entry.
+  // Optional. Schema of the entry. An entry might not have any schema attached
+  // to it.
   Schema schema = 5;
 
   // Output only. Timestamps about the underlying Google Cloud Platform resource
@@ -444,7 +439,7 @@ message CreateTagTemplateRequest {
   // Required. The id of the tag template to create.
   string tag_template_id = 3;
 
-  // The tag template to create.
+  // Required. The tag template to create.
   TagTemplate tag_template = 2;
 }
 
@@ -459,24 +454,23 @@ message GetTagTemplateRequest {
 // Request message for
 // [UpdateTagTemplate][google.cloud.datacatalog.v1beta1.DataCatalog.UpdateTagTemplate].
 message UpdateTagTemplateRequest {
-  // The template to update.
+  // Required. The template to update.
   TagTemplate tag_template = 1;
 
-  // The field mask specifies the parts of the template to overwrite.
+  // Optional. The field mask specifies the parts of the template to overwrite.
   //
   // Allowed fields:
   //
   //   * display_name
   //
-  // If the field mask is omitted, all of the allowed fields above will be
-  // updated.
+  // If update_mask is omitted, all of the allowed fields above will be updated.
   google.protobuf.FieldMask update_mask = 2;
 }
 
 // Request message for
 // [DeleteTagTemplate][google.cloud.datacatalog.v1beta1.DataCatalog.DeleteTagTemplate].
 message DeleteTagTemplateRequest {
-  // The name of the tag template to delete. For example,
+  // Required. The name of the tag template to delete. For example,
   // "projects/{project_id}/locations/{location}/tagTemplates/{tag_template_id}".
   string name = 1;
 
@@ -495,25 +489,26 @@ message CreateTagRequest {
   // "projects/{project_id}/locations/{location}/entryGroups/{entry_group_id}/entries/{entry_id}").
   string parent = 1;
 
-  // The tag to create.
+  // Required. The tag to create.
   Tag tag = 2;
 }
 
 // Request message for
 // [UpdateTag][google.cloud.datacatalog.v1beta1.DataCatalog.UpdateTag].
 message UpdateTagRequest {
-  // The updated tag.
+  // Required. The updated tag.
   Tag tag = 1;
 
-  // The fields to update on the Tag.  If absent or empty, all modifiable fields
-  // are updated. Currently the only modifiable field is the field `fields`.
+  // Optional. The fields to update on the Tag.  If absent or empty, all
+  // modifiable fields are updated. Currently the only modifiable field is the
+  // field `fields`.
   google.protobuf.FieldMask update_mask = 2;
 }
 
 // Request message for
 // [DeleteTag][google.cloud.datacatalog.v1beta1.DataCatalog.DeleteTag].
 message DeleteTagRequest {
-  // The name of the tag to delete. For example,
+  // Required. The name of the tag to delete. For example,
   // "projects/{project_id}/locations/{location}/entryGroups/{entry_group_id}/entries/{entry_id}/tags/{tag_id}".
   string name = 1;
 }
@@ -546,14 +541,17 @@ message UpdateTagTemplateFieldRequest {
   // Required. The template to update.
   TagTemplateField tag_template_field = 2;
 
-  // The field mask specifies the parts of the template to overwrite.
+  // Optional. The field mask specifies the parts of the template to overwrite.
   // Allowed fields:
   //
   //   * display_name
   //   * type.enum_type
   //
-  // If the field mask is omitted, all of the allowed fields above will be
-  // updated.
+  // If update_mask is omitted, all of the allowed fields above will be updated.
+  //
+  // When updating an enum type, the provided values will be merged with the
+  // existing values. Therefore, enum values can only be added, existing enum
+  // values cannot be deleted nor renamed.
   google.protobuf.FieldMask update_mask = 3;
 }
 
@@ -564,7 +562,7 @@ message RenameTagTemplateFieldRequest {
   // "projects/{project_id}/locations/{location}/tagTemplates/{tag_template_id}/fields/{tag_template_field_id}".
   string name = 1;
 
-  // Required. The new id of this tag template field. For example,
+  // Required. The new ID of this tag template field. For example,
   // "my_new_field".
   string new_tag_template_field_id = 2;
 }
@@ -599,14 +597,12 @@ message DeleteTagTemplateFieldRequest {
 // Request message for
 // [ListTags][google.cloud.datacatalog.v1beta1.DataCatalog.ListTags].
 message ListTagsRequest {
-  // Required.
-  // The name of the Data Catalog resource to list the tags of. The
-  // resource could be an [Entry][google.cloud.datacatalog.v1beta1.Entry] or a
-  // [Dataset][google.cloud.datacatalog.v1beta1.Dataset].
+  // Required. The name of the Data Catalog resource to list the tags of. The
+  // resource could be an [Entry][google.cloud.datacatalog.v1beta1.Entry].
   string parent = 1;
 
-  // Optional. The maximum number of tags to return. Default is 10. Max limit
-  // is 1000.
+  // Optional. The maximum number of tags to return. Default is 10. Max limit is
+  // 1000.
   int32 page_size = 2;
 
   // Optional. Token that specifies which page is requested. If empty, the first
