@@ -9,7 +9,7 @@ language_settings:
   go:
     package_name: cloud.google.com/go/gaming/apiv1alpha
   csharp:
-    package_name: Google.Cloud.Gaming.V1alpha
+    package_name: Google.Cloud.Gaming.V1Alpha
   ruby:
     package_name: Google::Cloud::Gaming::V1alpha
   php:
@@ -321,7 +321,7 @@ interfaces:
     field_name_patterns:
       parent: realm
     long_running:
-      return_type: google.cloud.gaming.v1alpha.CreateGameServerCluster
+      return_type: google.cloud.gaming.v1alpha.GameServerCluster
       metadata_type: google.protobuf.Empty
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
@@ -361,7 +361,7 @@ interfaces:
     field_name_patterns:
       game_server_cluster.name: game_server_cluster
     long_running:
-      return_type: google.cloud.gaming.v1alpha.CreateGameServerCluster
+      return_type: google.cloud.gaming.v1alpha.GameServerCluster
       metadata_type: google.protobuf.Empty
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
