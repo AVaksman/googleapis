@@ -28,6 +28,9 @@ import "google/api/client.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/gaming/v1alpha;gaming";
 
+option java_multiple_files = true;
+option java_package = "com.google.cloud.gaming.v1alpha";
+
 // The cloud gaming allocation policy is used as the controller's recipe for the
 // allocating game servers from clusters. The policy has three modes:
 //   1. Default mode which is not limited to time.

@@ -28,6 +28,9 @@ import "google/api/client.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/gaming/v1alpha;gaming";
 
+option java_multiple_files = true;
+option java_package = "com.google.cloud.gaming.v1alpha";
+
 // The cloud gaming scaling policy is used to configure scaling parameters for
 // each fleet.
 service ScalingPoliciesService {
