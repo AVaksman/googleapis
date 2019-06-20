@@ -17,7 +17,6 @@ syntax = "proto3";
 
 package google.cloud.automl.v1beta1;
 
-import "google/api/resource.proto";
 import "google/cloud/automl/v1beta1/image.proto";
 import "google/cloud/automl/v1beta1/tables.proto";
 import "google/cloud/automl/v1beta1/text.proto";
@@ -54,6 +53,9 @@ message Dataset {
 
     // Metadata for a dataset used for video object tracking.
     VideoObjectTrackingDatasetMetadata video_object_tracking_dataset_metadata = 29;
+
+    // Metadata for a dataset used for video action recognition.
+    VideoActionRecognitionDatasetMetadata video_action_recognition_dataset_metadata = 36;
 
     // Metadata for a dataset used for text extraction.
     TextExtractionDatasetMetadata text_extraction_dataset_metadata = 28;

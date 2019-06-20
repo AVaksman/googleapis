@@ -18,11 +18,11 @@ syntax = "proto3";
 package google.cloud.automl.v1beta1;
 
 import "google/api/annotations.proto";
-import "google/api/resource.proto";
 import "google/cloud/automl/v1beta1/annotation_payload.proto";
 import "google/cloud/automl/v1beta1/data_items.proto";
 import "google/cloud/automl/v1beta1/io.proto";
 import "google/longrunning/operations.proto";
+import "google/api/client.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;automl";
 option java_multiple_files = true;
@@ -35,6 +35,9 @@ option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 // On any input that is documented to expect a string parameter in
 // snake_case or kebab-case, either of those cases is accepted.
 service PredictionService {
+  option (google.api.default_host) = "automl.googleapis.com";
+  option (google.api.oauth_scopes) = "https://www.googleapis.com/auth/cloud-platform";
+
   // Perform an online prediction. The prediction result will be directly
   // returned in the response.
   // Available for following ML problems, and their expected request payloads:
@@ -52,6 +55,8 @@ service PredictionService {
   //            up to 5MB. Not available for FORECASTING
   //
   // [prediction_type][google.cloud.automl.v1beta1.TablesModelMetadata.prediction_type].
+  // * Text Sentiment - TextSnippet, content up 500 characters, UTF-8
+  //                     encoded.
   rpc Predict(PredictRequest) returns (PredictResponse) {
     option (google.api.http) = {
       post: "/v1beta1/{name=projects/*/locations/*/models/*}:predict"
@@ -65,7 +70,11 @@ service PredictionService {
   // result via [GetOperation][google.longrunning.Operations.GetOperation]
   // method. Once the operation is done, [BatchPredictResult][google.cloud.automl.v1beta1.BatchPredictResult] is returned in
   // the [response][google.longrunning.Operation.response] field.
-  // Available for following ML problems: * Video Classification * Text Extraction
+  // Available for following ML problems:
+  // * Image Classification
+  // * Image Object Detection
+  // * Video Classification
+  // * Video Object Tracking * Text Extraction
   // * Tables
   rpc BatchPredict(BatchPredictRequest) returns (google.longrunning.Operation) {
     option (google.api.http) = {
@@ -80,8 +89,7 @@ message PredictRequest {
   // Name of the model requested to serve the prediction.
   string name = 1;
 
-  // Required.
-  // Payload to perform a prediction on. The payload must match the
+  // Required. Payload to perform a prediction on. The payload must match the
   // problem type that the model was trained to solve.
   ExamplePayload payload = 2;
 
@@ -93,6 +101,14 @@ message PredictRequest {
   //    `score_threshold` - (float) A value from 0.0 to 1.0. When the model
   //     makes predictions for an image, it will only produce results that have
   //     at least this confidence score. The default is 0.5.
+  //
+  //  *  For Image Object Detection:
+  //    `score_threshold` - (float) When Model detects objects on the image,
+  //        it will only produce bounding boxes which have at least this
+  //        confidence score. Value in 0 to 1 range, default is 0.5.
+  //    `max_bounding_box_count` - (int64) No more than this number of bounding
+  //        boxes will be returned in the response. Default is 100, the
+  //        requested value may be limited by server.
   // *  For Tables:
   //    `feature_importance` - (boolean) Whether
   //
@@ -118,6 +134,20 @@ message PredictResponse {
   ExamplePayload preprocessed_input = 3;
 
   // Additional domain-specific prediction response metadata.
+  //
+  // * For Image Object Detection:
+  //  `max_bounding_box_count` - (int64) At most that many bounding boxes per
+  //      image could have been returned.
+  //
+  // * For Text Sentiment:
+  //  `sentiment_score` - (float, deprecated) A value between -1 and 1,
+  //      -1 maps to least positive sentiment, while 1 maps to the most positive
+  //      one and the higher the score, the more positive the sentiment in the
+  //      document is. Yet these values are relative to the training data, so
+  //      e.g. if all data was positive then -1 will be also positive (though
+  //      the least).
+  //      The sentiment_score shouldn't be confused with "score" or "magnitude"
+  //      from the previous Natural Language Sentiment Analysis API.
   map<string, string> metadata = 2;
 }
 
@@ -135,6 +165,21 @@ message BatchPredictRequest {
 
   // Additional domain-specific parameters for the predictions, any string must
   // be up to 25000 characters long.
+  //
+  // *  For Image Classification:
+  //
+  //    `score_threshold` - (float) A value from 0.0 to 1.0. When the model
+  //         makes predictions for an image, it will only produce results that
+  //         have at least this confidence score. The default is 0.5.
+  //
+  // *  For Image Object Detection:
+  //
+  //    `score_threshold` - (float) When Model detects objects on the image,
+  //        it will only produce bounding boxes which have at least this
+  //        confidence score. Value in 0 to 1 range, default is 0.5.
+  //    `max_bounding_box_count` - (int64) No more than this number of bounding
+  //        boxes will be produced per image. Default is 100, the
+  //        requested value may be limited by server.
   //
   // *  For Video Classification :
   //    `score_threshold` - (float) A value from 0.0 to 1.0. When the model
@@ -163,6 +208,18 @@ message BatchPredictRequest {
   //        type, the quality of it depends on training data, but there are no
   //        metrics provided to describe that quality. The default is
   //        "false".
+  //
+  // *  For Video Object Tracking:
+  //    `score_threshold` - (float) When Model detects objects on video frames,
+  //        it will only produce bounding boxes which have at least this
+  //        confidence score. Value in 0 to 1 range, default is 0.5.
+  //    `max_bounding_box_count` - (int64) No more than this number of bounding
+  //        boxes will be returned per frame. Default is 100, the requested
+  //        value may be limited by server.
+  //    `min_bounding_box_size` - (float) Only bounding boxes with shortest edge
+  //      at least that long as a relative value of video frame size will be
+  //      returned. Value in 0 to 1 range. Default is 0.
+  //
   // *  For Tables:
   //    `feature_importance` - (boolean) Whether
   //
@@ -183,5 +240,9 @@ message BatchPredictResult {
   // *  For Image Object Detection:
   //  `max_bounding_box_count` - (int64) At most that many bounding boxes per
   //      image could have been returned.
+  //
+  // *  For Video Object Tracking:
+  //  `max_bounding_box_count` - (int64) At most that many bounding boxes per
+  //      frame could have been returned.
   map<string, string> metadata = 1;
 }

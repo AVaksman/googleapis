@@ -17,7 +17,6 @@ syntax = "proto3";
 
 package google.cloud.automl.v1beta1;
 
-import "google/api/resource.proto";
 import "google/cloud/automl/v1beta1/classification.proto";
 import "google/cloud/automl/v1beta1/detection.proto";
 import "google/cloud/automl/v1beta1/regression.proto";
@@ -25,6 +24,7 @@ import "google/cloud/automl/v1beta1/tables.proto";
 import "google/cloud/automl/v1beta1/text_extraction.proto";
 import "google/cloud/automl/v1beta1/text_sentiment.proto";
 import "google/cloud/automl/v1beta1/translation.proto";
+import "google/cloud/automl/v1beta1/video_action_recognition.proto";
 import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 
@@ -57,6 +57,9 @@ message ModelEvaluation {
     // Model evaluation metrics for video object tracking.
     VideoObjectTrackingEvaluationMetrics video_object_tracking_evaluation_metrics = 14;
 
+    // Model evaluation metrics for video action recognition.
+    VideoActionRecognitionEvaluationMetrics video_action_recognition_evaluation_metrics = 25;
+
     // Evaluation metrics for text sentiment models.
     TextSentimentEvaluationMetrics text_sentiment_evaluation_metrics = 11;
 
@@ -64,15 +67,13 @@ message ModelEvaluation {
     TextExtractionEvaluationMetrics text_extraction_evaluation_metrics = 13;
   }
 
-  // Output only.
-  // Resource name of the model evaluation.
+  // Output only. Resource name of the model evaluation.
   // Format:
   //
   // `projects/{project_id}/locations/{location_id}/models/{model_id}/modelEvaluations/{model_evaluation_id}`
   string name = 1;
 
-  // Output only.
-  // The ID of the annotation spec that the model evaluation applies to. The
+  // Output only. The ID of the annotation spec that the model evaluation applies to. The
   // The ID is empty for the overall model evaluation.
   // For Tables annotation specs in the dataset do not exist and this ID is
   // always not set, but for CLASSIFICATION
@@ -97,12 +98,10 @@ message ModelEvaluation {
   // The display_name is empty for the overall model evaluation.
   string display_name = 15;
 
-  // Output only.
-  // Timestamp when this model evaluation was created.
+  // Output only. Timestamp when this model evaluation was created.
   google.protobuf.Timestamp create_time = 5;
 
-  // Output only.
-  // The number of examples used for model evaluation, i.e. for
+  // Output only. The number of examples used for model evaluation, i.e. for
   // which ground truth from time of model creation is compared against the
   // predicted annotations created by the model.
   // For overall ModelEvaluation (i.e. with annotation_spec_id not set) this is

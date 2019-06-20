@@ -20,23 +20,21 @@ package google.cloud.automl.v1beta1;
 import "google/api/annotations.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;automl";
-option java_multiple_files = true;
+option java_outer_classname = "TextRelationProto";
 option java_package = "com.google.cloud.automl.v1beta1";
 option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 
-// A definition of an annotation spec.
-message AnnotationSpec {
-  // Output only. Resource name of the annotation spec.
-  // Form:
-  //
-  // 'projects/{project_id}/locations/{location_id}/datasets/{dataset_id}/annotationSpecs/{annotation_spec_id}'
-  string name = 1;
+// Represents a relationship edge between two entity annotations. The
+// relationship label is in the parent proto. Note that one subject(object)
+// annotation may have relationship with multiple object(subject) annotations.
+// The relationship is directional: "subject A -> Object B" does not imply
+// "subject B -> object A".
+message TextRelation {
+  // The id of the TextExtrationAnnotation which is the source/subject of this
+  // relationship.
+  string subject_id = 1;
 
-  // Required. The name of the annotation spec to show in the interface. The name can be
-  // up to 32 characters long and must match the regexp `[a-zA-Z0-9_]+`.
-  string display_name = 2;
-
-  // Output only. The number of examples in the parent dataset
-  // labeled by the annotation spec.
-  int32 example_count = 9;
+  // The id of the TextExtrationAnnotation which is the target/object of this
+  // relationship.
+  string object_id = 2;
 }

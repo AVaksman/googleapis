@@ -18,7 +18,6 @@ syntax = "proto3";
 package google.cloud.automl.v1beta1;
 
 import "google/api/annotations.proto";
-import "google/api/resource.proto";
 import "google/cloud/automl/v1beta1/annotation_payload.proto";
 import "google/cloud/automl/v1beta1/annotation_spec.proto";
 import "google/cloud/automl/v1beta1/column_spec.proto";
@@ -30,6 +29,7 @@ import "google/cloud/automl/v1beta1/model_evaluation.proto";
 import "google/cloud/automl/v1beta1/table_spec.proto";
 import "google/longrunning/operations.proto";
 import "google/protobuf/field_mask.proto";
+import "google/api/client.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;automl";
 option java_multiple_files = true;
@@ -52,6 +52,9 @@ option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
 // On any input that is documented to expect a string parameter in
 // snake_case or kebab-case, either of those cases is accepted.
 service AutoMl {
+  option (google.api.default_host) = "automl.googleapis.com";
+  option (google.api.oauth_scopes) = "https://www.googleapis.com/auth/cloud-platform";
+
   // Creates a dataset.
   rpc CreateDataset(CreateDatasetRequest) returns (Dataset) {
     option (google.api.http) = {
@@ -560,6 +563,9 @@ message DeployModelRequest {
   oneof model_deployment_metadata {
     // Model deployment metadata specific to Image Object Detection.
     ImageObjectDetectionModelDeploymentMetadata image_object_detection_model_deployment_metadata = 2;
+
+    // Model deployment metadata specific to Image Classification.
+    ImageClassificationModelDeploymentMetadata image_classification_model_deployment_metadata = 4;
   }
 
   // Resource name of the model to deploy.

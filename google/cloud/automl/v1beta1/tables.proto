@@ -44,7 +44,7 @@ message TablesDatasetMetadata {
   // * CATEGORY
   // * FLOAT64
   // Furthermore, if the type is CATEGORY , then only up to
-  // 40 unique values may exist in that column across all rows.
+  // 100 unique values may exist in that column across all rows.
   //
   // NOTE: Updates of this field will instantly affect any other users
   // concurrently working with the dataset.
@@ -240,6 +240,21 @@ message TablesModelMetadata {
   // data_type - Output only.
   repeated ColumnSpec input_feature_column_specs = 3;
 
+  // Output only. Column specs of the dataset's primary table's columns that
+  // were excluded from training. Derived from the input feature column specs.
+  // The
+  //
+  // [target_column][google.cloud.automl.v1beta1.TablesModelMetadata.target_column_spec],
+  //
+  // [weight_column][google.cloud.automl.v1beta1.TablesDatasetMetadata.weight_column_spec_id],
+  // and
+  //
+  // [ml_use_column][google.cloud.automl.v1beta1.TablesDatasetMetadata.ml_use_column_spec_id]
+  // are not included in this list because they are automatically excluded as
+  // prediction inputs.
+  // Only 3 fields are used: name, display_name, and data_type
+  repeated ColumnSpec excluded_feature_column_specs = 13;
+
   // Objective function the model is optimizing towards. The training process
   // creates a model that maximizes/minimizes the value of the objective
   // function over the validation set.
@@ -292,9 +307,9 @@ message TablesModelMetadata {
   // to not exceed the train budget.
   int64 train_cost_milli_node_hours = 7;
 
-  // Use the entire train budget. This disables the early stopping algorithm. By
-  // default early stopping algorithm is turned on and Automl Table may not use
-  // the entire train budget.
+  // Use the entire training budget. This disables the early stopping feature.
+  // By default, the early stopping feature is enabled, which means that AutoML
+  // Tables might stop training before the entire training budget has been used.
   bool disable_early_stopping = 12;
 }
 
@@ -349,9 +364,7 @@ message TablesModelColumnInfo {
   // its ColumnSpec).
   string column_display_name = 2;
 
-  // Output only.
-  //
-  // When given as part of a Model (always populated):
+  // Output only. When given as part of a Model (always populated):
   // Measurement of how much model predictions correctness on the TEST data
   // depend on values in this column. A value between 0 and 1, higher means
   // higher influence. These values are normalized - for all input feature

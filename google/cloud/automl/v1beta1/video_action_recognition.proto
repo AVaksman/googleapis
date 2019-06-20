@@ -1,0 +1,83 @@
+// Copyright 2019 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.cloud.automl.v1beta1;
+
+import "google/protobuf/duration.proto";
+import "google/api/annotations.proto";
+
+option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;automl";
+option java_multiple_files = true;
+option java_package = "com.google.cloud.automl.v1beta1";
+option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
+
+// Annotation details for video action recognition.
+message VideoActionRecognitionAnnotation {
+  // Required. A time (frame) of a video to which this annotation pertains.
+  // Represented as the duration since the video's start.
+  google.protobuf.Duration time_offset = 1;
+
+  // Output only. The confidence that this annotation is positive for the video at
+  // the time_offset, value in [0, 1], higher means higher positivity
+  // confidence. For annotations created by the user the score is 1. When
+  // a user approves an annotation, the original float score is kept (and not
+  // changed to 1).
+  float score = 2;
+}
+
+// Model evaluation metrics for video action recognition.
+message VideoActionRecognitionEvaluationMetrics {
+  // The Evaluation metrics entry given a specific [precision_threshold][].
+  message VideoActionMetricsEntry {
+    // Metrics for a single confidence threshold.
+    message ConfidenceMetricsEntry {
+      // Output only. The confidence threshold value used to compute the metrics.
+      // Only annotations with score of at least this threshold are considered
+      // to be ones the model would return.
+      float confidence_threshold = 1;
+
+      // Output only. Recall under the given confidence threshold.
+      float recall = 2;
+
+      // Output only. Precision under the given confidence threshold.
+      float precision = 3;
+
+      // Output only. The harmonic mean of recall and precision.
+      float f1_score = 4;
+    }
+
+    // This [VideoActionMetricsEntry][google.cloud.automl.v1beta1.VideoActionRecognitionEvaluationMetrics.VideoActionMetricsEntry] is calculated based on this prediction
+    // window length. If the predicted action's timestamp is inside the time
+    // window which center is the ground truth action's timsstamp with this
+    // specific length, the prediction result is treated as a true positive.
+    google.protobuf.Duration precision_window_length = 1;
+
+    // The mean average precision.
+    float mean_average_precision = 2;
+
+    // Output only. Metrics for each label-match confidence_threshold from
+    // 0.05,0.10,...,0.95,0.96,0.97,0.98,0.99.
+    // Precision-recall curve can be derived from it.
+    repeated ConfidenceMetricsEntry confidence_metrics_entries = 3;
+  }
+
+  // Output only. The number of ground truth actions used to create this evaluation.
+  int32 evaluated_action_count = 1;
+
+  // Output only. The metric entries for precision threshold: 1s,2s,3s,4s,5s.
+  repeated VideoActionMetricsEntry video_action_metrics_entries = 2;
+}

@@ -17,7 +17,6 @@ syntax = "proto3";
 
 package google.cloud.automl.v1beta1;
 
-import "google/api/resource.proto";
 import "google/cloud/automl/v1beta1/image.proto";
 import "google/cloud/automl/v1beta1/tables.proto";
 import "google/cloud/automl/v1beta1/text.proto";
@@ -61,14 +60,14 @@ message Model {
     // Metadata for image object detection models.
     ImageObjectDetectionModelMetadata image_object_detection_model_metadata = 20;
 
-    // Metadata for image segmentation models.
-    ImageSegmentationModelMetadata image_segmentation_model_metadata = 31;
-
     // Metadata for video classification models.
     VideoClassificationModelMetadata video_classification_model_metadata = 23;
 
     // Metadata for video object tracking models.
     VideoObjectTrackingModelMetadata video_object_tracking_model_metadata = 21;
+
+    // Metadata for video action recognition models.
+    VideoActionRecognitionModelMetadata video_action_recognition_model_metadata = 32;
 
     // Metadata for text extraction models.
     TextExtractionModelMetadata text_extraction_model_metadata = 19;
@@ -80,8 +79,7 @@ message Model {
     TextSentimentModelMetadata text_sentiment_model_metadata = 22;
   }
 
-  // Output only.
-  // Resource name of the model.
+  // Output only. Resource name of the model.
   // Format: `projects/{project_id}/locations/{location_id}/models/{model_id}`
   string name = 1;
 
@@ -91,17 +89,14 @@ message Model {
   // (_), and ASCII digits 0-9. It must start with a letter.
   string display_name = 2;
 
-  // Required.
-  // The resource ID of the dataset used to create the model. The dataset must
+  // Required. The resource ID of the dataset used to create the model. The dataset must
   // come from the same ancestor project and location.
   string dataset_id = 3;
 
-  // Output only.
-  // Timestamp when the model training finished  and can be used for prediction.
+  // Output only. Timestamp when the model training finished  and can be used for prediction.
   google.protobuf.Timestamp create_time = 7;
 
-  // Output only.
-  // Timestamp when this model was last updated.
+  // Output only. Timestamp when this model was last updated.
   google.protobuf.Timestamp update_time = 11;
 
   // Output only. Deployment state of the model. A model can only serve
