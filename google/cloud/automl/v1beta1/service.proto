@@ -36,6 +36,7 @@ option java_multiple_files = true;
 option java_outer_classname = "AutoMlProto";
 option java_package = "com.google.cloud.automl.v1beta1";
 option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
+option ruby_package = "Google::Cloud::AutoML::Master";
 
 // AutoML Server API.
 //
@@ -217,8 +218,7 @@ service AutoMl {
   // [node_number][google.cloud.automl.v1beta1.ImageObjectDetectionModelDeploymentMetadata.node_number])
   //  will reset the deployment state without pausing the model's availability.
   //
-  // Only applicable for Text Classification, Image Object Detection and Tables;
-  // all other domains manage deployment automatically.
+  // Only applicable for Text Classification, Image Object Detection and Tables; all other domains manage deployment automatically.
   //
   // Returns an empty response in the
   // [response][google.longrunning.Operation.response] field when it completes.
@@ -349,12 +349,7 @@ message UpdateDatasetRequest {
   // The dataset which replaces the resource on the server.
   Dataset dataset = 1;
 
-  // The update mask applies to the resource. For the `FieldMask` definition,
-  // see
-  //
-  // https:
-  // //developers.google.com/protocol-buffers
-  // // /docs/reference/google.protobuf#fieldmask
+  // The update mask applies to the resource.
   google.protobuf.FieldMask update_mask = 2;
 }
 
@@ -436,12 +431,7 @@ message UpdateTableSpecRequest {
   // The table spec which replaces the resource on the server.
   TableSpec table_spec = 1;
 
-  // The update mask applies to the resource. For the `FieldMask` definition,
-  // see
-  //
-  // https:
-  // //developers.google.com/protocol-buffers
-  // // /docs/reference/google.protobuf#fieldmask
+  // The update mask applies to the resource.
   google.protobuf.FieldMask update_mask = 2;
 }
 
@@ -491,12 +481,7 @@ message UpdateColumnSpecRequest {
   // The column spec which replaces the resource on the server.
   ColumnSpec column_spec = 1;
 
-  // The update mask applies to the resource. For the `FieldMask` definition,
-  // see
-  //
-  // https:
-  // //developers.google.com/protocol-buffers
-  // // /docs/reference/google.protobuf#fieldmask
+  // The update mask applies to the resource.
   google.protobuf.FieldMask update_mask = 2;
 }
 

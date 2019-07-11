@@ -29,6 +29,7 @@ option java_multiple_files = true;
 option java_outer_classname = "PredictionServiceProto";
 option java_package = "com.google.cloud.automl.v1beta1";
 option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
+option ruby_package = "Google::Cloud::AutoML::Master";
 
 // AutoML Prediction API.
 //
@@ -220,14 +221,6 @@ message BatchPredictRequest {
   //      at least that long as a relative value of video frame size will be
   //      returned. Value in 0 to 1 range. Default is 0.
   //
-  // *  For Tables:
-  //    `feature_importance` - (boolean) Whether
-  //
-  // [feature_importance][[google.cloud.automl.v1beta1.TablesModelColumnInfo.feature_importance]
-  //        should be populated in the returned
-  //
-  // [TablesAnnotation(-s)][[google.cloud.automl.v1beta1.TablesAnnotation].
-  //        The default is false.
   map<string, string> params = 5;
 }
 

@@ -31,6 +31,7 @@ option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;
 option java_multiple_files = true;
 option java_package = "com.google.cloud.automl.v1beta1";
 option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
+option ruby_package = "Google::Cloud::AutoML::Master";
 
 // Metadata for a dataset used for AutoML Tables.
 message TablesDatasetMetadata {
@@ -41,9 +42,12 @@ message TablesDatasetMetadata {
   // training & prediction target.
   // This column must be non-nullable and have one of following data types
   // (otherwise model creation will error):
+  //
   // * CATEGORY
+  //
   // * FLOAT64
-  // Furthermore, if the type is CATEGORY , then only up to
+  //
+  // If the type is CATEGORY , only up to
   // 100 unique values may exist in that column across all rows.
   //
   // NOTE: Updates of this field will instantly affect any other users
@@ -88,11 +92,12 @@ message TablesDatasetMetadata {
   // for the timestamp at which these stats were last updated.
   map<string, CorrelationStats> target_column_correlations = 6;
 
-  // The most recent timestamp when target_column_correlations field and all
-  // descendant ColumnSpec.data_stats and ColumnSpec.top_correlated_columns
-  // fields were last (re-)generated. Any changes that happened to the dataset
-  // afterwards are not reflected in these fields values. The regeneration
-  // happens in the background on a best effort basis.
+  // Output only. The most recent timestamp when target_column_correlations
+  // field and all descendant ColumnSpec.data_stats and
+  // ColumnSpec.top_correlated_columns fields were last (re-)generated. Any
+  // changes that happened to the dataset afterwards are not reflected in these
+  // fields values. The regeneration happens in the background on a best effort
+  // basis.
   google.protobuf.Timestamp stats_update_time = 7;
 }
 
@@ -131,6 +136,20 @@ message TablesModelMetadata {
     // its timestamp and timestamp of latest historical row for any key is over
     // the horizon.
     int64 horizon_periods = 2;
+  }
+
+  // An additional configuration for a data split by percentages.
+  // `train_set_percentage`, `validation_set_percentage`, and
+  // `test_set_percentage` must all add up to 100.
+  message SplitPercentageConfig {
+    // Required. The percentage of data to reserve for the training set.
+    int32 train_set_percentage = 1;
+
+    // Required. The percentage of data to reserve for the validation set.
+    int32 validation_set_percentage = 2;
+
+    // Required. The percentage of data to reserve for the test set.
+    int32 test_set_percentage = 3;
   }
 
   // The type of prediction this model is providing.
@@ -206,6 +225,35 @@ message TablesModelMetadata {
     ForecastingConfig forecasting_config = 10;
   }
 
+  // Additional optimization objective configuration. Required for
+  // `MAXIMIZE_PRECISION_AT_RECALL` and `MAXIMIZE_RECALL_AT_PRECISION`,
+  // otherwise unused.
+  oneof additional_optimization_objective_config {
+    // Required when optimization_objective is "MAXIMIZE_PRECISION_AT_RECALL".
+    // Must be between 0 and 1, inclusive.
+    float optimization_objective_recall_value = 17;
+
+    // Required when optimization_objective is "MAXIMIZE_RECALL_AT_PRECISION".
+    // Must be between 0 and 1, inclusive.
+    float optimization_objective_precision_value = 18;
+  }
+
+  // The strategy used to split the data between training, validation, and test
+  // sets. If set at model creation time, then it overrides
+  //
+  // [ml_use_column][google.cloud.automl.v1beta1.TablesDatasetMetadata.ml_use_column_spec_id].
+  // Otherwise, then the dataset properties will be used to determine a
+  // strategy. If no strategy is set, then the dataset will be split using
+  // SplitPercentageConfig with 80% to train set, 10% to validation set, and 10%
+  // to test set.
+  oneof data_split_strategy {
+    // ID of the column use to split the table.
+    string ml_use_column_spec_id = 14;
+
+    // A data split strategy using percentage configuration.
+    SplitPercentageConfig split_percentage_config = 15;
+  }
+
   // The type of prediction this model is providing.
   PredictionType prediction_type = 9;
 
@@ -232,12 +280,16 @@ message TablesModelMetadata {
   //
   // [ml_use_column][google.cloud.automl.v1beta1.TablesDatasetMetadata.ml_use_column_spec_id]
   // must never be included here.
+  //
   // Only 3 fields are used:
-  // name - May be set on CreateModel, if set only the columns specified are
-  //        used, otherwise all primary table's columns (except the ones listed
-  //        above) are used for the training and prediction input.
-  // display_name - Output only.
-  // data_type - Output only.
+  //
+  // * name - May be set on CreateModel, if set only the columns specified are
+  //   used, otherwise all primary table's columns (except the ones listed
+  //   above) are used for the training and prediction input.
+  //
+  // * display_name - Output only.
+  //
+  // * data_type - Output only.
   repeated ColumnSpec input_feature_column_specs = 3;
 
   // Output only. Column specs of the dataset's primary table's columns that
@@ -267,6 +319,10 @@ message TablesModelMetadata {
   //                                 operating characteristic (ROC) curve.
   //   "MINIMIZE_LOG_LOSS" - Minimize log loss.
   //   "MAXIMIZE_AU_PRC" - Maximize the area under the precision-recall curve.
+  //   "MAXIMIZE_PRECISION_AT_RECALL" - Maximize precision for a specified
+  //                                   recall value.
+  //   "MAXIMIZE_RECALL_AT_PRECISION" - Maximize recall for a specified
+  //                                    precision value.
   //
   // CLASSIFICATION_MULTI_CLASS :
   //   "MINIMIZE_LOG_LOSS" (default) - Minimize log loss.
@@ -276,10 +332,6 @@ message TablesModelMetadata {
   //   "MINIMIZE_RMSE" (default) - Minimize root-mean-squared error (RMSE).
   //   "MINIMIZE_MAE" - Minimize mean-absolute error (MAE).
   //   "MINIMIZE_RMSLE" - Minimize root-mean-squared log error (RMSLE).
-  //
-  // FORECASTING:
-  //   "MINIMIZE_RMSE" (default) - Minimize root-mean-squared error (RMSE).
-  //   "MINIMIZE_MAE" - Minimize mean-absolute error (MAE).
   string optimization_objective = 4;
 
   // Output only. Auxiliary information for each of the
@@ -311,6 +363,18 @@ message TablesModelMetadata {
   // By default, the early stopping feature is enabled, which means that AutoML
   // Tables might stop training before the entire training budget has been used.
   bool disable_early_stopping = 12;
+
+  // ID of the time column. If set, then this overrides
+  //
+  // [time_column_spec_id][google.cloud.automl.v1beta1.TableSpec.time_column_spec_id].
+  // If unset, then
+  //
+  // [time_column_spec_id][google.cloud.automl.v1beta1.TableSpec.time_column_spec_id]
+  // will be used. Only used if
+  //
+  // [ml_use_column][google.cloud.automl.v1beta1.TablesModelMetadata.ml_use_column_spec_id]
+  // is not set.
+  string time_column_spec_id = 16;
 }
 
 // Contains annotation details specific to Tables.
@@ -334,9 +398,11 @@ message TablesAnnotation {
   //
   // [target_column][google.cloud.automl.v1beta1.TablesModelMetadata.target_column_spec].
   // The value depends on the column's DataType:
-  // CATEGORY - the predicted (with the above confidence `score`) CATEGORY
-  //            value.
-  // FLOAT64 - the predicted (with above `prediction_interval`) FLOAT64 value.
+  //
+  // * CATEGORY - the predicted (with the above confidence `score`) CATEGORY
+  //   value.
+  //
+  // * FLOAT64 - the predicted (with above `prediction_interval`) FLOAT64 value.
   google.protobuf.Value value = 2;
 
   // Output only. Auxiliary information for each of the model's

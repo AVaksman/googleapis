@@ -32,6 +32,7 @@ option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;
 option java_multiple_files = true;
 option java_package = "com.google.cloud.automl.v1beta1";
 option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
+option ruby_package = "Google::Cloud::AutoML::Master";
 
 // Evaluation results of a model.
 message ModelEvaluation {
@@ -85,7 +86,7 @@ message ModelEvaluation {
   string annotation_spec_id = 2;
 
   // Output only. The value of
-  // [display_name][google.cloud.automl.v1beta1.AnnotationSpec.dispay_name] at
+  // [display_name][google.cloud.automl.v1beta1.AnnotationSpec.display_name] at
   // the moment when the model was trained. Because this field returns a value
   // at model training time, for different models trained from the same dataset,
   // the values may differ, since display names could had been changed between
