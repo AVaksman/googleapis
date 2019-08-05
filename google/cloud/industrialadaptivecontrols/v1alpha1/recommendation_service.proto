@@ -1,0 +1,113 @@
+// Copyright 2019 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.cloud.industrialadaptivecontrols.v1alpha1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/client.proto";
+
+option go_package = "google.golang.org/genproto/googleapis/cloud/industrialadaptivecontrols/v1alpha1;industrialadaptivecontrols";
+option java_multiple_files = true;
+option java_package = "com.google.cloud.industrialadaptivecontrols.v1alpha1";
+
+// Service for recommending setpoint values.
+service RecommendationService {
+  option (google.api.default_host) = "industrialadaptivecontrols.googleapis.com";
+  option (google.api.oauth_scopes) = "https://www.googleapis.com/auth/cloud-platform";
+
+  // Predict recommended setpoint values.
+  rpc RecommendSetpointValues(RecommendSetpointValuesRequest) returns (RecommendSetpointValuesResponse) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{name=projects/*/locations/*/facilities/*/controllableUnits/*}:recommend"
+      body: "*"
+    };
+  }
+}
+
+// Request message for [RecommendationService.RecommendSetpointValues][google.cloud.industrialadaptivecontrols.v1alpha1.RecommendationService.RecommendSetpointValues].
+message RecommendSetpointValuesRequest {
+  // Required. Controllable unit resource name.
+  string name = 1;
+}
+
+// Response message for [RecommendationService.RecommendSetpointValues][google.cloud.industrialadaptivecontrols.v1alpha1.RecommendationService.RecommendSetpointValues].
+message RecommendSetpointValuesResponse {
+  message SetpointValue {
+    // Resource name of the setpoint.
+    // Form:
+    //
+    // `projects/{project_id}/locations/{location_id}/facilities/{facility_id}/controllableUnits/{controllable_unit_id}/setpoints/{setpoint_id}`
+    string setpoint_name = 1;
+
+    // Client-side ID for the setpoint. Only populated if the setpoint has
+    // configured with client-side UUID.
+    string client_id = 2;
+
+    // Value of the setpoint. Possible values are either floating point numbers
+    // or strings.
+    google.protobuf.Value value = 3;
+  }
+
+  message Action {
+    // Predicted value for a single setpoint.
+    repeated SetpointValue setpoint_values = 1;
+
+    // Score of the action on optimizing the objective.
+    // Within the range of [0.0, 1.0].
+    float score = 2;
+  }
+
+  enum DisableReason {
+    // Unspecified. This should never be returned.
+    DISABLE_REASON_UNSPECIFIED = 0;
+
+    // AI is not yet ready for prediction.
+    NOT_READY = 1;
+  }
+
+  enum RecommendationMode {
+    // Unspecified. This should never be returned.
+    RECOMMENDATION_MODE_UNSPECIFIED = 0;
+
+    // AI prediction is currently unavailable.
+    DISABLED = 1;
+
+    EXPLORE = 2;
+
+    EXPLOIT = 3;
+  }
+
+  oneof result {
+    // All setpoint values predicted for a single controllable unit.
+    Action action = 2;
+
+    // Reason why AI control is disabled for the controllable unit.
+    DisableReason disable_reason = 3;
+  }
+
+  // High-level explanation of the recommendation result.
+  RecommendationMode mode = 1;
+
+  // When are the predicted actions generated.
+  google.protobuf.Timestamp predict_time = 4;
+
+  // Among the measurements used to generate this recommendation, when is the
+  // most rescent one measured.
+  google.protobuf.Timestamp measure_time = 5;
+}

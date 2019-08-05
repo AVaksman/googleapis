@@ -1,0 +1,44 @@
+// Copyright 2019 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.cloud.industrialadaptivecontrols.v1alpha1;
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "google.golang.org/genproto/googleapis/cloud/industrialadaptivecontrols/v1alpha1;industrialadaptivecontrols";
+option java_multiple_files = true;
+option java_package = "com.google.cloud.industrialadaptivecontrols.v1alpha1";
+
+// Reading of sensors or setpoints.
+message Measurement {
+  oneof identifier {
+    // Resource name of the Sensor or Setpoint.
+    string name = 1;
+
+    // ID of the sensor or setpoint assigned by the client. The corresponding
+    // Sensor or Setpoint must be configured with the specified client_id.
+    string client_id = 2;
+  }
+
+  // The time when this measurement occurs.
+  google.protobuf.Timestamp measure_time = 3;
+
+  // Value of the measurement. Only `number_value` and `string_value` are
+  // supported.
+  google.protobuf.Value value = 4;
+}

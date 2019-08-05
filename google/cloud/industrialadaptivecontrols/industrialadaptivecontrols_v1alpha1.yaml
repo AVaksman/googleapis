@@ -1,0 +1,39 @@
+type: google.api.Service
+config_version: 3
+name: industrialadaptivecontrols.googleapis.com
+title: industrialadaptivecontrols API
+
+apis:
+- name: google.cloud.industrialadaptivecontrols.v1alpha1.ConfigService
+- name: google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService
+- name: google.cloud.industrialadaptivecontrols.v1alpha1.RecommendationService
+
+backend:
+  rules:
+  - selector: 'google.cloud.industrialadaptivecontrols.v1alpha1.ConfigService.*'
+    deadline: 60.0
+  - selector: google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.CollectMeasurements
+    deadline: 60.0
+  - selector: google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.ImportMeasurements
+    deadline: 60.0
+  - selector: google.cloud.industrialadaptivecontrols.v1alpha1.RecommendationService.RecommendSetpointValues
+    deadline: 60.0
+
+authentication:
+  rules:
+  - selector: 'google.cloud.industrialadaptivecontrols.v1alpha1.ConfigService.*'
+    oauth:
+      canonical_scopes: |-
+        https://www.googleapis.com/auth/cloud-platform
+  - selector: google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.CollectMeasurements
+    oauth:
+      canonical_scopes: |-
+        https://www.googleapis.com/auth/cloud-platform
+  - selector: google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.ImportMeasurements
+    oauth:
+      canonical_scopes: |-
+        https://www.googleapis.com/auth/cloud-platform
+  - selector: google.cloud.industrialadaptivecontrols.v1alpha1.RecommendationService.RecommendSetpointValues
+    oauth:
+      canonical_scopes: |-
+        https://www.googleapis.com/auth/cloud-platform
