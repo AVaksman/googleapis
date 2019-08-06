@@ -10,30 +10,30 @@ documentation:
   summary: Integrates text translation into your website or application.
 
 types:
-  - name: google.cloud.translation.v3.CreateGlossaryMetadata
-  - name: google.cloud.translation.v3.DeleteGlossaryMetadata
-  - name: google.cloud.translation.v3.DeleteGlossaryResponse
-  - name: google.cloud.translation.v3.BatchTranslateResponse
-  - name: google.cloud.translation.v3.BatchTranslateMetadata
+- name: google.cloud.translation.v3.CreateGlossaryMetadata
+- name: google.cloud.translation.v3.DeleteGlossaryMetadata
+- name: google.cloud.translation.v3.DeleteGlossaryResponse
+- name: google.cloud.translation.v3.BatchTranslateResponse
+- name: google.cloud.translation.v3.BatchTranslateMetadata
 
 http:
   rules:
-    - selector: google.longrunning.Operations.CancelOperation
-      post: '/v3/{name=projects/*/locations/*/operations/*}:cancel'
-      body: '*'
-    - selector: google.longrunning.Operations.DeleteOperation
-      delete: '/v3/{name=projects/*/locations/*/operations/*}'
-    - selector: google.longrunning.Operations.GetOperation
-      get: '/v3/{name=projects/*/locations/*/operations/*}'
-    - selector: google.longrunning.Operations.ListOperations
-      get: '/v3/{name=projects/*/locations/*/operations}'
-    - selector: google.longrunning.Operations.WaitOperation
-      post: '/v3/{name=projects/*/locations/*/operations/*}:wait'
-      body: '*'
-    - selector: google.cloud.location.Locations.GetLocation
-      get: '/v3/{name=projects/*/locations/*}'
-    - selector: google.cloud.location.Locations.ListLocations
-      get: '/v3/{name=projects/*}/locations'
+  - selector: google.longrunning.Operations.CancelOperation
+    post: '/v3/{name=projects/*/locations/*/operations/*}:cancel'
+    body: '*'
+  - selector: google.longrunning.Operations.DeleteOperation
+    delete: '/v3/{name=projects/*/locations/*/operations/*}'
+  - selector: google.longrunning.Operations.GetOperation
+    get: '/v3/{name=projects/*/locations/*/operations/*}'
+  - selector: google.longrunning.Operations.ListOperations
+    get: '/v3/{name=projects/*/locations/*/operations}'
+  - selector: google.longrunning.Operations.WaitOperation
+    post: '/v3/{name=projects/*/locations/*/operations/*}:wait'
+    body: '*'
+  - selector: google.cloud.location.Locations.GetLocation
+    get: '/v3/{name=projects/*/locations/*}'
+  - selector: google.cloud.location.Locations.ListLocations
+    get: '/v3/{name=projects/*}/locations'
 
 backend:
   rules:

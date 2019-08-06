@@ -19,7 +19,7 @@ language_settings:
     domain_layer_location: google-cloud
 # A list of API interface configurations.
 interfaces:
-  # The fully qualified name of the API interface.
+# The fully qualified name of the API interface.
 - name: google.cloud.translation.v3beta1.TranslationService
   # A list of resource collection configurations.
   # Consists of a name_pattern and an entity_name.

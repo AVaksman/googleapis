@@ -3,7 +3,7 @@ common:
   api_version: v3beta1
   organization_name: google-cloud
   proto_deps:
-    - name: google-common-protos
+  - name: google-common-protos
   src_proto_paths:
   - v3beta1
   service_yaml: translate_v3beta1.yaml
