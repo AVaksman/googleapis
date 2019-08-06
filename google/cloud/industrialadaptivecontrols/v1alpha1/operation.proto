@@ -18,6 +18,8 @@ syntax = "proto3";
 package google.cloud.industrialadaptivecontrols.v1alpha1;
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/industrialadaptivecontrols/v1alpha1;industrialadaptivecontrols";
+option java_multiple_files = true;
+option java_package = "com.google.cloud.industrialadaptivecontrols.v1alpha1";
 
 // Metadata used across all long running operations returned by Cloud Industrial
 // Adaptive Controls API.

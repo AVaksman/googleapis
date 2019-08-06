@@ -1,12 +1,16 @@
 type: google.api.Service
 config_version: 3
 name: industrialadaptivecontrols.googleapis.com
-title: industrialadaptivecontrols API
+title: Industrial Adaptive Controls API
 
 apis:
 - name: google.cloud.industrialadaptivecontrols.v1alpha1.ConfigService
 - name: google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService
 - name: google.cloud.industrialadaptivecontrols.v1alpha1.RecommendationService
+
+types:
+- name: google.cloud.industrialadaptivecontrols.config.Facility
+- name: google.cloud.industrialadaptivecontrols.v1alpha1.OperationMetadata
 
 backend:
   rules:
