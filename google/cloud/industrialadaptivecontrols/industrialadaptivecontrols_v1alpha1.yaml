@@ -4,17 +4,16 @@ name: industrialadaptivecontrols.googleapis.com
 title: Industrial Adaptive Controls API
 
 apis:
-- name: google.cloud.industrialadaptivecontrols.v1alpha1.ConfigService
+- name: google.cloud.industrialadaptivecontrols.v1alpha1.FacilityService
 - name: google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService
 - name: google.cloud.industrialadaptivecontrols.v1alpha1.RecommendationService
 
 types:
-- name: google.cloud.industrialadaptivecontrols.config.Facility
 - name: google.cloud.industrialadaptivecontrols.v1alpha1.OperationMetadata
 
 backend:
   rules:
-  - selector: 'google.cloud.industrialadaptivecontrols.v1alpha1.ConfigService.*'
+  - selector: 'google.cloud.industrialadaptivecontrols.v1alpha1.FacilityService.*'
     deadline: 60.0
   - selector: google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.CollectMeasurements
     deadline: 60.0
@@ -25,7 +24,7 @@ backend:
 
 authentication:
   rules:
-  - selector: 'google.cloud.industrialadaptivecontrols.v1alpha1.ConfigService.*'
+  - selector: 'google.cloud.industrialadaptivecontrols.v1alpha1.FacilityService.*'
     oauth:
       canonical_scopes: |-
         https://www.googleapis.com/auth/cloud-platform

@@ -17,6 +17,7 @@ syntax = "proto3";
 
 package google.cloud.industrialadaptivecontrols.v1alpha1;
 
+import "google/api/field_behavior.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 
@@ -24,21 +25,25 @@ option go_package = "google.golang.org/genproto/googleapis/cloud/industrialadapt
 option java_multiple_files = true;
 option java_package = "com.google.cloud.industrialadaptivecontrols.v1alpha1";
 
-// Reading of sensors or setpoints.
+// Reading of trends or setpoints.
 message Measurement {
   oneof identifier {
-    // Resource name of the Sensor or Setpoint.
-    string name = 1;
+    // Resource name of the Trend.
+    // Form:
+    //
+    // `projects/{project_id}/locations/{location_id}/facilities/{facility_id}/controllableUnits/{controllable_unit_id}/trends/{trend_id}`
+    string trend = 1;
 
-    // ID of the sensor or setpoint assigned by the client. The corresponding
-    // Sensor or Setpoint must be configured with the specified client_id.
-    string client_id = 2;
+    // ID of the trend assigned by the client. The corresponding
+    // Trend must be configured with the specified external_id.
+    string external_trend_id = 2;
   }
 
-  // The time when this measurement occurs.
-  google.protobuf.Timestamp measure_time = 3;
+  // Required. The time when this measurement occurs.
+  google.protobuf.Timestamp measure_time = 3
+      [(google.api.field_behavior) = REQUIRED];
 
-  // Value of the measurement. Only `number_value` and `string_value` are
-  // supported.
-  google.protobuf.Value value = 4;
+  // Required. Value of the measurement. Only `number_value` and `string_value`
+  // are supported.
+  google.protobuf.Value value = 4 [(google.api.field_behavior) = REQUIRED];
 }

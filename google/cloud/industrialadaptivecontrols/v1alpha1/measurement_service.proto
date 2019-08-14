@@ -18,24 +18,34 @@ syntax = "proto3";
 package google.cloud.industrialadaptivecontrols.v1alpha1;
 
 import "google/api/annotations.proto";
+import "google/api/client.proto";
+import "google/api/field_behavior.proto";
 import "google/cloud/industrialadaptivecontrols/v1alpha1/io.proto";
 import "google/cloud/industrialadaptivecontrols/v1alpha1/measurement.proto";
 import "google/longrunning/operations.proto";
-import "google/api/client.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/industrialadaptivecontrols/v1alpha1;industrialadaptivecontrols";
 option java_multiple_files = true;
 option java_package = "com.google.cloud.industrialadaptivecontrols.v1alpha1";
 
-// Service for collecting sensor readings and setpoint values.
+// Service for collecting measurements under trends.
 service MeasurementService {
-  option (google.api.default_host) = "industrialadaptivecontrols.googleapis.com";
-  option (google.api.oauth_scopes) = "https://www.googleapis.com/auth/cloud-platform";
+  option (google.api.default_host) =
+      "industrialadaptivecontrols.googleapis.com";
+  option (google.api.oauth_scopes) =
+      "https://www.googleapis.com/auth/cloud-platform";
 
-  // Imports facility historical equipment readings and setpoint values.
-  rpc ImportMeasurements(ImportMeasurementsRequest) returns (google.longrunning.Operation) {
+  // Imports facility historical measurements.
+  //
+  // Use this method to batch import historical measurements collected locally
+  // before the facility is set up. For sending new measurements after the
+  // facility is set up, use
+  // [CollectMeasurements][google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.CollectMeasurements]
+  // instead.
+  rpc ImportMeasurements(ImportMeasurementsRequest)
+      returns (google.longrunning.Operation) {
     option (google.api.http) = {
-      post: "/v1alpha1/{name=projects/*/locations/*/facilities/*}:importMeasurements"
+      post: "/v1alpha1/{parent=projects/*/locations/*/facilities/*}/measurements:import"
       body: "*"
     };
     option (google.longrunning.operation_info) = {
@@ -45,55 +55,75 @@ service MeasurementService {
   }
 
   // Collect recent equipment readings and setpoint values.
-  rpc CollectMeasurements(CollectMeasurementsRequest) returns (CollectMeasurementsResponse) {
+  //
+  // Use this method to send incremental measurements to the AI systems after
+  // the facility is set up. For batch import historical measurements collected
+  // locally before the facility is set up, use
+  // [ImportMeasurements][google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.ImportMeasurements]
+  // instead.
+  rpc CollectMeasurements(CollectMeasurementsRequest)
+      returns (CollectMeasurementsResponse) {
     option (google.api.http) = {
-      post: "/v1alpha1/{name=projects/*/locations/*/facilities/*}:collectMeasurements"
+      post: "/v1alpha1/{parent=projects/*/locations/*/facilities/*}/measurements:collect"
       body: "*"
     };
   }
 }
 
-// Request message for [MeasurementService.ImportMeasurements][google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.ImportMeasurements].
+// Request message for
+// [MeasurementService.ImportMeasurements][google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.ImportMeasurements].
 message ImportMeasurementsRequest {
+  oneof source {
+    // Reference to historical measurements stored as CSV files in Google Cloud
+    // Storage.
+    //
+    // Each line of the CSV file is in the format of
+    // `EXTERNAL_TREND_ID,MEASURE_TIME,VALUE`. The definition of each column is:
+    //
+    //  *  EXTERNAL_TREND_ID: The external ID of the trend object that reports
+    //     this measurement.
+    //  *  MEASURE_TIME: The time when this measurement is reported. The format
+    //     is RFC 3339, e.g. `1972-01-01T10:00:20.021Z`.
+    //  *  VALUE: A number or string, depending on the value type of the trend
+    //     identified by EXTERNAL_TREND_ID at MEASURE_TIME. The type of the
+    //     value is determined as follows:
+    //     *  If the raw value is wrapped by double quotes ("), the value is
+    //        treated as a string. The wrapping quotes are removed from
+    //        the raw value;
+    //     *  Otherwise, if the value can be parsed as a number, is treated as
+    //        a number;
+    //     *  Otherwise, the value is treated as a string.
+    GcsSource gcs_source = 4;
+  }
+
   // Required. Existing facility name.
   // Form:
   // `projects/{project_id}/locations/{location_id}/facilities/{facility_id}`
-  string name = 1;
+  string parent = 1 [(google.api.field_behavior) = REQUIRED];
 
   // Unique identifier provided by client, within the ancestor
   // dataset scope. Ensures idempotency. Up to 128 characters long.
   string request_id = 2;
-
-  // Required. The location of the CSV file representing the historical measurements.
-  // Each line of the CSV file is in the format of
-  // `TREND_CLIENT_ID,MEASURE_TIME,VALUE`. The definition of each column is:
-  //
-  //  *  TREND_CLIENT_ID: The client ID of the trend object that reports this
-  //     measurement.
-  //  *  MEASURE_TIME: The time when this measurement is reported. The format is
-  //     RFC 3339, e.g. `1972-01-01T10:00:20.021Z`.
-  //  *  VALUE: A number or string, depending on the value type of the trend
-  //     identified by TREND_CLIENT_ID at MEASURE_TIME.
-  InputConfig input_config = 3;
 }
 
-// Request message for [MeasurementService.CollectMeasurements][google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.CollectMeasurements].
+// Request message for
+// [MeasurementService.CollectMeasurements][google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.CollectMeasurements].
 message CollectMeasurementsRequest {
-  // Required. Existing facility name.
-  // Form:
+  // Required. Resource name of the facility from which the measurements are
+  // collected. Form:
   // `projects/{project_id}/locations/{location_id}/facilities/{facility_id}`
-  string name = 1;
+  string parent = 1 [(google.api.field_behavior) = REQUIRED];
 
   // Unique identifier provided by client, within the ancestor
   // dataset scope. Ensures idempotency. Up to 128 characters long.
   string request_id = 2;
 
-  // Required. The data collected from sensors. The command sensor measurements
-  // along with all feedback sensor measurements are collected here as well.
-  repeated Measurement sensor_measurements = 3;
+  // Required. The data collected from trends. The active/recommended setpoint
+  // values are collected here as well.
+  repeated Measurement measurements = 3
+      [(google.api.field_behavior) = REQUIRED];
 }
 
-// Response message for [MeasurementService.CollectMeasurements][google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.CollectMeasurements].
-message CollectMeasurementsResponse {
-
-}
+// Response message for
+// [MeasurementService.CollectMeasurements][google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.CollectMeasurements].
+message CollectMeasurementsResponse {}

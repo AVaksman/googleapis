@@ -17,6 +17,7 @@ syntax = "proto3";
 
 package google.cloud.industrialadaptivecontrols.v1alpha1;
 
+import "google/api/field_behavior.proto";
 import "google/protobuf/timestamp.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/industrialadaptivecontrols/v1alpha1;industrialadaptivecontrols";
@@ -25,24 +26,27 @@ option java_package = "com.google.cloud.industrialadaptivecontrols.v1alpha1";
 
 // An unit with facility that can be controlled independently.
 message ControllableUnit {
-  // Output only. The resource name of the controllable unit.
+  // Immutable. The resource name of the controllable unit.
   // Form:
   //
   // `projects/{project_id}/locations/{location_id}/facilities/{facility_id}/controllableUnits/{controllable_unit_id}`
-  string name = 1;
+  string name = 1 [(google.api.field_behavior) = IMMUTABLE];
 
   // Required. The human readable name of the controllable unit to show in the
   // interface.
-  string display_name = 2;
+  string display_name = 2 [(google.api.field_behavior) = REQUIRED];
 
-  // Optional. Client-side ID for mapping the controllable unit with client-side
+  // External ID for mapping the controllable unit with client-side
   // representation.
-  string client_id = 3;
+  string external_id = 3;
 
-  // Optional. Timestamp of when this controllable unit was created.
-  google.protobuf.Timestamp create_time = 4;
+  // Optional. Output only. Timestamp of when this controllable unit was
+  // created.
+  google.protobuf.Timestamp create_time = 4
+      [(google.api.field_behavior) = OUTPUT_ONLY];
 
-  // Optional
+  // Output only. Optional
   // Timestamp of when this controllable unit was last updated.
-  google.protobuf.Timestamp update_time = 5;
+  google.protobuf.Timestamp update_time = 5
+      [(google.api.field_behavior) = OUTPUT_ONLY];
 }

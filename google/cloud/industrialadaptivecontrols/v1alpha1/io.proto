@@ -17,21 +17,11 @@ syntax = "proto3";
 
 package google.cloud.industrialadaptivecontrols.v1alpha1;
 
+import "google/api/field_behavior.proto";
+
 option go_package = "google.golang.org/genproto/googleapis/cloud/industrialadaptivecontrols/v1alpha1;industrialadaptivecontrols";
 option java_multiple_files = true;
 option java_package = "com.google.cloud.industrialadaptivecontrols.v1alpha1";
-
-// Configuration for consuming data from external data source.
-// The format of the data is documented in the request message.
-message InputConfig {
-  // The source of the input.
-  oneof source {
-    // The Google Cloud Storage location for the input content.
-    // In ImportData, the gcs_source points to a csv with structure described in
-    // the comment.
-    GcsSource gcs_source = 1;
-  }
-}
 
 // The Google Cloud Storage location for the input content.
 message GcsSource {
@@ -41,5 +31,5 @@ message GcsSource {
   //
   // Accepted forms:
   // * Full object path, e.g. gs://bucket/directory/object.csv
-  repeated string input_uris = 1;
+  repeated string input_uris = 1 [(google.api.field_behavior) = REQUIRED];
 }

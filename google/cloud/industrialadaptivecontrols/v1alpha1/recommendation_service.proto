@@ -18,9 +18,11 @@ syntax = "proto3";
 package google.cloud.industrialadaptivecontrols.v1alpha1;
 
 import "google/api/annotations.proto";
+import "google/api/client.proto";
+import "google/api/field_behavior.proto";
+import "google/cloud/industrialadaptivecontrols/v1alpha1/recommendation.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
-import "google/api/client.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/industrialadaptivecontrols/v1alpha1;industrialadaptivecontrols";
 option java_multiple_files = true;
@@ -28,11 +30,14 @@ option java_package = "com.google.cloud.industrialadaptivecontrols.v1alpha1";
 
 // Service for recommending setpoint values.
 service RecommendationService {
-  option (google.api.default_host) = "industrialadaptivecontrols.googleapis.com";
-  option (google.api.oauth_scopes) = "https://www.googleapis.com/auth/cloud-platform";
+  option (google.api.default_host) =
+      "industrialadaptivecontrols.googleapis.com";
+  option (google.api.oauth_scopes) =
+      "https://www.googleapis.com/auth/cloud-platform";
 
   // Predict recommended setpoint values.
-  rpc RecommendSetpointValues(RecommendSetpointValuesRequest) returns (RecommendSetpointValuesResponse) {
+  rpc RecommendSetpointValues(RecommendSetpointValuesRequest)
+      returns (RecommendSetpointValuesResponse) {
     option (google.api.http) = {
       post: "/v1alpha1/{name=projects/*/locations/*/facilities/*/controllableUnits/*}:recommend"
       body: "*"
@@ -40,44 +45,21 @@ service RecommendationService {
   }
 }
 
-// Request message for [RecommendationService.RecommendSetpointValues][google.cloud.industrialadaptivecontrols.v1alpha1.RecommendationService.RecommendSetpointValues].
+// Request message for
+// [RecommendationService.RecommendSetpointValues][google.cloud.industrialadaptivecontrols.v1alpha1.RecommendationService.RecommendSetpointValues].
 message RecommendSetpointValuesRequest {
   // Required. Controllable unit resource name.
-  string name = 1;
+  string name = 1 [(google.api.field_behavior) = REQUIRED];
 }
 
-// Response message for [RecommendationService.RecommendSetpointValues][google.cloud.industrialadaptivecontrols.v1alpha1.RecommendationService.RecommendSetpointValues].
+// Response message for
+// [RecommendationService.RecommendSetpointValues][google.cloud.industrialadaptivecontrols.v1alpha1.RecommendationService.RecommendSetpointValues].
 message RecommendSetpointValuesResponse {
-  message SetpointValue {
-    // Resource name of the setpoint.
-    // Form:
-    //
-    // `projects/{project_id}/locations/{location_id}/facilities/{facility_id}/controllableUnits/{controllable_unit_id}/setpoints/{setpoint_id}`
-    string setpoint_name = 1;
-
-    // Client-side ID for the setpoint. Only populated if the setpoint has
-    // configured with client-side UUID.
-    string client_id = 2;
-
-    // Value of the setpoint. Possible values are either floating point numbers
-    // or strings.
-    google.protobuf.Value value = 3;
-  }
-
-  message Action {
-    // Predicted value for a single setpoint.
-    repeated SetpointValue setpoint_values = 1;
-
-    // Score of the action on optimizing the objective.
-    // Within the range of [0.0, 1.0].
-    float score = 2;
-  }
-
   enum DisableReason {
     // Unspecified. This should never be returned.
     DISABLE_REASON_UNSPECIFIED = 0;
 
-    // AI is not yet ready for prediction.
+    // AI is not yet ready for recommendation.
     NOT_READY = 1;
   }
 
@@ -88,14 +70,18 @@ message RecommendSetpointValuesResponse {
     // AI prediction is currently unavailable.
     DISABLED = 1;
 
-    EXPLORE = 2;
+    // The recommendation is for collecting more data for improving the AI
+    // model.
+    EXPLORING = 2;
 
-    EXPLOIT = 3;
+    // The recommendation is for optimizing the objective of this controllable
+    // unit.
+    EXPLOITING = 3;
   }
 
   oneof result {
     // All setpoint values predicted for a single controllable unit.
-    Action action = 2;
+    ControllableUnitRecommendation recommendation = 2;
 
     // Reason why AI control is disabled for the controllable unit.
     DisableReason disable_reason = 3;
@@ -104,8 +90,8 @@ message RecommendSetpointValuesResponse {
   // High-level explanation of the recommendation result.
   RecommendationMode mode = 1;
 
-  // When are the predicted actions generated.
-  google.protobuf.Timestamp predict_time = 4;
+  // When are the recommendations generated.
+  google.protobuf.Timestamp recommend_time = 4;
 
   // Among the measurements used to generate this recommendation, when is the
   // most rescent one measured.

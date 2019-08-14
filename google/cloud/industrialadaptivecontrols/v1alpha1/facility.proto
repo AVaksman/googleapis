@@ -17,6 +17,7 @@ syntax = "proto3";
 
 package google.cloud.industrialadaptivecontrols.v1alpha1;
 
+import "google/api/field_behavior.proto";
 import "google/protobuf/timestamp.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/industrialadaptivecontrols/v1alpha1;industrialadaptivecontrols";
@@ -25,18 +26,19 @@ option java_package = "com.google.cloud.industrialadaptivecontrols.v1alpha1";
 
 // A facility building to be controlled by AI.
 message Facility {
-  // Output only. The resource name of the facility.
+  // Immutable. The resource name of the facility.
   // Form:
   // `projects/{project_id}/locations/{location_id}/facilities/{facility_id}`
-  string name = 1;
+  string name = 1 [(google.api.field_behavior) = IMMUTABLE];
 
   // Required. The human readable name of the facility to show in the interface.
-  string display_name = 2;
+  string display_name = 2 [(google.api.field_behavior) = REQUIRED];
 
-  // Optional. Timestamp of when this facility was created.
-  google.protobuf.Timestamp create_time = 3;
+  // Output only. Timestamp of when this facility was created.
+  google.protobuf.Timestamp create_time = 3
+      [(google.api.field_behavior) = OUTPUT_ONLY];
 
-  // Optional
-  // Timestamp of when this facility was last updated.
-  google.protobuf.Timestamp update_time = 4;
+  // Output only. Timestamp of when this facility was last updated.
+  google.protobuf.Timestamp update_time = 4
+      [(google.api.field_behavior) = OUTPUT_ONLY];
 }
