@@ -95,7 +95,7 @@ interfaces:
   #   timeout_millis - Specifies the default timeout for a non-retrying call. If
   #   the call is retrying, refer to retry_params_name instead.
   methods:
-  - name: AsyncBatchProcessDocuments
+  - name: BatchProcessDocuments
     flattening:
       groups:
       - parameters:
@@ -105,7 +105,7 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     long_running:
-      return_type: google.cloud.document.v1beta1.AsyncBatchProcessDocumentsResponse
+      return_type: google.cloud.document.v1beta1.BatchProcessDocumentsResponse
       metadata_type: google.cloud.document.v1beta1.OperationMetadata
       initial_poll_delay_millis: 20000
       poll_delay_multiplier: 1.5

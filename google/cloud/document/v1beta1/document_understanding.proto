@@ -18,10 +18,10 @@ syntax = "proto3";
 package google.cloud.document.v1beta1;
 
 import "google/api/annotations.proto";
-import "google/api/client.proto";
 import "google/cloud/document/v1beta1/geometry.proto";
 import "google/longrunning/operations.proto";
 import "google/protobuf/timestamp.proto";
+import "google/api/client.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/document/v1beta1;document";
 option java_multiple_files = true;
@@ -33,23 +33,32 @@ option java_package = "com.google.cloud.document.v1beta1";
 // computer vision, and translation.
 service DocumentUnderstandingService {
   option (google.api.default_host) = "document.googleapis.com";
-  option (google.api.oauth_scopes) =
-      "https://www.googleapis.com/auth/cloud-platform";
+  option (google.api.oauth_scopes) = "https://www.googleapis.com/auth/cloud-platform";
 
   // LRO endpoint to batch process many documents.
-  rpc AsyncBatchProcessDocuments(AsyncBatchProcessDocumentsRequest)
-      returns (google.longrunning.Operation) {
+  rpc BatchProcessDocuments(BatchProcessDocumentsRequest) returns (google.longrunning.Operation) {
     option (google.api.http) = {
-      post: "/v1beta1/documents:asyncBatchProcess"
+      post: "/v1beta1/{parent=projects/*/locations/*}/documents:batchProcess"
       body: "*"
+      additional_bindings {
+        post: "/v1beta1/{parent=projects/*}/documents:batchProcess"
+        body: "*"
+      }
     };
   }
 }
 
 // Request to batch process documents as an asynchronous operation.
-message AsyncBatchProcessDocumentsRequest {
+message BatchProcessDocumentsRequest {
   // Individual requests for each document.
   repeated ProcessDocumentRequest requests = 1;
+
+  // Target project and location to make a call.
+  //
+  // Format: `projects/{project-id}/locations/{location-id}`.
+  //
+  // If no location is specified, a region will be chosen automatically.
+  string parent = 2;
 }
 
 // Request to process one document.
@@ -57,23 +66,40 @@ message ProcessDocumentRequest {
   // Required. Information about the input file.
   InputConfig input_config = 1;
 
-  // Request parameters to specify what and how to process the document. If not
-  // provided, only OCR will be run on the document with no structural analysis.
-  ProcessDocumentParams process_params = 2;
+  // Required. The desired output location.
+  OutputConfig output_config = 2;
 
-  // Required. The desired output location (e.g. format).
-  OutputConfig output_config = 3;
+  // Specifies a known document type for deeper structure detection. Valid
+  // values are currently "general" and "invoice". If not provided, "general"\
+  // is used as default. If any other value is given, the request is rejected.
+  string document_type = 3;
+
+  // Controls table extraction behavior. If not specified, the system will
+  // decide reasonable defaults.
+  TableExtractionParams table_extraction_params = 4;
+
+  // Controls form extraction behavior. If not specified, the system will
+  // decide reasonable defaults.
+  FormExtractionParams form_extraction_params = 5;
+
+  // Controls entity extraction behavior. If not specified, the system will
+  // decide reasonable defaults.
+  EntityExtractionParams entity_extraction_params = 6;
+
+  // Controls OCR behavior. If not specified, the system will decide reasonable
+  // defaults.
+  OcrParams ocr_params = 7;
 }
 
-// Response to an async batch document processing request. This is returned in
+// Response to an batch document processing request. This is returned in
 // the LRO Operation after the operation is complete.
-message AsyncBatchProcessDocumentsResponse {
+message BatchProcessDocumentsResponse {
   // Responses for each individual document.
-  repeated AsyncProcessDocumentResponse responses = 1;
+  repeated ProcessDocumentResponse responses = 1;
 }
 
-// Response to a single async batch document processing request.
-message AsyncProcessDocumentResponse {
+// Response to a single document processing request.
+message ProcessDocumentResponse {
   // Information about the input file. This is the same as the corresponding
   // input config in the request.
   InputConfig input_config = 1;
@@ -81,30 +107,6 @@ message AsyncProcessDocumentResponse {
   // The output location of the parsed responses. The responses are written to
   // this location as JSON-serialized `Document` objects.
   OutputConfig output_config = 2;
-}
-
-// Parameters to control how and what to process and extract from the document.
-message ProcessDocumentParams {
-  // Specifies a known document type for deeper structure detection. Valid
-  // values are currently "GENERAL" and "INVOICE". If not provided, "GENERAL"\
-  // is used as default. If any other value is given, the request is rejected.
-  string document_type = 1;
-
-  // Controls table extraction behavior. If not specified, the system will
-  // decide reasonable defaults.
-  TableExtractionParams table_extraction_params = 2;
-
-  // Controls form extraction behavior. If not specified, the system will
-  // decide reasonable defaults.
-  FormExtractionParams form_extraction_params = 3;
-
-  // Controls entity extraction behavior. If not specified, the system will
-  // decide reasonable defaults.
-  EntityExtractionParams entity_extraction_params = 4;
-
-  // Controls OCR behavior. If not specified, the system will decide reasonable
-  // defaults.
-  OcrParams ocr_params = 5;
 }
 
 // Parameters to control Optical Character Recognition (OCR) behavior.
@@ -215,6 +217,25 @@ message OutputConfig {
     // The Google Cloud Storage location to write the output to.
     GcsDestination gcs_destination = 1;
   }
+
+  // The max number of pages to include into each output Document shard JSON on
+  // Google Cloud Storage.
+  //
+  // The valid range is [1, 100]. If not specified, the default value is 20.
+  //
+  // For example, for one pdf file with 100 pages, 100 parsed pages will be
+  // produced. If `pages_per_shard` = 20, then 5 Document shard JSON files each
+  // containing 20 parsed pages will be written under the prefix
+  // [InputConfig.gcs_destination.uri][] and suffix -pages-x-to-y.json where
+  // x and y are 1-indexed page numbers.
+  //
+  // Example GCS outputs with 157 pages and pages_per_shard = 50:
+  //
+  // <prefix>-pages-001-to-050.json
+  // <prefix>-pages-051-to-100.json
+  // <prefix>-pages-101-to-150.json
+  // <prefix>-pages-151-to-157.json
+  int32 pages_per_shard = 2;
 }
 
 // The Google Cloud Storage location where the input file will be read from.
@@ -227,19 +248,37 @@ message GcsDestination {
   string uri = 1;
 }
 
-// Contains metadata for the AsyncBatchProcessDocuments operation.
+// Contains metadata for the BatchProcessDocuments operation.
 message OperationMetadata {
-  // All possible state values include:
-  // CREATED: Request is received.
-  // WAITING: Request operation is waiting for scheduling.
-  // RUNNING: Request is actively being processed.
-  // DONE: The batch processing is done.
-  // CANCELLED: The batch processing was cancelled.
-  string operation_state = 1;
+  enum State {
+    // The default value. This value is used if the state is omitted.
+    STATE_UNSPECIFIED = 0;
 
-  string status_message = 2;
+    // Request is received.
+    ACCEPTED = 1;
 
+    // Request operation is waiting for scheduling.
+    WAITING = 2;
+
+    // Request is being processed.
+    RUNNING = 3;
+
+    // The batch processing completed successfully.
+    SUCCEEDED = 4;
+
+    // The batch processing was cancelled.
+    CANCELLED = 5;
+  }
+
+  // The state of the current batch processing.
+  State state = 1;
+
+  // A message providing more details about the current state of processing.
+  string state_message = 2;
+
+  // The creation time of the operation.
   google.protobuf.Timestamp create_time = 3;
 
+  // The last update time of the operation.
   google.protobuf.Timestamp update_time = 4;
 }

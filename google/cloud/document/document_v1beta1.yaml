@@ -7,7 +7,7 @@ apis:
 - name: google.cloud.document.v1beta1.DocumentUnderstandingService
 
 types:
-- name: google.cloud.document.v1beta1.AsyncBatchProcessDocumentsResponse
+- name: google.cloud.document.v1beta1.BatchProcessDocumentsResponse
 - name: google.cloud.document.v1beta1.Document
 - name: google.cloud.document.v1beta1.OperationMetadata
 
@@ -19,7 +19,7 @@ documentation:
 
 authentication:
   rules:
-  - selector: google.cloud.document.v1beta1.DocumentUnderstandingService.AsyncBatchProcessDocuments
+  - selector: google.cloud.document.v1beta1.DocumentUnderstandingService.BatchProcessDocuments
     oauth:
       canonical_scopes: |-
         https://www.googleapis.com/auth/cloud-platform
