@@ -19,6 +19,7 @@ package google.cloud.automl.v1beta1;
 
 import "google/cloud/automl/v1beta1/classification.proto";
 import "google/cloud/automl/v1beta1/detection.proto";
+import "google/cloud/automl/v1beta1/image_segmentation.proto";
 import "google/cloud/automl/v1beta1/regression.proto";
 import "google/cloud/automl/v1beta1/tables.proto";
 import "google/cloud/automl/v1beta1/text_extraction.proto";
@@ -32,7 +33,7 @@ option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;
 option java_multiple_files = true;
 option java_package = "com.google.cloud.automl.v1beta1";
 option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
-option ruby_package = "Google::Cloud::AutoML::Master";
+option ruby_package = "Google::Cloud::AutoML::V1beta1";
 
 // Evaluation results of a model.
 message ModelEvaluation {
@@ -54,6 +55,9 @@ message ModelEvaluation {
 
     // Model evaluation metrics for image object detection.
     ImageObjectDetectionEvaluationMetrics image_object_detection_evaluation_metrics = 12;
+
+    // Model evaluation metrics for image segmentation.
+    ImageSegmentationEvaluationMetrics image_segmentation_evaluation_metrics = 26;
 
     // Model evaluation metrics for video object tracking.
     VideoObjectTrackingEvaluationMetrics video_object_tracking_evaluation_metrics = 14;
@@ -84,6 +88,13 @@ message ModelEvaluation {
   // [display_name][google.cloud.automl.v1beta1.ModelEvaluation.display_name]
   // field is used.
   string annotation_spec_id = 2;
+
+  // Output only. The ID of the time series that the model evaluation applies to.
+  // The ID is empty for the overall model evaluation.
+  // This ID is only set for FORECASTING
+  //
+  // [prediction_type-s][google.cloud.automl.v1beta1.TablesModelMetadata.prediction_type].
+  string time_series_id = 27;
 
   // Output only. The value of
   // [display_name][google.cloud.automl.v1beta1.AnnotationSpec.display_name] at

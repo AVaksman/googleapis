@@ -23,7 +23,7 @@ option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;
 option java_multiple_files = true;
 option java_package = "com.google.cloud.automl.v1beta1";
 option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
-option ruby_package = "Google::Cloud::AutoML::Master";
+option ruby_package = "Google::Cloud::AutoML::V1beta1";
 
 // A definition of an annotation spec.
 message AnnotationSpec {
@@ -36,6 +36,17 @@ message AnnotationSpec {
   // Required. The name of the annotation spec to show in the interface. The name can be
   // up to 32 characters long and must match the regexp `[a-zA-Z0-9_]+`.
   string display_name = 2;
+
+  // This field is required in image segmentation and is only useful in it.
+  // In
+  //
+  // [category_mask][google.cloud.automl.v1beta1.ImageSegmentationAnnotation.category_mask],
+  // each pixel represents the category of the pixel in original image. This
+  // field associates each category_mask with one AnnotationSpec. No two
+  // AnnotationSpecs in a dataset can have the same category_mask. Valid range
+  // for categories is 1 to 254 inclusive. Also, 0 and 255 are also allowed
+  // where 0 is assumed to be background while 255 signifies unknown regions.
+  int32 category = 17;
 
   // Output only. The number of examples in the parent dataset
   // labeled by the annotation spec.

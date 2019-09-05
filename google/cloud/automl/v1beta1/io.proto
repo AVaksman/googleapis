@@ -23,7 +23,7 @@ option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;
 option java_multiple_files = true;
 option java_package = "com.google.cloud.automl.v1beta1";
 option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
-option ruby_package = "Google::Cloud::AutoML::Master";
+option ruby_package = "Google::Cloud::AutoML::V1beta1";
 
 // Input configuration for ImportData Action.
 //
@@ -140,7 +140,8 @@ option ruby_package = "Google::Cloud::AutoML::Master";
 //         CSV file(s) with each line in format:
 //           ML_USE,GCS_FILE_PATH
 //           GCS_FILE_PATH leads to a .JSONL (that is, JSON Lines) file which
-//           either imports text in-line or as documents.
+//           either imports text in-line or as documents. Any given
+//           .JSONL file must be 100MB or smaller.
 //           The in-line .JSONL file contains, per line, a proto that wraps a
 //           TextSnippet proto (in json representation) followed by one or more
 //           AnnotationPayload protos (called annotations), which have
@@ -148,12 +149,16 @@ option ruby_package = "Google::Cloud::AutoML::Master";
 //           is expected to be annotated exhaustively, for example, if you look
 //           for animals and text contains "dolphin" that is not labeled, then
 //           "dolphin" is assumed to not be an animal. Any given text snippet
-//           content must have 30,000 characters or less,  and also be UTF-8 NFC
-//           encoded (ASCII already is).           The document .JSONL file contains, per line, a proto that wraps a
-//           Document proto with input_config set. Only PDF documents are
-//           supported now, and each document may be up to 2MB large. Currently
-//           annotations on documents cannot be specified at import. Any given
-//           .JSONL file must be 100MB or smaller.
+//           content must be 10KB or smaller, and also be UTF-8 NFC encoded
+//           (ASCII already is).
+//           The document .JSONL file contains, per line, a proto that wraps a
+//           Document proto. The Document proto must have either document_text
+//           or input_config set. In document_text case, the Document proto may
+//           also contain the spatial information of the document, including
+//           layout, document dimension and page number. In input_config case,
+//           only PDF documents are supported now, and each document may be up
+//           to 2MB large. Currently, annotations on documents cannot be
+//           specified at import.
 //         Three sample CSV rows:
 //           TRAIN,gs://folder/file1.jsonl
 //           VALIDATE,gs://folder/file2.jsonl
@@ -162,27 +167,61 @@ option ruby_package = "Google::Cloud::AutoML::Master";
 //         with artificial line breaks, but the only actual line break is
 //         denoted by \n).:
 //           {
-//             "text_snippet": {
-//               "content": "dog car cat"
-//             }             "annotations": [
+//             "document": {
+//               "document_text": {"content": "dog cat"}
+//               "layout": [
+//                 {
+//                   "text_segment": {
+//                     "start_offset": 0,
+//                     "end_offset": 3,
+//                   },
+//                   "page_number": 1,
+//                   "bounding_poly": {
+//                     "normalized_vertices": [
+//                       {"x": 0.1, "y": 0.1},
+//                       {"x": 0.1, "y": 0.3},
+//                       {"x": 0.3, "y": 0.3},
+//                       {"x": 0.3, "y": 0.1},
+//                     ],
+//                   },
+//                   "text_segment_type": TOKEN,
+//                 },
+//                 {
+//                   "text_segment": {
+//                     "start_offset": 4,
+//                     "end_offset": 7,
+//                   },
+//                   "page_number": 1,
+//                   "bounding_poly": {
+//                     "normalized_vertices": [
+//                       {"x": 0.4, "y": 0.1},
+//                       {"x": 0.4, "y": 0.3},
+//                       {"x": 0.8, "y": 0.3},
+//                       {"x": 0.8, "y": 0.1},
+//                     ],
+//                   },
+//                   "text_segment_type": TOKEN,
+//                 }
+//
+//               ],
+//               "document_dimensions": {
+//                 "width": 8.27,
+//                 "height": 11.69,
+//                 "unit": INCH,
+//               }
+//               "page_count": 1,
+//             },
+//             "annotations": [
 //               {
 //                 "display_name": "animal",
-//                 "text_extraction": {
-//                   "text_segment": {"start_offset": 0, "end_offset": 3}
-//                 }
-//               },
-//               {
-//                 "display_name": "vehicle",
-//                 "text_extraction": {
-//                   "text_segment": {"start_offset": 4, "end_offset": 7}
-//                 }
+//                 "text_extraction": {"text_segment": {"start_offset": 0,
+//                 "end_offset": 3}}
 //               },
 //               {
 //                 "display_name": "animal",
-//                 "text_extraction": {
-//                   "text_segment": {"start_offset": 8, "end_offset": 11}
-//                 }
-//               },
+//                 "text_extraction": {"text_segment": {"start_offset": 4,
+//                 "end_offset": 7}}
+//               }
 //             ],
 //           }\n
 //           {
@@ -423,6 +462,28 @@ message InputConfig {
 //           gs://folder/video1.mp4,10,240
 //           gs://folder/video1.mp4,300,360
 //           gs://folder/vid2.mov,0,inf
+//  *  For Text Classification:
+//         CSV file(s) with each line having just a single column:
+//           GCS_FILE_PATH | TEXT_SNIPPET
+//         Any given text file can have size upto 128kB.
+//         Any given text snippet content must have 60,000 characters or less.
+//         Three sample rows:
+//           gs://folder/text1.txt
+//           "Some text content to predict"
+//           gs://folder/text3.pdf
+//         Supported file extensions: .txt, .pdf
+//
+//  *  For Text Sentiment:
+//         CSV file(s) with each line having just a single column:
+//           GCS_FILE_PATH | TEXT_SNIPPET
+//         Any given text file can have size upto 128kB.
+//         Any given text snippet content must have 500 characters or less.
+//         Three sample rows:
+//           gs://folder/text1.txt
+//           "Some text content to predict"
+//           gs://folder/text3.pdf
+//         Supported file extensions: .txt, .pdf
+//
 //  * For Text Extraction
 //         .JSONL (i.e. JSON Lines) file(s) which either provide text in-line or
 //         as documents (for a single BatchPredict call only one of the these
@@ -538,6 +599,8 @@ message InputConfig {
 //
 //  Definitions:
 //  GCS_FILE_PATH = A path to file on GCS, e.g. "gs://folder/video.avi".
+//  TEXT_SNIPPET = A content of a text snippet, UTF-8 encoded, enclosed within
+//                 double quotes ("")
 //  TIME_SEGMENT_START = TIME_OFFSET
 //                       Expresses a beginning, inclusive, of a time segment
 //                       within an
@@ -757,6 +820,54 @@ message OutputConfig {
 //         for each frame of the video time segment the file is assigned to in
 //         video_object_tracking.csv. All AnnotationPayload protos will have
 //         video_object_tracking field set.
+//  *  For Text Classification:
+//         In the created directory files `text_classification_1.jsonl`,
+//         `text_classification_2.jsonl`,...,`text_classification_N.jsonl`
+//         will be created, where N may be 1, and depends on the
+//         total number of inputs and annotations found.
+//
+//         Each .JSONL file will contain, per line, a JSON representation of a
+//         proto that wraps input text snippet or input text file and a list of
+//         zero or more AnnotationPayload protos (called annotations), which
+//         have classification detail populated. A single text snippet or file
+//         will be listed only once with all its annotations, and its
+//         annotations will never be split across files.
+//
+//         If prediction for any text snippet or file failed (partially or
+//         completely), then additional `errors_1.jsonl`, `errors_2.jsonl`,...,
+//         `errors_N.jsonl` files will be created (N depends on total number of
+//         failed predictions). These files will have a JSON representation of a
+//         proto that wraps input text snippet or input text file followed by
+//         exactly one
+//
+// [`google.rpc.Status`](https:
+// //github.com/googleapis/googleapis/blob/master/google/rpc/status.proto)
+//         containing only `code` and `message`.
+//
+//  *  For Text Sentiment:
+//         In the created directory files `text_sentiment_1.jsonl`,
+//         `text_sentiment_2.jsonl`,...,`text_sentiment_N.jsonl`
+//         will be created, where N may be 1, and depends on the
+//         total number of inputs and annotations found.
+//
+//         Each .JSONL file will contain, per line, a JSON representation of a
+//         proto that wraps input text snippet or input text file and a list of
+//         zero or more AnnotationPayload protos (called annotations), which
+//         have text_sentiment detail populated. A single text snippet or file
+//         will be listed only once with all its annotations, and its
+//         annotations will never be split across files.
+//
+//         If prediction for any text snippet or file failed (partially or
+//         completely), then additional `errors_1.jsonl`, `errors_2.jsonl`,...,
+//         `errors_N.jsonl` files will be created (N depends on total number of
+//         failed predictions). These files will have a JSON representation of a
+//         proto that wraps input text snippet or input text file followed by
+//         exactly one
+//
+// [`google.rpc.Status`](https:
+// //github.com/googleapis/googleapis/blob/master/google/rpc/status.proto)
+//         containing only `code` and `message`.
+//
 //   *  For Text Extraction:
 //         In the created directory files `text_extraction_1.jsonl`,
 //         `text_extraction_2.jsonl`,...,`text_extraction_N.jsonl`
@@ -766,7 +877,8 @@ message OutputConfig {
 //         used inline text, or documents.
 //         If input was inline, then each .JSONL file will contain, per line,
 //           a JSON representation of a proto that wraps given in request text
-//           snippet's "id" : "<id_value>" followed by a list of zero or more
+//           snippet's "id" (if specified), followed by input text snippet,
+//           and a list of zero or more
 //           AnnotationPayload protos (called annotations), which have
 //           text_extraction detail populated. A single text snippet will be
 //           listed only once with all its annotations, and its annotations will

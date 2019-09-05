@@ -29,7 +29,7 @@ option java_multiple_files = true;
 option java_outer_classname = "PredictionServiceProto";
 option java_package = "com.google.cloud.automl.v1beta1";
 option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
-option ruby_package = "Google::Cloud::AutoML::Master";
+option ruby_package = "Google::Cloud::AutoML::V1beta1";
 
 // AutoML Prediction API.
 //
@@ -127,8 +127,8 @@ message PredictResponse {
   // Translation and Text Sentiment will return precisely one payload.
   repeated AnnotationPayload payload = 1;
 
-  // The preprocessed example that we actually make prediction on.
-  // Will be empty if we don't preprocess the input example.
+  // The preprocessed example that AutoML actually makes prediction on.
+  // Empty if AutoML does not preprocess the input example.
   // * For Text Extraction:
   //   If the input is a .pdf file, the OCR'ed text will be provided in
   //   [document_text][google.cloud.automl.v1beta1.Document.document_text].
@@ -166,6 +166,12 @@ message BatchPredictRequest {
 
   // Additional domain-specific parameters for the predictions, any string must
   // be up to 25000 characters long.
+  //
+  // *  For Text Classification:
+  //
+  //    `score_threshold` - (float) A value from 0.0 to 1.0. When the model
+  //         makes predictions for a text snippet, it will only produce results
+  //         that have at least this confidence score. The default is 0.5.
   //
   // *  For Image Classification:
   //

@@ -29,7 +29,7 @@ option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;
 option java_multiple_files = true;
 option java_package = "com.google.cloud.automl.v1beta1";
 option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
-option ruby_package = "Google::Cloud::AutoML::Master";
+option ruby_package = "Google::Cloud::AutoML::V1beta1";
 
 // API proto representing a trained machine learning model.
 message Model {
@@ -60,6 +60,9 @@ message Model {
 
     // Metadata for image object detection models.
     ImageObjectDetectionModelMetadata image_object_detection_model_metadata = 20;
+
+    // Metadata for image segmentation models.
+    ImageSegmentationModelMetadata image_segmentation_model_metadata = 31;
 
     // Metadata for video classification models.
     VideoClassificationModelMetadata video_classification_model_metadata = 23;

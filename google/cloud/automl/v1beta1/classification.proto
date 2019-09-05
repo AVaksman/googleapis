@@ -24,7 +24,7 @@ option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;
 option java_outer_classname = "ClassificationProto";
 option java_package = "com.google.cloud.automl.v1beta1";
 option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
-option ruby_package = "Google::Cloud::AutoML::Master";
+option ruby_package = "Google::Cloud::AutoML::V1beta1";
 
 // Type of the classification problem.
 enum ClassificationType {
@@ -163,6 +163,15 @@ message ClassificationEvaluationMetrics {
     // [prediction_type][google.cloud.automl.v1beta1.TablesModelMetadata.prediction_type]
     // only list of [annotation_spec_display_name-s][] is populated.
     repeated string annotation_spec_id = 1;
+
+    // Output only. Display name of the annotation specs used in the confusion
+    // matrix, as they were at the moment of the evaluation. For Tables
+    // CLASSIFICATION
+    //
+    // [prediction_type-s][google.cloud.automl.v1beta1.TablesModelMetadata.prediction_type],
+    // distinct values of the target column at the moment of the model
+    // evaluation are populated here.
+    repeated string display_name = 3;
 
     // Output only. Rows in the confusion matrix. The number of rows is equal to
     // the size of `annotation_spec_id`.

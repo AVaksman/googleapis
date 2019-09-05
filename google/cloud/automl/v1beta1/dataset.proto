@@ -29,7 +29,7 @@ option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;
 option java_multiple_files = true;
 option java_package = "com.google.cloud.automl.v1beta1";
 option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
-option ruby_package = "Google::Cloud::AutoML::Master";
+option ruby_package = "Google::Cloud::AutoML::V1beta1";
 
 // A workspace for solving a single, particular machine learning (ML) problem.
 // A workspace contains examples that may be annotated.
@@ -48,6 +48,9 @@ message Dataset {
 
     // Metadata for a dataset used for image object detection.
     ImageObjectDetectionDatasetMetadata image_object_detection_dataset_metadata = 26;
+
+    // Metadata for a dataset used for image segmentation.
+    ImageSegmentationDatasetMetadata image_segmentation_dataset_metadata = 38;
 
     // Metadata for a dataset used for video classification.
     VideoClassificationDatasetMetadata video_classification_dataset_metadata = 31;

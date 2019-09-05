@@ -30,7 +30,7 @@ option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;
 option java_multiple_files = true;
 option java_package = "com.google.cloud.automl.v1beta1";
 option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
-option ruby_package = "Google::Cloud::AutoML::Master";
+option ruby_package = "Google::Cloud::AutoML::V1beta1";
 
 // A representation of an image.
 // Only images up to 30MB in size are supported.
@@ -212,7 +212,6 @@ message Video {
 
 // A representation of a row in a relational table.
 message Row {
-  // Input Only.
   // The resource IDs of the column specs describing the columns of the row.
   // If set must contain, but possibly in a different order, all input
   // feature
@@ -221,24 +220,15 @@ message Row {
   // of the Model this row is being passed to.
   // Note: The below `values` field must match order of this field, if this
   // field is set.
-  repeated string column_spec_ids = 2 [deprecated = true];
+  repeated string column_spec_ids = 2;
 
-  // Input Only.
-  // The values of the row cells, given in the same order as the
+  // Required. The values of the row cells, given in the same order as the
   // column_spec_ids, or, if not set, then in the same order as input
   // feature
   //
   // [column_specs][google.cloud.automl.v1beta1.TablesModelMetadata.input_feature_column_specs]
   // of the Model this row is being passed to.
-  repeated google.protobuf.Value values = 3 [deprecated = true];
-
-  // Works for input and is always populated in output.
-  // A map from column_spec_id to the values of the corresponding cell in the
-  // row. It must contain all column_spec_id in Model's
-  //
-  // [input_feature_column_specs][google.cloud.automl.v1beta1.TablesModelMetadata.input_feature_column_specs].
-  // Should be empty if [column_spec_ids][google.cloud.automl.v1beta1.Row.column_spec_ids] or [values][google.cloud.automl.v1beta1.Row.values] are not empty.
-  map<string, google.protobuf.Value> cells = 4;
+  repeated google.protobuf.Value values = 3;
 }
 
 // Represents a time series.
