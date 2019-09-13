@@ -17,7 +17,6 @@ syntax = "proto3";
 
 package google.monitoring.v3;
 
-import "google/api/annotations.proto";
 import "google/api/distribution.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
@@ -52,14 +51,23 @@ message TypedValue {
   }
 }
 
-// A time interval extending just after a start time through an end time.
-// The start time must not be later than the end time. The default start time is
-// the end time, making the `startTime` value technically optional. Whether this
-// is useful depends on the
-// [`MetricKind`](/monitoring/api/ref_v3/rest/v3/projects.metricDescriptors#MetricKind).
-// If the start and end times are the same, the interval represents a point in
-// time. This is appropriate for `GAUGE` metrics, but not for `DELTA` and
-// `CUMULATIVE` metrics, which cover a span of time.
+// A closed time interval. It extends from the start time to the end time, and includes both: `[startTime, endTime]`. Valid time intervals depend on the [`MetricKind`](/monitoring/api/ref_v3/rest/v3/projects.metricDescriptors#MetricKind) of the metric value. In no case can the end time be earlier than the start time.
+//
+// * For a `GAUGE` metric, the `startTime` value is technically optional; if
+//   no value is specified, the start time defaults to the value of the
+//   end time, and the interval represents a single point in time. Such an
+//   interval is valid only for `GAUGE` metrics, which are point-in-time
+//   measurements.
+//
+// * For `DELTA` and `CUMULATIVE` metrics, the start time must be earlier
+//   than the end time.
+//
+// * In all cases, the start time of the next interval must be
+//   at least a microsecond after the end time of the previous interval.
+//   Because the interval is closed, if the start time of a new interval
+//   is the same as the end time of the previous interval, data written
+//   at the new start time could overwrite data written at the previous
+//   end time.
 message TimeInterval {
   // Required. The end of the time interval.
   google.protobuf.Timestamp end_time = 2;
@@ -369,54 +377,6 @@ message Aggregation {
   // a single output time series. If `crossSeriesReducer` is not
   // defined, this field is ignored.
   repeated string group_by_fields = 5;
-}
-
-// Describes a ranking-based time series filter. Each input time series is
-// ranked with an aligner. The filter lets through up to `num_time_series` time
-// series, selecting them based on the relative ranking.
-message PickTimeSeriesFilter {
-  // The value reducers that can be applied to a PickTimeSeriesFilter.
-  enum Method {
-    // Not allowed in well-formed requests.
-    METHOD_UNSPECIFIED = 0;
-
-    // Select the mean of all values.
-    METHOD_MEAN = 1;
-
-    // Select the maximum value.
-    METHOD_MAX = 2;
-
-    // Select the minimum value.
-    METHOD_MIN = 3;
-
-    // Compute the sum of all values.
-    METHOD_SUM = 4;
-
-    // Select the most recent value.
-    METHOD_LATEST = 5;
-  }
-
-  // Describes the ranking directions.
-  enum Direction {
-    // Not allowed in well-formed requests.
-    DIRECTION_UNSPECIFIED = 0;
-
-    // Pass the highest ranking inputs.
-    TOP = 1;
-
-    // Pass the lowest ranking inputs.
-    BOTTOM = 2;
-  }
-
-  // `rankingMethod` is applied to each time series independently to produce the
-  // value which will be used to compare the time series to other time series.
-  Method ranking_method = 1;
-
-  // How many time series to return.
-  int32 num_time_series = 2;
-
-  // How to use the ranking to select time series that pass through the filter.
-  Direction direction = 3;
 }
 
 // Specifies an ordering relationship on two arguments, here called left and

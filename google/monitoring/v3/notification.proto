@@ -17,7 +17,6 @@ syntax = "proto3";
 
 package google.monitoring.v3;
 
-import "google/api/annotations.proto";
 import "google/api/label.proto";
 import "google/monitoring/v3/common.proto";
 import "google/protobuf/wrappers.proto";
@@ -94,9 +93,7 @@ message NotificationChannel {
   }
 
   // The type of the notification channel. This field matches the
-  // value of the
-  // [NotificationChannelDescriptor.type][google.monitoring.v3.NotificationChannelDescriptor.type]
-  // field.
+  // value of the [NotificationChannelDescriptor.type][google.monitoring.v3.NotificationChannelDescriptor.type] field.
   string type = 1;
 
   // The full REST resource name for this channel. The syntax is:
@@ -119,8 +116,8 @@ message NotificationChannel {
 
   // Configuration fields that define the channel and its behavior. The
   // permissible and required labels are specified in the
-  // [NotificationChannelDescriptor.labels][google.monitoring.v3.NotificationChannelDescriptor.labels]
-  // of the `NotificationChannelDescriptor` corresponding to the `type` field.
+  // [NotificationChannelDescriptor.labels][google.monitoring.v3.NotificationChannelDescriptor.labels] of the
+  // `NotificationChannelDescriptor` corresponding to the `type` field.
   map<string, string> labels = 5;
 
   // User-supplied key/value data that does not need to conform to
