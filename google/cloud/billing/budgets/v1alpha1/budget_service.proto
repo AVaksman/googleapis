@@ -33,8 +33,7 @@ option java_package = "com.google.cloud.billing.budgets.v1alpha1";
 // budget plan and rules to execute as we track spend against that plan.
 service BudgetService {
   option (google.api.default_host) = "billingbudgets.googleapis.com";
-  option (google.api.oauth_scopes) =
-      "https://www.googleapis.com/auth/cloud-platform";
+  option (google.api.oauth_scopes) = "https://www.googleapis.com/auth/cloud-platform";
 
   // Creates a new budget if none exists. There is a limit of 1,000 budgets
   // per billing account.
@@ -77,7 +76,7 @@ service BudgetService {
 
 // Request for CreateBudget
 message CreateBudgetRequest {
-  // the name of the billing account to create the budget in. Values
+  // Required. the name of the billing account to create the budget in. Values
   // are of the form `billingAccounts/{billingAccountId}`.
   string parent = 1 [
     (google.api.field_behavior) = REQUIRED,
@@ -86,26 +85,25 @@ message CreateBudgetRequest {
     }
   ];
 
-  // Budget to create.
+  // Required. Budget to create.
   Budget budget = 2 [(google.api.field_behavior) = REQUIRED];
 }
 
 // Request for UpdateBudget
 message UpdateBudgetRequest {
-  // The updated budget object.
+  // Required. The updated budget object.
   // The budget to update is specified by the budget name in the budget.
   Budget budget = 1 [(google.api.field_behavior) = REQUIRED];
 
-  // Indicates which fields in the provided budget to update.
+  // Optional. Indicates which fields in the provided budget to update.
   // Read-only fields (such as `name`) cannot be changed.
   // If this is not provided, then all fields are updated.
-  google.protobuf.FieldMask update_mask = 2
-      [(google.api.field_behavior) = OPTIONAL];
+  google.protobuf.FieldMask update_mask = 2 [(google.api.field_behavior) = OPTIONAL];
 }
 
 // Request for GetBudget
 message GetBudgetRequest {
-  // Name of budget to get. Values are of the form
+  // Required. Name of budget to get. Values are of the form
   // `billingAccounts/{billingAccountId}/budgets/{budgetId}`.
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
@@ -117,7 +115,7 @@ message GetBudgetRequest {
 
 // Request for ListBudgets
 message ListBudgetsRequest {
-  // Name of billing account to list budgets under. Values
+  // Required. Name of billing account to list budgets under. Values
   // are of the form `billingAccounts/{billingAccountId}`.
   string parent = 1 [
     (google.api.field_behavior) = REQUIRED,
@@ -126,11 +124,11 @@ message ListBudgetsRequest {
     }
   ];
 
-  // The maximum number of budgets to return per page.
+  // Optional. The maximum number of budgets to return per page.
   // The default and maximum value are 100.
   int32 page_size = 2 [(google.api.field_behavior) = OPTIONAL];
 
-  // The value returned by the last `ListBudgetsResponse` which
+  // Optional. The value returned by the last `ListBudgetsResponse` which
   // indicates that this is a continuation of a prior `ListBudgets` call,
   // and that the system should return the next page of data.
   string page_token = 3 [(google.api.field_behavior) = OPTIONAL];
@@ -148,7 +146,7 @@ message ListBudgetsResponse {
 
 // Request for DeleteBudget
 message DeleteBudgetRequest {
-  // Name of the budget to delete. Values are of the form
+  // Required. Name of the budget to delete. Values are of the form
   // `billingAccounts/{billingAccountId}/budgets/{budgetId}`.
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
