@@ -1,13 +1,13 @@
 common:
-  api_name: firestore
-  api_version: v1beta1
+  api_name: firestore-admin
+  api_version: v1
   organization_name: google-cloud
   proto_deps:
-    - name: google-common-protos
+  - name: google-common-protos
   src_proto_paths:
-  - v1beta1
-  service_yaml: firestore_v1beta1.yaml
-  gapic_yaml: v1beta1/firestore_gapic.yaml
+  - v1
+  service_yaml: firestore_admin_v1.yaml
+  gapic_yaml: v1/firestore_gapic.yaml
 artifacts:
 - name: gapic_config
   type: GAPIC_CONFIG
