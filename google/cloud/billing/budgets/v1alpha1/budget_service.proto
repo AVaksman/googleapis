@@ -96,8 +96,11 @@ message UpdateBudgetRequest {
   Budget budget = 1 [(google.api.field_behavior) = REQUIRED];
 
   // Optional. Indicates which fields in the provided budget to update.
-  // Read-only fields (such as `name`) cannot be changed.
-  // If this is not provided, then all fields are updated.
+  // Read-only fields (such as `name`) cannot be changed. If this is not
+  // provided, then only fields with non-default values from the request are
+  // updated. See
+  // https://developers.google.com/protocol-buffers/docs/proto3#default for more
+  // details about default values.
   google.protobuf.FieldMask update_mask = 2 [(google.api.field_behavior) = OPTIONAL];
 }
 
