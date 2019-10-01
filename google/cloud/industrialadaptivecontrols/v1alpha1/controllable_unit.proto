@@ -17,6 +17,7 @@ syntax = "proto3";
 
 package google.cloud.industrialadaptivecontrols.v1alpha1;
 
+import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/timestamp.proto";
 
@@ -36,17 +37,15 @@ message ControllableUnit {
   // interface.
   string display_name = 2 [(google.api.field_behavior) = REQUIRED];
 
-  // External ID for mapping the controllable unit with client-side
+  // Immutable. External ID for mapping the controllable unit with client-side
   // representation.
-  string external_id = 3;
+  string external_id = 3 [(google.api.field_behavior) = IMMUTABLE];
 
-  // Optional. Output only. Timestamp of when this controllable unit was
-  // created.
+  // Output only. Timestamp of when this controllable unit was created.
   google.protobuf.Timestamp create_time = 4
       [(google.api.field_behavior) = OUTPUT_ONLY];
 
-  // Output only. Optional
-  // Timestamp of when this controllable unit was last updated.
+  // Output only. Timestamp of when this controllable unit was last updated.
   google.protobuf.Timestamp update_time = 5
       [(google.api.field_behavior) = OUTPUT_ONLY];
 }

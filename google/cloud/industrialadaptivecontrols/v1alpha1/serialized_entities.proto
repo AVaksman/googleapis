@@ -17,6 +17,7 @@ syntax = "proto3";
 
 package google.cloud.industrialadaptivecontrols.v1alpha1;
 
+import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
@@ -123,6 +124,38 @@ message SerializedTrend {
   // this trend. If the expression is evaluated as false for a measurement, it's
   // removed from the measurements.
   repeated string health_rules = 4;
+
+  // Required. Rules on how to synthesize trend measurements when measurements
+  // of the trend is missing.
+  Imputation imputation = 5 [(google.api.field_behavior) = REQUIRED];
+}
+
+// Rules on how to synthesize trend measurements.
+message Imputation {
+  // Required. Copy the most recent past measurement from the same trend if it's
+  // measured no longer than `fill_forward_duration` ago.
+  //
+  // It's recommended to set it to the measure period. The Industrial Adaptive
+  // Controls system may sample the measurements in shorter periods than the
+  // measure periods. Setting `fill_forward_duration` to the measure period lets
+  // the system know it should use the most recent measurement in this case.
+  google.protobuf.Duration fill_forward_duration = 1
+      [(google.api.field_behavior) = REQUIRED];
+
+  // Optional. Google SQL expression that defines how to synthesize the
+  // measurements for this trend when forward filling is infeasible. Forward
+  // filling is infeasible if there is no past measurement from the trend, or
+  // the most recent past measurement is measured at the time that exceeds
+  // `fill_forward_duration`.
+  //
+  // The expression must return a number if the `spec` of the trend is
+  // numerical, or a string if the `spec` of the trend is categorical. It can
+  // contain any number of `MEASURED_VALUE`, `MEASURED_STRING_VALUE`, or
+  // `MEASURED_VALUES` functions.
+  //
+  // If not specified, measurement will remain missing if forward filling is
+  // infeasible.
+  string expression = 2 [(google.api.field_behavior) = OPTIONAL];
 }
 
 // A knob or lever that can be used to control the controllable unit.
@@ -211,6 +244,22 @@ message SetpointSpec {
     // The value of the setpoint cannot be changed more than once in any window
     // of its value.
     google.protobuf.Duration change_period = 7;
+
+    // Optional. Increment/decrement size, where minimum_increment <= step_size
+    // <= maximum_increment && minimum_decrement <= step_size <=
+    // maximum_decrement.
+    //
+    // If it is not set, while is_integer is true, the step_size defaults to 1.
+    // If it is not set, while is_integer is false, the step_size can be any
+    // number between minimum_increment and maximum_increment and
+    // between minimum_decrement and maximum_decrement.
+    // If it is set, while is_integer is true, the step_size has to be integer
+    // value.
+    // If it is set, while is_integer is false, there is no extra constraint.
+    double step_size = 8 [(google.api.field_behavior) = OPTIONAL];
+
+    // Optional. Default to false if not set.
+    bool is_integer = 9 [(google.api.field_behavior) = OPTIONAL];
   }
 
   // Required.
