@@ -7,7 +7,7 @@ common:
   src_proto_paths:
   - v1alpha1
   service_yaml: billingbudgets.yaml
-  proto_package: google.cloud.billing.budgets.v1alpha1
+  gapic_yaml: v1alpha1/billingbudgets_gapic.yaml
 artifacts:
 - name: gapic_config
   type: GAPIC_CONFIG
