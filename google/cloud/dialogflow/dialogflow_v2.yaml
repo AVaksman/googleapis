@@ -136,9 +136,9 @@ backend:
   - selector: google.cloud.dialogflow.v2.SessionEntityTypes.DeleteSessionEntityType
     deadline: 60.0
   - selector: google.cloud.dialogflow.v2.Sessions.DetectIntent
-    deadline: 230.0
+    deadline: 220.0
   - selector: google.cloud.dialogflow.v2.Sessions.StreamingDetectIntent
-    deadline: 230.0
+    deadline: 220.0
 
 http:
   rules:
