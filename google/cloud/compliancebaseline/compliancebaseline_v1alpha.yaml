@@ -1,0 +1,14 @@
+type: google.api.Service
+config_version: 3
+name: compliancebaseline.googleapis.com
+title: Compliance Baseline API
+
+apis:
+- name: google.cloud.compliancebaseline.v1alpha.ComplianceBaseline
+
+authentication:
+  rules:
+  - selector: 'google.cloud.compliancebaseline.v1alpha.ComplianceBaseline.*'
+    oauth:
+      canonical_scopes: |-
+        https://www.googleapis.com/auth/cloud-platform
