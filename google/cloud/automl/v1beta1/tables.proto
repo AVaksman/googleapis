@@ -36,22 +36,6 @@ option ruby_package = "Google::Cloud::AutoML::V1beta1";
 
 // Metadata for a dataset used for AutoML Tables.
 message TablesDatasetMetadata {
-  // Type of structured data.
-  enum TablesDatasetType {
-    // An un-set value of this enum.
-    TABLES_DATASET_TYPE_UNSPECIFIED = 0;
-
-    // A generic dataset, suitable for most structured data problems.
-    BASIC = 1;
-
-    // A dataset suitable for forecasting problems.
-    FORECASTING = 2;
-  }
-
-  // Type of structured data problem.
-  // Default value is [BASIC][DatasetType.BASIC]
-  TablesDatasetType tables_dataset_type = 10;
-
   // Output only. The table_spec_id of the primary table of this dataset.
   string primary_table_spec_id = 1;
 
@@ -120,128 +104,6 @@ message TablesDatasetMetadata {
 
 // Model metadata specific to AutoML Tables.
 message TablesModelMetadata {
-  // An additional configuration needed for FORECASTING prediction type.
-  // By `key`, the union of the
-  //
-  // [key][forecasting_metadata][google.cloud.automl.v1beta1.ColumnSpec.ForecastingMetadata.ColumnType.KEY]
-  // column(s) is meant.
-  // The table's rows are the data points of the time series, and their
-  // timestamps are the values in the
-  //
-  // [primary_table's][google.cloud.automl.v1beta1.TablesDatasetMetadata.primary_table_spec_id]
-  // [time_column][google.cloud.automl.v1beta1.TableSpec.time_column_spec_id]
-  message ForecastingConfig {
-    // Required. Describes the granularity of the time series. E.g. is a row
-    // for each key given per hour, per 3 months or per year?
-    // For each key the rows' timestamps should be spaced approximately
-    // by this granularity period. Missing rows are allowed i.e. there may be
-    // periods for which data for a given key is missing, also data for a key
-    // may start late or end early. On the other hand within a single
-    // granularity period no more than one row per key is allowed.
-    // The time column must be at least as precise as this granularity requires.
-    TimeGranularity granularity = 1;
-
-    // Required. The number of periods the model is able to predict into the
-    // future, where each period is one unit of granularity as defined by the
-    // `granularity` field above. Forecasting only supports batch predictions
-    // and when such a one is requested both historical data rows, as well as
-    // to-be-predicted rows must be provided.
-    // Prediction for a row fails if, for its key, the time difference between
-    // its timestamp and timestamp of key's latest historical row is larger than
-    // the horizon. If the asked to be predicted row's key is not present in the
-    // historical data then its prediction fails if the time difference between
-    // its timestamp and timestamp of latest historical row for any key is over
-    // the horizon.
-    int64 horizon_periods = 2;
-  }
-
-  // An additional configuration for a data split by percentages.
-  // `train_set_percentage`, `validation_set_percentage`, and
-  // `test_set_percentage` must all add up to 100.
-  message SplitPercentageConfig {
-    // Required. The percentage of data to reserve for the training set.
-    int32 train_set_percentage = 1;
-
-    // Required. The percentage of data to reserve for the validation set.
-    int32 validation_set_percentage = 2;
-
-    // Required. The percentage of data to reserve for the test set.
-    int32 test_set_percentage = 3;
-  }
-
-  // The type of prediction this model is providing.
-  //
-  // The available and default prediction types depend on
-  //
-  // [target_column's][google.cloud.automl.v1beta1.TablesModelMetadata.target_column_spec]
-  //
-  // [data_type][google.cloud.automl.v1beta1.TablesModelMetadata.target_column_spec]
-  // and, possibly, number of distinct values in that column:
-  //
-  // * CATEGORY, two distinct values:
-  //      CLASSIFICATION_BINARY (default)
-  //
-  // * CATEGORY, more than two distinct values:
-  //      CLASSIFICATION_MULTI_CLASS (default)
-  //
-  // * ARRAY(CATEGORY):
-  //      CLASSIFICATION_MULTI_LABEL (default)
-  //
-  // * FLOAT64:
-  //      REGRESSION (default)
-  //      FORECASTING
-  enum PredictionType {
-    // An un-set value of this enum, must not be used.
-    PREDICTION_TYPE_UNSPECIFIED = 0;
-
-    // One out of two target values is picked per example.
-    CLASSIFICATION_BINARY = 1;
-
-    // One out of multiple target values is picked per example.
-    CLASSIFICATION_MULTI_CLASS = 2;
-
-    // Multiple values are picked per example.
-    CLASSIFICATION_MULTI_LABEL = 3;
-
-    // A value is chosen based on its relation to other values.
-    REGRESSION = 4;
-
-    // A value for a new timestamp is chosen, based on the historical time
-    // series data. Time series for multiple entities, which are identified by
-    //
-    // [key][google.cloud.automl.v1beta1.ColumnSpec.ForecastingMetadata.ColumnType.KEY],
-    // column(s) may be forecast by a single model.
-    // The use of this prediction type has following requirements:
-    // *
-    // [primary_table_spec's'][google.cloud.automl.v1beta1.TablesDatasetMetadata.primary_table_spec_id]
-    //
-    // [time_column_spec_id][google.cloud.automl.v1beta1.TableSpec.time_column_spec_id]
-    //   must be set, and must be not
-    //   [nullable][google.cloud.automl.v1beta1.DataType.nullable].
-    // * Each
-    //
-    // [input_feature_column_spec][google.cloud.automl.v1beta1.TablesModelMetadata.input_feature_column_specs],
-    //   except for time_column_spec must have
-    //
-    // [forecasting_metadata][google.cloud.automl.v1beta1.ColumnSpec.forecasting_metadata]
-    //   set (note that
-    //
-    // [target_column_spec][google.cloud.automl.v1beta1.TablesModelMetadata.target_column_spec]
-    //   is separate and needs not this information).
-    // * The
-    //
-    // [forecasting_config][google.cloud.automl.v1beta1.TablesModelMetadata.forecasting_config]
-    //   must be set.
-    FORECASTING = 5;
-  }
-
-  // Additional model configuration that may be required depending on the
-  // prediction_type.
-  oneof config {
-    // Additional model configuration specific to FORECASTING.
-    ForecastingConfig forecasting_config = 10;
-  }
-
   // Additional optimization objective configuration. Required for
   // `MAXIMIZE_PRECISION_AT_RECALL` and `MAXIMIZE_RECALL_AT_PRECISION`,
   // otherwise unused.
@@ -254,25 +116,6 @@ message TablesModelMetadata {
     // Must be between 0 and 1, inclusive.
     float optimization_objective_precision_value = 18;
   }
-
-  // The strategy used to split the data between training, validation, and test
-  // sets. If set at model creation time, then it overrides
-  //
-  // [ml_use_column][google.cloud.automl.v1beta1.TablesDatasetMetadata.ml_use_column_spec_id].
-  // Otherwise, then the dataset properties will be used to determine a
-  // strategy. If no strategy is set, then the dataset will be split using
-  // SplitPercentageConfig with 80% to train set, 10% to validation set, and 10%
-  // to test set.
-  oneof data_split_strategy {
-    // ID of the column use to split the table.
-    string ml_use_column_spec_id = 14;
-
-    // A data split strategy using percentage configuration.
-    SplitPercentageConfig split_percentage_config = 15;
-  }
-
-  // The type of prediction this model is providing.
-  PredictionType prediction_type = 9;
 
   // Column spec of the dataset's primary table's column the model is
   // predicting. Snapshotted when model creation started.
@@ -308,21 +151,6 @@ message TablesModelMetadata {
   //
   // * data_type - Output only.
   repeated ColumnSpec input_feature_column_specs = 3;
-
-  // Output only. Column specs of the dataset's primary table's columns that
-  // were excluded from training. Derived from the input feature column specs.
-  // The
-  //
-  // [target_column][google.cloud.automl.v1beta1.TablesModelMetadata.target_column_spec],
-  //
-  // [weight_column][google.cloud.automl.v1beta1.TablesDatasetMetadata.weight_column_spec_id],
-  // and
-  //
-  // [ml_use_column][google.cloud.automl.v1beta1.TablesDatasetMetadata.ml_use_column_spec_id]
-  // are not included in this list because they are automatically excluded as
-  // prediction inputs.
-  // Only 3 fields are used: name, display_name, and data_type
-  repeated ColumnSpec excluded_feature_column_specs = 13;
 
   // Objective function the model is optimizing towards. The training process
   // creates a model that maximizes/minimizes the value of the objective
@@ -380,43 +208,6 @@ message TablesModelMetadata {
   // By default, the early stopping feature is enabled, which means that AutoML
   // Tables might stop training before the entire training budget has been used.
   bool disable_early_stopping = 12;
-
-  // ID of the time column. If set, then this overrides
-  //
-  // [time_column_spec_id][google.cloud.automl.v1beta1.TableSpec.time_column_spec_id].
-  // If unset, then
-  //
-  // [time_column_spec_id][google.cloud.automl.v1beta1.TableSpec.time_column_spec_id]
-  // will be used. Only used if
-  //
-  // [ml_use_column][google.cloud.automl.v1beta1.TablesModelMetadata.ml_use_column_spec_id]
-  // is not set.
-  string time_column_spec_id = 16;
-
-  // column_spec_id of the primary table's column that should be used as the
-  // weight column. Higher values in this column give more importance to the row
-  // during model training. Required column type: FLOAT64. Allowed values: 0 to
-  // 10000, inclusive on both ends; 0 means the row is ignored for training.
-  // If set, then this overrides
-  //
-  // [weight_column][google.cloud.automl.v1beta1.TablesDatasetMetadata.weight_column_spec_id].
-  // If unset, then it will be set to the value of
-  //
-  // [weight_column][google.cloud.automl.v1beta1.TablesDatasetMetadata.weight_column_spec_id].
-  // If neither weight column field is set, then all rows are assumed to have
-  // equal weight of 1.
-  string weight_column_spec_id = 19;
-
-  // When true, create a compressed model. A compressed model is typically
-  // significantly smaller, but at a small cost to the quality of the model's
-  // predictions.
-  bool compress = 20;
-
-  // Must be set when [compress] is true. The name of the model to compress. The
-  // model has to exist in the same project and location. The
-  // [uncompressed_model] and its dataset cannot be deleted while being
-  // compressed.
-  string uncompressed_model = 21;
 }
 
 // Contains annotation details specific to Tables.

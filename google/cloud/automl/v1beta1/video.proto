@@ -38,11 +38,6 @@ message VideoObjectTrackingDatasetMetadata {
 
 }
 
-// Dataset metadata specific to video action recognition.
-message VideoActionRecognitionDatasetMetadata {
-
-}
-
 // Model metadata specific to video classification.
 message VideoClassificationModelMetadata {
 
@@ -50,10 +45,5 @@ message VideoClassificationModelMetadata {
 
 // Model metadata specific to video object tracking.
 message VideoObjectTrackingModelMetadata {
-
-}
-
-// Model metadata specific to video action recognition.
-message VideoActionRecognitionModelMetadata {
 
 }

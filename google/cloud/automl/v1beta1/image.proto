@@ -40,11 +40,6 @@ message ImageObjectDetectionDatasetMetadata {
 
 }
 
-// Dataset metadata specific to image segmentation.
-message ImageSegmentationDatasetMetadata {
-
-}
-
 // Model metadata for image classification.
 message ImageClassificationModelMetadata {
   // Optional. The ID of the `base` model. If it is specified, the new model
@@ -144,7 +139,7 @@ message ImageObjectDetectionModelMetadata {
   // full budget and the stop_reason will be `MODEL_CONVERGED`.
   // Note, node_hour  = actual_hour * number_of_nodes_invovled.
   // For model type `cloud-high-accuracy-1`(default) and `cloud-low-latency-1`,
-  // the train budget must be between 20,000 and 2,000,000 milli node hours,
+  // the train budget must be between 20,000 and 900,000 milli node hours,
   // inclusive. The default value is 216, 000 which represents one day in
   // wall time.
   // For model type `mobile-low-latency-1`, `mobile-versatile-1`,
@@ -158,16 +153,6 @@ message ImageObjectDetectionModelMetadata {
   // milli node hours, i.e. 1,000 value in this field means 1 node hour.
   // Guaranteed to not exceed the train budget.
   int64 train_cost_milli_node_hours = 7;
-}
-
-// Model metadata specific to Image Segmentation.
-message ImageSegmentationModelMetadata {
-  // Output only. The snapshot of datasets's annotation specs.
-  // Only 3 fields are populated:
-  // name - Output only.
-  // display_name - Output only.
-  // category - Output only.
-  repeated AnnotationSpec annotation_spec = 1;
 }
 
 // Model deployment metadata specific to Image Classification.

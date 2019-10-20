@@ -42,18 +42,4 @@ message RegressionEvaluationMetrics {
 
   // Output only. Root mean squared log error.
   float root_mean_squared_log_error = 5;
-
-  // Output only. A list of actual versus predicted points for the model being
-  // evaluated. This is not guaranteed to contain all test/validation points,
-  // and is likely a subset of the input dataset.
-  repeated RegressionMetricsEntry regression_metrics_entries = 6;
-}
-
-// A pair of actual & observed values for the model being evaluated.
-message RegressionMetricsEntry {
-  // The actual target value for a row in the dataset.
-  float true_value = 1;
-
-  // The observed value for a row in the dataset.
-  float predicted_value = 2;
 }

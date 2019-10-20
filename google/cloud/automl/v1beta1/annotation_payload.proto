@@ -19,12 +19,10 @@ package google.cloud.automl.v1beta1;
 
 import "google/cloud/automl/v1beta1/classification.proto";
 import "google/cloud/automl/v1beta1/detection.proto";
-import "google/cloud/automl/v1beta1/image_segmentation.proto";
 import "google/cloud/automl/v1beta1/tables.proto";
 import "google/cloud/automl/v1beta1/text_extraction.proto";
 import "google/cloud/automl/v1beta1/text_sentiment.proto";
 import "google/cloud/automl/v1beta1/translation.proto";
-import "google/cloud/automl/v1beta1/video_action_recognition.proto";
 import "google/protobuf/any.proto";
 import "google/api/annotations.proto";
 
@@ -48,18 +46,12 @@ message AnnotationPayload {
     // Annotation details for image object detection.
     ImageObjectDetectionAnnotation image_object_detection = 4;
 
-    // Annotation details for image segmentation.
-    ImageSegmentationAnnotation image_segmentation = 11;
-
     // Annotation details for video classification.
     // Returned for Video Classification predictions.
     VideoClassificationAnnotation video_classification = 9;
 
     // Annotation details for video object tracking.
     VideoObjectTrackingAnnotation video_object_tracking = 8;
-
-    // Annotation details for video action recognition.
-    VideoActionRecognitionAnnotation video_action_recognition = 12;
 
     // Annotation details for text extraction.
     TextExtractionAnnotation text_extraction = 6;

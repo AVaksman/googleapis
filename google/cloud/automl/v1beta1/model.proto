@@ -61,17 +61,11 @@ message Model {
     // Metadata for image object detection models.
     ImageObjectDetectionModelMetadata image_object_detection_model_metadata = 20;
 
-    // Metadata for image segmentation models.
-    ImageSegmentationModelMetadata image_segmentation_model_metadata = 31;
-
     // Metadata for video classification models.
     VideoClassificationModelMetadata video_classification_model_metadata = 23;
 
     // Metadata for video object tracking models.
     VideoObjectTrackingModelMetadata video_object_tracking_model_metadata = 21;
-
-    // Metadata for video action recognition models.
-    VideoActionRecognitionModelMetadata video_action_recognition_model_metadata = 32;
 
     // Metadata for text extraction models.
     TextExtractionModelMetadata text_extraction_model_metadata = 19;

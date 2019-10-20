@@ -36,9 +36,9 @@ option ruby_package = "Google::Cloud::AutoML::V1beta1";
 // Only images up to 30MB in size are supported.
 message Image {
   // Input only. The data representing the image.
-  // For Predict calls [image_bytes][] must be set, as other options are not
+  // For Predict calls [image_bytes][google.cloud.automl.v1beta1.Image.image_bytes] must be set, as other options are not
   // currently supported by prediction API. You can read the contents of an
-  // uploaded image by using the [content_uri][] field.
+  // uploaded image by using the [content_uri][google.cloud.automl.v1beta1.Image.content_uri] field.
   oneof data {
     // Image content represented as a stream of bytes.
     // Note: As with all `bytes` fields, protobuffers use a pure binary
@@ -51,9 +51,6 @@ message Image {
 
   // Output only. HTTP URI to the thumbnail image.
   string thumbnail_uri = 4;
-
-  // Output only. HTTP URI to the normalized image.
-  string content_uri = 5;
 }
 
 // A representation of a text snippet.
@@ -185,31 +182,6 @@ message Document {
   int32 page_count = 5;
 }
 
-// A representation of a video.
-message Video {
-  // An input config specifying the content of the video.
-  VideoInputConfig input_config = 1;
-
-  // Output only. HTTP URI-s to selected thumbnail images of the video.
-  repeated string thumbnail_uris = 2;
-
-  // Output only. HTTP URI to the video.
-  string content_uri = 3;
-
-  // Output only. The duration of the video.
-  google.protobuf.Duration duration = 4;
-
-  // Output only. The number of frames per second of the video.
-  double frame_rate = 5;
-
-  // Output only. The resolution of the video.
-  Resolution resolution = 6;
-
-  // Optional. Currently Video Action Recognition only. The time ranges that the video is
-  // fully annotated.
-  repeated TimeSegment annotated_segments = 7;
-}
-
 // A representation of a row in a relational table.
 message Row {
   // The resource IDs of the column specs describing the columns of the row.
@@ -231,25 +203,6 @@ message Row {
   repeated google.protobuf.Value values = 3;
 }
 
-// Represents a time series.
-message TimeSeries {
-  // Required. To be predicted row in the time series.
-  Row row = 1;
-
-  // Required in predict.
-  // Historical data in the time series.
-  repeated Row historical_rows = 2;
-}
-
-// Represents the resolution of an image or a video frame.
-message Resolution {
-  // Number of pixels in the horizontal dimension.
-  int32 width = 1;
-
-  // Number of pixels in the vertical dimension.
-  int32 height = 2;
-}
-
 // Example data used for training or prediction.
 message ExamplePayload {
   // Required. Input only. The example data.
@@ -263,13 +216,7 @@ message ExamplePayload {
     // Example document.
     Document document = 4;
 
-    // Example video.
-    Video video = 5;
-
     // Example relational table row.
     Row row = 3;
-
-    // Time series example.
-    TimeSeries time_series = 6;
   }
 }
