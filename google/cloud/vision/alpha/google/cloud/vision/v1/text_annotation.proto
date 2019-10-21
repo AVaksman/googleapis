@@ -135,6 +135,9 @@ message Block {
 
     // Barcode block.
     BARCODE = 5;
+
+    // A key-value pair block.
+    KEY_VALUE_PAIR = 6;
   }
 
   // Additional information detected for the block.
@@ -170,6 +173,15 @@ message Block {
 
   // Confidence of the OCR results on the block. Range [0, 1].
   float confidence = 5;
+
+  // Detected table for TABLE block_type. This detection can be turned off by
+  // explicitly setting desired fields in DocumentParsingParams.block_filter.
+  Table table = 6;
+
+  // Detected pair for KEY_VALUE_PAIR block_type. This detection can be turned
+  // off by explicitly setting desired fields in
+  // DocumentParsingParams.block_filter.
+  KeyValuePair key_value_pair = 8;
 }
 
 // Structural unit of text representing a number of words in certain order.
@@ -258,4 +270,66 @@ message Symbol {
 
   // Confidence of the OCR results for the symbol. Range [0, 1].
   float confidence = 4;
+}
+
+// A table representation similar to HTML table structure.
+message Table {
+  // A cell representation inside of tables.
+  message TableCell {
+    // How many rows this cell spans.
+    int32 row_span = 1;
+
+    // How many columns this cell spans.
+    int32 col_span = 2;
+
+    // Text block for this cell which also contains the normalized bounding box
+    // for the cell and deeper structures within a cell if present.
+    Block text_block = 3;
+
+    // The merged text value of this cell, omitting any deeper structural
+    // information unlike `text_block`. This is useful for simple cells.
+    string text = 4;
+  }
+
+  // A row of table cells.
+  message TableRow {
+    // Cells that make up this row.
+    repeated TableCell cells = 1;
+  }
+
+  // Header rows of the table
+  repeated TableRow header_rows = 2;
+
+  // Body rows of the table
+  repeated TableRow body_rows = 3;
+}
+
+// Proto for a key value pair.
+message KeyValuePair {
+  // The key string value.
+  string key = 1;
+
+  // Key block of the pair containing the normalized bounding box and key text.
+  Block key_block = 2;
+
+  // Value block of the pair containing the normalized bounding box and value
+  // text, including potentially deeper structures within the value text.
+  Block value_block = 3;
+
+  // Type of the value. Valid strings are the following:
+  //
+  //  "generic" - For generic text that is mapped to a value.
+  //  "number" - for numeric types
+  //  "id" - for generic identifiers.
+  //  "currency" - for currency values.
+  //  "date" - for dates.
+  //  "time" - for time and duration values.
+  //  "date_range" - for date ranges.
+  //  "address" - for address values (can be long).
+  //  "person" - for names of people or other personal identifiers.
+  //  "phone" - for phone numbers.
+  string value_type = 4;
+
+  // Optional. The translation of key text if the text is not in English.
+  string normalized_key = 5;
 }

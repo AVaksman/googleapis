@@ -19,6 +19,7 @@ package google.cloud.vision.v1;
 
 import "google/api/annotations.proto";
 import "google/api/client.proto";
+import "google/api/field_behavior.proto";
 import "google/cloud/vision/v1/geometry.proto";
 import "google/cloud/vision/v1/product_search.proto";
 import "google/cloud/vision/v1/text_annotation.proto";
@@ -61,6 +62,7 @@ service ImageAnnotator {
         body: "*"
       }
     };
+    option (google.api.method_signature) = "requests";
   }
 
   // Service that performs image detection and annotation for a batch of files.
@@ -84,6 +86,7 @@ service ImageAnnotator {
         body: "*"
       }
     };
+    option (google.api.method_signature) = "requests";
   }
 
   // Run asynchronous image detection and annotation for a list of images.
@@ -109,6 +112,11 @@ service ImageAnnotator {
         body: "*"
       }
     };
+    option (google.api.method_signature) = "requests,output_config";
+    option (google.longrunning.operation_info) = {
+      response_type: "AsyncBatchAnnotateImagesResponse"
+      metadata_type: "OperationMetadata"
+    };
   }
 
   // Run asynchronous image detection and annotation for a list of generic
@@ -130,6 +138,11 @@ service ImageAnnotator {
         post: "/v1/{parent=projects/*}/files:asyncBatchAnnotate"
         body: "*"
       }
+    };
+    option (google.api.method_signature) = "requests";
+    option (google.longrunning.operation_info) = {
+      response_type: "AsyncBatchAnnotateFilesResponse"
+      metadata_type: "OperationMetadata"
     };
   }
 }
@@ -183,6 +196,12 @@ message Feature {
 
     // Run localizer for object detection.
     OBJECT_LOCALIZATION = 19;
+
+    // Run document parsing algorithms to extract structured data such as tables
+    // and forms. The results are found in `full_text_annotation` -> `page` ->
+    // `block` with type either TABLE for tables or KEY_VALUE_PAIR for key-value
+    // pairs in forms.
+    DOCUMENT_PARSING = 25;
   }
 
   // The feature type.
@@ -196,28 +215,6 @@ message Feature {
   // Supported values: "builtin/stable" (the default if unset) and
   // "builtin/latest".
   string model = 3;
-}
-
-// A bucketized representation of likelihood, which is intended to give clients
-// highly stable results across model upgrades.
-enum Likelihood {
-  // Unknown likelihood.
-  UNKNOWN = 0;
-
-  // It is very unlikely.
-  VERY_UNLIKELY = 1;
-
-  // It is unlikely.
-  UNLIKELY = 2;
-
-  // It is possible.
-  POSSIBLE = 3;
-
-  // It is likely.
-  LIKELY = 4;
-
-  // It is very likely.
-  VERY_LIKELY = 5;
 }
 
 // External image source (Google Cloud Storage or web URL image location).
@@ -261,6 +258,28 @@ message Image {
   // URL. If both `content` and `source` are provided for an image, `content`
   // takes precedence and is used to perform the image annotation request.
   ImageSource source = 2;
+}
+
+// A bucketized representation of likelihood, which is intended to give clients
+// highly stable results across model upgrades.
+enum Likelihood {
+  // Unknown likelihood.
+  UNKNOWN = 0;
+
+  // It is very unlikely.
+  VERY_UNLIKELY = 1;
+
+  // It is unlikely.
+  UNLIKELY = 2;
+
+  // It is possible.
+  POSSIBLE = 3;
+
+  // It is likely.
+  LIKELY = 4;
+
+  // It is very likely.
+  VERY_LIKELY = 5;
 }
 
 // A face annotation object contains the results of face detection.
@@ -631,6 +650,81 @@ message WebDetectionParams {
   bool include_geo_results = 2;
 }
 
+// Parameters for DOCUMENT_PARSING feature.
+message DocumentParsingParams {
+  // Disables orientation detection such that rotated text will not be detected.
+  bool disable_orientation_detection = 1;
+
+  // Controls table detection behavior.
+  TableDetectionOptions table_detection_options = 2;
+
+  // Controls key value pair detection behavior.
+  KeyValuePairDetectionOptions key_value_pair_detection_options = 5;
+
+  // Specifies a known document type for deeper structure detection. Valid value
+  // is currently just "general". If not provided, "general" is used as default.
+  // If any other value is given, the request is rejected.
+  string document_type = 3;
+
+  // Controls what data is returned at the block level in full_text_annotation.
+  // This can be used to control what specific types of blocks should be
+  // detected.
+  // Default when unset:
+  //   All fields are included except `merged_text`.
+  google.protobuf.FieldMask block_field_mask = 4;
+}
+
+// User-provided hint for key value pair.
+message KeyValuePairHint {
+  // The key text for the hint.
+  string key = 1;
+
+  // Type of the value. This is case-insensitive, and could be one of:
+  // INVOICE, ADDRESS, LOCATION, ORGANIZATION, PERSON, PHONE_NUMBER
+  // ID, NUMBER, EMAIL, PRICE, TERMS, DATE, NAME
+  repeated string value_types = 2;
+}
+
+// User-provided hints for key value pairs.
+message KeyValuePairDetectionOptions {
+  // User can provide pairs of (key text, value type) to improve the parsing
+  // result.
+  //
+  // For example, if a document has a field called "Date" that holds a date
+  // value and a field called "Amount" that may hold either a currency value
+  // (e.g., "$500.00") or a simple number value (e.g., "20"), you could use the
+  // following hints: [ {"key": "Date", value_types: [ "DATE" ]},
+  // {"key": "Amount", "value_types": [ "PRICE", "NUMBER" ]} ]
+  //
+  // If the value type is unknown, but you want to provide hints for the keys,
+  // you can leave the value_types field blank. e.g. {"key": "Date",
+  // "value_types": []}
+  repeated KeyValuePairHint key_value_pair_hints = 1;
+}
+
+// Options for the table detection.
+message TableDetectionOptions {
+  // Optional. Table bounding box hints that can be provided for complex
+  // cases which our algorithm cannot locate the table(s) in.
+  repeated TableBoundHint table_bound_hints = 1;
+
+  // Optional. Table header hints. The detection will bias towards producing
+  // these terms as table headers, which may improve accuracy.
+  repeated string header_hints = 3;
+}
+
+// A hint for a table bounding box on the page for table parsing.
+message TableBoundHint {
+  // Optional page number for multi-paged inputs this hint applies to. If
+  // not provided, this hint will apply to all pages by default. This value
+  // is 1-indexed.
+  int32 page_number = 1;
+
+  // Bounding box hint for a table on this page. The coordinates must be
+  // normalized to [0,1] and the bounding box must be an axis-aligned rectangle.
+  BoundingPoly bounding_box = 2;
+}
+
 // Image context and/or feature-specific parameters.
 message ImageContext {
   // Not used.
@@ -654,6 +748,9 @@ message ImageContext {
 
   // Parameters for web detection.
   WebDetectionParams web_detection_params = 6;
+
+  // Parameters for document parsing.
+  DocumentParsingParams document_parsing_params = 15;
 }
 
 // Request for performing Google Cloud Vision API tasks over a user-provided
@@ -732,28 +829,11 @@ message AnnotateImageResponse {
   ImageAnnotationContext context = 21;
 }
 
-// Response to a single file annotation request. A file may contain one or more
-// images, which individually have their own responses.
-message AnnotateFileResponse {
-  // Information about the file for which this response is generated.
-  InputConfig input_config = 1;
-
-  // Individual responses to images found within the file. This field will be
-  // empty if the `error` field is set.
-  repeated AnnotateImageResponse responses = 2;
-
-  // This field gives the total number of pages in the file.
-  int32 total_pages = 3;
-
-  // If set, represents the error message for the failed request. The
-  // `responses` field will not be set in this case.
-  google.rpc.Status error = 4;
-}
-
 // Multiple image annotation requests are batched into a single service call.
 message BatchAnnotateImagesRequest {
-  // Individual image annotation requests for this batch.
-  repeated AnnotateImageRequest requests = 1;
+  // Required. Individual image annotation requests for this batch.
+  repeated AnnotateImageRequest requests = 1
+      [(google.api.field_behavior) = REQUIRED];
 
   // Optional. Target project and location to make a call.
   //
@@ -804,11 +884,30 @@ message AnnotateFileRequest {
   repeated int32 pages = 4;
 }
 
+// Response to a single file annotation request. A file may contain one or more
+// images, which individually have their own responses.
+message AnnotateFileResponse {
+  // Information about the file for which this response is generated.
+  InputConfig input_config = 1;
+
+  // Individual responses to images found within the file. This field will be
+  // empty if the `error` field is set.
+  repeated AnnotateImageResponse responses = 2;
+
+  // This field gives the total number of pages in the file.
+  int32 total_pages = 3;
+
+  // If set, represents the error message for the failed request. The
+  // `responses` field will not be set in this case.
+  google.rpc.Status error = 4;
+}
+
 // A list of requests to annotate files using the BatchAnnotateFiles API.
 message BatchAnnotateFilesRequest {
-  // The list of file annotation requests. Right now we support only one
-  // AnnotateFileRequest in BatchAnnotateFilesRequest.
-  repeated AnnotateFileRequest requests = 1;
+  // Required. The list of file annotation requests. Right now we support only
+  // one AnnotateFileRequest in BatchAnnotateFilesRequest.
+  repeated AnnotateFileRequest requests = 1
+      [(google.api.field_behavior) = REQUIRED];
 
   // Optional. Target project and location to make a call.
   //
@@ -855,11 +954,12 @@ message AsyncAnnotateFileResponse {
 
 // Request for async image annotation for a list of images.
 message AsyncBatchAnnotateImagesRequest {
-  // Individual image annotation requests for this batch.
-  repeated AnnotateImageRequest requests = 1;
+  // Required. Individual image annotation requests for this batch.
+  repeated AnnotateImageRequest requests = 1
+      [(google.api.field_behavior) = REQUIRED];
 
   // Required. The desired output location and metadata (e.g. format).
-  OutputConfig output_config = 2;
+  OutputConfig output_config = 2 [(google.api.field_behavior) = REQUIRED];
 
   // Optional. Target project and location to make a call.
   //
@@ -885,8 +985,9 @@ message AsyncBatchAnnotateImagesResponse {
 // Multiple async file annotation requests are batched into a single service
 // call.
 message AsyncBatchAnnotateFilesRequest {
-  // Individual async file annotation requests for this batch.
-  repeated AsyncAnnotateFileRequest requests = 1;
+  // Required. Individual async file annotation requests for this batch.
+  repeated AsyncAnnotateFileRequest requests = 1
+      [(google.api.field_behavior) = REQUIRED];
 
   // Optional. Target project and location to make a call.
   //
