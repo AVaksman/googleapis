@@ -837,13 +837,6 @@ message ModelExportOutputConfig {
     //  will be created. Inside the model and any of its supporting files
     //  will be written.
     GcsDestination gcs_destination = 1 [(google.api.field_behavior) = REQUIRED];
-
-    // The GCR location where model image is to be pushed to. This location
-    // may only be set for the following model formats:
-    //   "docker".
-    //
-    // The model image will be created under the given URI.
-    GcrDestination gcr_destination = 3;
   }
 
   // The format in which the model must be exported. The available, and default,
@@ -853,12 +846,15 @@ message ModelExportOutputConfig {
   //
   // *  For Image Classification mobile-low-latency-1, mobile-versatile-1,
   //        mobile-high-accuracy-1:
-  //      "tflite" (default), "edgetpu_tflite", "tf_saved_model", "tf_js",
-  //      "docker".
+  //      "tflite" (default), "edgetpu_tflite", "tf_saved_model", "tf_js".
   //
   // *  For Image Classification mobile-core-ml-low-latency-1,
   //        mobile-core-ml-versatile-1, mobile-core-ml-high-accuracy-1:
   //      "core_ml" (default).
+  //
+  // *  For Image Object Detection mobile-low-latency-1, mobile-versatile-1,
+  //        mobile-high-accuracy-1:
+  //      "tflite", "tf_saved_model", "tf_js".
   // Formats description:
   //
   // * tflite - Used for Android mobile devices.
@@ -867,23 +863,12 @@ message ModelExportOutputConfig {
   // * tf_saved_model - A tensorflow model in SavedModel format.
   // * tf_js - A [TensorFlow.js](https://www.tensorflow.org/js) model that can
   //           be used in the browser and in Node.js using JavaScript.
-  // * docker - Used for Docker containers. Use the params field to customize
-  //            the container. The container is verified to work correctly on
-  //            ubuntu 16.04 operating system. See more at
-  //            [containers
-  //
-  // quickstart](https:
-  // //cloud.google.com/vision/automl/docs/containers-gcs-quickstart)
   // * core_ml - Used for iOS mobile devices.
   string model_format = 4;
 
   // Additional model-type and format specific parameters describing the
   // requirements for the to be exported model files, any string must be up to
   // 25000 characters long.
-  //
-  //  * For `docker` format:
-  //     `cpu_architecture` - (string) "x86_64" (default).
-  //     `gpu_architecture` - (string) "none" (default), "nvidia".
   map<string, string> params = 2;
 }
 
@@ -904,20 +889,4 @@ message GcsDestination {
   // The requesting user must have write permission to the bucket.
   // The directory is created if it doesn't exist.
   string output_uri_prefix = 1 [(google.api.field_behavior) = REQUIRED];
-}
-
-// The GCR location where the image must be pushed to.
-message GcrDestination {
-  // Required. Google Contained Registry URI of the new image, up to
-  // 2000 characters long. See
-  //
-  // https:
-  // //cloud.google.com/container-registry/do
-  // // cs/pushing-and-pulling#pushing_an_image_to_a_registry
-  // Accepted forms:
-  // * [HOSTNAME]/[PROJECT-ID]/[IMAGE]
-  // * [HOSTNAME]/[PROJECT-ID]/[IMAGE]:[TAG]
-  //
-  // The requesting user must have permission to push images the project.
-  string output_uri = 1 [(google.api.field_behavior) = REQUIRED];
 }

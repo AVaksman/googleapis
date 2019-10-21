@@ -9,6 +9,7 @@ apis:
 
 types:
 - name: google.cloud.automl.v1.OperationMetadata
+- name: google.cloud.automl.v1.BatchPredictResult
 
 documentation:
   summary: |-
@@ -32,7 +33,7 @@ backend:
     deadline: 5.0
   - selector: google.cloud.automl.v1.PredictionService.Predict
     deadline: 60.0
-  - selector: google.cloud.automl.v1beta1.PredictionService.BatchPredict
+  - selector: google.cloud.automl.v1.PredictionService.BatchPredict
     deadline: 20.0
   - selector: google.cloud.automl.v1.AutoMl.CreateDataset
     deadline: 5.0
