@@ -197,6 +197,23 @@ message Feature {
     // Run localizer for object detection.
     OBJECT_LOCALIZATION = 19;
 
+    // Compute attributes of objects detected in the image. Four domains of
+    // objects are supported. Please select via Feature.model (required):
+    // "builtin/apparel", "builtin/car" or "builtin/food".
+    OBJECT_ATTRIBUTES = 21;
+
+    // Run quality optimization algorithms. There are three types of operations:
+    // COMPRESSION, ENHANCEMENT and QUALITY_SCORE. COMPRESSION and ENHANCEMENT
+    // parameters, and QUALITY_SCORE model choice can are specified in
+    // image_context.quality_optimization_params.
+    QUALITY_OPTIMIZATION = 22;
+
+    // Run barcode detection and recognition.
+    BARCODE_DETECTION = 23;
+
+    // Run domain label detection.
+    DOMAIN_LABEL_DETECTION = 24;
+
     // Run document parsing algorithms to extract structured data such as tables
     // and forms. The results are found in `full_text_annotation` -> `page` ->
     // `block` with type either TABLE for tables or KEY_VALUE_PAIR for key-value
@@ -482,6 +499,20 @@ message Property {
 
   // Value of numeric properties.
   uint64 uint64_value = 3;
+
+  // Value in range [0..1]. Confidence of this property value.
+  float confidence = 4;
+
+  // Opaque property value ID. Some IDs may be available in
+  // [Google Knowledge Graph Search
+  // API](https://developers.google.com/knowledge-graph/).
+  // An example property for a blue coat would be:
+  // Property {
+  //   name: 'color'
+  //   value: 'blue'
+  //   mid: '/m/01g5v'  // For color blue
+  // }
+  string mid = 5;
 }
 
 // Set of detected entity features.
@@ -551,6 +582,53 @@ message LocalizedObjectAnnotation {
   BoundingPoly bounding_poly = 5;
 }
 
+// Set of detected barcodes with bounding boxes.
+message LocalizedBarcodeAnnotation {
+  // Barcode format describes the format of a barcode. Supported formats are:
+  // CODE_128: Code 128 type.
+  // CODE_39: Code 39 type.
+  // CODE_93: Code 93 type.
+  // CODABAR: Codabar type.
+  // DATA_MATRIX: 2D Data Matrix type.
+  // ITF: ITF type.
+  // EAN_13: EAN-13 type.
+  // EAN_8: EAN-8 type.
+  // QR_CODE: 2D QR code type.
+  // UPC_A: UPC-A type.
+  // UPC_E: UPC-E type.
+  // PDF417: PDF417 type.
+  // AZTEC: 2D Aztec code type.
+  // DATABAR: GS1 DataBar code type.
+  string format = 1;
+
+  // Barcode value format idescribes the format of the value a barcode encodes.
+  // Supported value formats are:
+  // CONTACT_INFO: Contact information.
+  // EMAIL: Email address.
+  // ISBN: ISBN identifier.
+  // PHONE: Phone number.
+  // PRODUCT: Product.
+  // SMS: SMS message.
+  // TEXT: Text string.
+  // URL: URL address.
+  // WIFI: Wifi information.
+  // GEO: Geo-localization (long and lat).
+  // CALENDAR_EVENT: Calendar event.
+  // DRIVER_LICENSE: Driver's license.
+  string value_format = 2;
+
+  // Barcode value that is the ASCII value captured in the barcode.
+  // Barcode may encode structured values, for example,
+  // 'MEBKM:TITLE:Google;URL:https://www.google.com;;'.
+  string value = 3;
+
+  // Confidence value of the result. Range [0, 1].
+  float confidence = 4;
+
+  // Image region to which this barcode belongs. This must be populated.
+  BoundingPoly bounding_poly = 5;
+}
+
 // Set of features pertaining to the image, computed by computer vision
 // methods over safe-search verticals (for example, adult, spoof, medical,
 // violence).
@@ -613,6 +691,27 @@ message ImageProperties {
   DominantColorsAnnotation dominant_colors = 1;
 }
 
+// Stores image quality scores, could be aesthetic quality or technical quality.
+message ImageQuality {
+  // A score representing the aesthetic/technical quality of the image. The
+  // score is in range [0, 1]. Higher value corresponds to more professional
+  // looking photos. 0 means the image looks very bad, 1 means the image with
+  // very high quality.
+  float quality_score = 1;
+}
+
+// Stores enhanced image bytes.
+message QualityOptimizationResult {
+  // Required optimization type.
+  QualityOptimizationParams.Type quality_optimization_type = 1;
+
+  // Optimized image bytes.
+  bytes image = 2;
+
+  // Mime type of the output image.
+  string mime_type = 3;
+}
+
 // Single crop hint that is used to generate a new crop when serving an image.
 message CropHint {
   // The bounding polygon for the crop region. The coordinates of the bounding
@@ -648,6 +747,109 @@ message CropHintsParams {
 message WebDetectionParams {
   // Whether to include results derived from the geo information in the image.
   bool include_geo_results = 2;
+}
+
+// Parameters for text detections. This is used to control TEXT_DETECTION and
+// DOCUMENT_TEXT_DETECTION features.
+message TextDetectionParams {
+  // Disables orientation detection such that rotated text will not be detected.
+  // This is only supported for DOCUMENT_TEXT_DETECTION.
+  bool disable_orientation_detection = 1;
+
+  // Disables the old text_annotations field. Only full_text_annotations will be
+  // returned.
+  bool disable_text_annotations = 2;
+
+  // Controls what data is returned at the page level in full_text_annotation.
+  //
+  // Example:
+  // "page_filter": {
+  //   "paths": ["confidence", "merged_text"]
+  // }
+  //
+  // The above will return Page objects with only the "confidence" and
+  // "merged_text" fields populated. This can save bandwidth and storage for
+  // unnecessary data.
+  //
+  // Default when unset:
+  //   All fields are included
+  google.protobuf.FieldMask page_filter = 3;
+
+  // Controls what data is returned at the block level in full_text_annotation.
+  //
+  // Example:
+  // "block_filter": {
+  //   "paths": ["confidence", "merged_text"]
+  // }
+  //
+  // The above will return Block objects with only the "confidence" and
+  // "merged_text" fields populated. This can save bandwidth and storage for
+  // unnecessary data.
+  //
+  // Default when unset:
+  //   All fields are included except `merged_text`.
+  google.protobuf.FieldMask block_filter = 4;
+
+  // Controls what data is returned at the paragraph level in
+  // full_text_annotation.
+  //
+  // Example:
+  // "paragraph_filter": {
+  //   "paths": ["confidence", "merged_text"]
+  // }
+  //
+  // The above will return Paragraph objects with only the "confidence" and
+  // "merged_text" fields populated. This can save bandwidth and storage for
+  // unnecessary data.
+  //
+  // Default when unset:
+  //   All fields are included except `merged_text` and `lines`
+  google.protobuf.FieldMask paragraph_filter = 5;
+
+  // Controls what data is returned at the line level in full_text_annotation.
+  // If this field is specified, the `lines` field instead of the `words` field
+  // will be populated in Paragraph.
+  //
+  // Example:
+  // "line_filter": {
+  //   "paths": ["bounding_box", "words"]
+  // }
+  //
+  // The above will return Line objects with only the "bounding_box" and "words"
+  // fields populated. This can save bandwidth and storage for unnecessary data.
+  //
+  // Default when unset:
+  //   No lines are returned in paragraphs.
+  google.protobuf.FieldMask line_filter = 8;
+
+  // Controls what data is returned at the word level in full_text_annotation.
+  //
+  // Example:
+  // "word_filter": {
+  //   "paths": ["confidence", "merged_text"]
+  // }
+  //
+  // The above will return Word objects with only the "confidence" and
+  // "merged_text" fields populated. This can save bandwidth and storage for
+  // unnecessary data.
+  //
+  // Default when unset:
+  //   All fields are included except `merged_text`
+  google.protobuf.FieldMask word_filter = 6;
+
+  // Controls what data is returned at the symbol level in full_text_annotation.
+  //
+  // Example:
+  // "symbol_filter": {
+  //   "paths": ["confidence", "text"]
+  // }
+  //
+  // The above will return Symbol objects with only the "confidence" and "text"
+  // fields populated. This can save bandwidth and storage for unnecessary data.
+  //
+  // Default when unset:
+  //   All fields are included except `bounding_box`
+  google.protobuf.FieldMask symbol_filter = 7;
 }
 
 // Parameters for DOCUMENT_PARSING feature.
@@ -725,6 +927,94 @@ message TableBoundHint {
   BoundingPoly bounding_box = 2;
 }
 
+// Parameters for image quality optimizations.
+message QualityOptimizationParams {
+  // Configuration for COMPRESSION.
+  message CompressionConfig {
+    // In range [0, 1]. Target quality after compression. 1 means lossless
+    // compared to input image, 0 means no minimum quality requirement.
+    float target_quality = 1;
+  }
+
+  // Configuration for ENHANCMENT. If not specify enhancement_config, default
+  // values sharpening_level equals to 0.5, auto_hdr_level equals to 0.5 and
+  // upscale_ratio equals to 1 will be used.
+  // If you want to customize any of the three parameters, you need to specify
+  // the whole EnhancementConfig. For example, if you want to use higher
+  // auto_hdr_level, which usually will make the image brighter, and keep
+  // sharpnening level and upscale ratio the same as default, you can set the
+  // config as:
+  // enhancement_config {
+  //   sharpening_level: 0.5
+  //   auto_hdr_level: 1.0
+  //   upscale_ratio: 1
+  // }
+  message EnhancementConfig {
+    // In range [0,1]. Level of sharpening, 0 means no sharpening, 1 means
+    // largest sharpening. Default is 0.5.
+    float sharpening_level = 1;
+
+    // In range [0,1]. Level of Auto HDR, 0 means no auto HDR, 1 means largest
+    // AutoHDR. Default is 0.5.
+    float auto_hdr_level = 2;
+
+    // In range [1, 2]. Whether do upscaling, default value will be 1, which
+    // means no upscaling. If specified, the output height and width will be
+    // equals to original height and width times upscale_ratio.
+    float upscale_ratio = 3;
+  }
+
+  // Configuration for QUALITY_SCORE.
+  message QualityScoreConfig {
+    // Specify which model to be used. Default value is empty string, and
+    // aesthetic score will be returned. Another supported quality model is
+    // "builtin/technical-score", which will return image technical quality.
+    string quality_model = 1;
+  }
+
+  // Quality optimization type enum.
+  enum Type {
+    // Invalid. Customer must select one Type.
+    TYPE_UNSPECIFIED = 0;
+
+    // Reduce image file size. Detailed params specified in CompressionConfig.
+    // If customer do not specify CompressionConfig, it will reduce image file
+    // size while not reducing image quality. If customer specify
+    // CompressionConfig, we will reduce file size while keeping
+    // CompressionParams.target_quality.
+    COMPRESSION = 1;
+
+    // Denoise, sharpening, HDR and upscaling. Detailed params specified in
+    // EnhancementConfig. If customer do not specify EnhancmentConfig, it will
+    // do image enhancement using default values. If upscale_ratio not
+    // specified, the output image will have the same resolution as input image.
+    ENHANCEMENT = 2;
+
+    // Query quality score for an image. Detailed params specified in
+    // QualityScoreConfig. If customer does not specify QualityScoreConfig,
+    // aesthetic score of image will be returned.
+    QUALITY_SCORE = 3;
+  }
+
+  // Choose one optimization type.
+  Type type = 1;
+
+  // Specify compression configuration.
+  CompressionConfig compression_config = 2;
+
+  // Specify auto enhancement configuration.
+  EnhancementConfig enhancement_config = 3;
+
+  // Specify quality score configuration.
+  QualityScoreConfig quality_score_config = 4;
+}
+
+// Parameters for domain label detection request.
+message DomainLabelDetectionParams {
+  // The domain specific label set provided by customer.
+  repeated string domain_specific_labels = 1;
+}
+
 // Image context and/or feature-specific parameters.
 message ImageContext {
   // Not used.
@@ -748,6 +1038,16 @@ message ImageContext {
 
   // Parameters for web detection.
   WebDetectionParams web_detection_params = 6;
+
+  // Parameters for document text detection.
+  TextDetectionParams text_detection_params = 12;
+
+  // Parameters for image quality optimizations.
+  QualityOptimizationParams quality_optimization_params = 13;
+
+  // Domain label detection parameters that holds details about the user
+  // provided label set and relevant information.
+  DomainLabelDetectionParams domain_label_detection_params = 14;
 
   // Parameters for document parsing.
   DocumentParsingParams document_parsing_params = 15;
@@ -827,6 +1127,40 @@ message AnnotateImageResponse {
   // If present, contextual information is needed to understand where this image
   // comes from.
   ImageAnnotationContext context = 21;
+
+  // If present, image quality calculation has completed successfully.
+  ImageQuality image_quality_annotation = 23;
+
+  // If present, objects attributes calculation has completed successfully. The
+  // attributes value will be filled in the EntityAnnotation.properties.
+  // Example:
+  // object_attribute_annotations {
+  //   properties {
+  //     name: "color"
+  //     value: "blue"
+  //     confidence: 0.1
+  //   }
+  //   properties {
+  //     name: "color"
+  //     value: "white"
+  //     confidence: 0.2
+  //   }
+  //   properties {
+  //     name: "material"
+  //     value: "silk"
+  //     confidence: 0.3
+  //   }
+  // }
+  repeated EntityAnnotation object_attribute_annotations = 24;
+
+  // If present, image quality optimization has completed successfully.
+  QualityOptimizationResult quality_optimization_result = 25;
+
+  // If present, localized barcode detection has completed successfully.
+  repeated LocalizedBarcodeAnnotation localized_barcode_annotations = 26;
+
+  // If present, domain label detection has completed successfully.
+  repeated EntityAnnotation domain_label_annotations = 27;
 }
 
 // Multiple image annotation requests are batched into a single service call.
