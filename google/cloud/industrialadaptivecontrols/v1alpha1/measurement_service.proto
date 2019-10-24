@@ -54,6 +54,8 @@ service MeasurementService {
   // Use this method to send incremental measurements to the AI systems after
   // the facility is set up. For batch import historical measurements collected
   // locally before the facility is set up, use [ImportMeasurements][google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.ImportMeasurements] instead.
+  // Measurements collected via this API are validated against the most current
+  // trend configs defined for each trend.
   rpc CollectMeasurements(CollectMeasurementsRequest) returns (CollectMeasurementsResponse) {
     option (google.api.http) = {
       post: "/v1alpha1/{parent=projects/*/locations/*/facilities/*}/measurements:collect"
