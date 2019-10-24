@@ -18,10 +18,10 @@ syntax = "proto3";
 package google.cloud.industrialadaptivecontrols.v1alpha1;
 
 import "google/api/annotations.proto";
-import "google/api/client.proto";
 import "google/api/field_behavior.proto";
 import "google/cloud/industrialadaptivecontrols/v1alpha1/recommendation.proto";
 import "google/protobuf/timestamp.proto";
+import "google/api/client.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/industrialadaptivecontrols/v1alpha1;industrialadaptivecontrols";
 option java_multiple_files = true;
@@ -29,14 +29,11 @@ option java_package = "com.google.cloud.industrialadaptivecontrols.v1alpha1";
 
 // Service for recommending setpoint values.
 service RecommendationService {
-  option (google.api.default_host) =
-      "industrialadaptivecontrols.googleapis.com";
-  option (google.api.oauth_scopes) =
-      "https://www.googleapis.com/auth/cloud-platform";
+  option (google.api.default_host) = "industrialadaptivecontrols.googleapis.com";
+  option (google.api.oauth_scopes) = "https://www.googleapis.com/auth/cloud-platform";
 
   // Predict recommended setpoint values.
-  rpc RecommendSetpointValues(RecommendSetpointValuesRequest)
-      returns (RecommendSetpointValuesResponse) {
+  rpc RecommendSetpointValues(RecommendSetpointValuesRequest) returns (RecommendSetpointValuesResponse) {
     option (google.api.http) = {
       post: "/v1alpha1/{name=projects/*/locations/*/facilities/*/controllableUnits/*}:recommend"
       body: "*"
@@ -44,15 +41,13 @@ service RecommendationService {
   }
 }
 
-// Request message for
-// [RecommendationService.RecommendSetpointValues][google.cloud.industrialadaptivecontrols.v1alpha1.RecommendationService.RecommendSetpointValues].
+// Request message for [RecommendationService.RecommendSetpointValues][google.cloud.industrialadaptivecontrols.v1alpha1.RecommendationService.RecommendSetpointValues].
 message RecommendSetpointValuesRequest {
   // Required. Controllable unit resource name.
   string name = 1 [(google.api.field_behavior) = REQUIRED];
 }
 
-// Response message for
-// [RecommendationService.RecommendSetpointValues][google.cloud.industrialadaptivecontrols.v1alpha1.RecommendationService.RecommendSetpointValues].
+// Response message for [RecommendationService.RecommendSetpointValues][google.cloud.industrialadaptivecontrols.v1alpha1.RecommendationService.RecommendSetpointValues].
 message RecommendSetpointValuesResponse {
   enum DisableReason {
     // Unspecified. This should never be returned.

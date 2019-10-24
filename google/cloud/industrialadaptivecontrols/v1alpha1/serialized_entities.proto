@@ -17,10 +17,10 @@ syntax = "proto3";
 
 package google.cloud.industrialadaptivecontrols.v1alpha1;
 
-import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/industrialadaptivecontrols/v1alpha1;industrialadaptivecontrols";
 option java_multiple_files = true;
@@ -29,32 +29,30 @@ option java_package = "com.google.cloud.industrialadaptivecontrols.v1alpha1";
 // Serialized representation of a facility with all its child resources for
 // importing purposes.
 message SerializedFacility {
-  // If specified the display name of the facility is updated.
+  // If specified the display name of the facility is updated. Must be less than
+  // 128 characters.
   string display_name = 1;
 
   // Required. One or more controllable units of this facility.
-  repeated SerializedControllableUnit controllable_units = 2
-      [(google.api.field_behavior) = REQUIRED];
+  repeated SerializedControllableUnit controllable_units = 2 [(google.api.field_behavior) = REQUIRED];
 }
 
 // A mechanical system that can be actuated independent of other mechanical
 // systems.
 message SerializedControllableUnit {
-  // Required. Human readable name of the controllable unit.
+  // Required. Human readable name of the controllable unit. Must be less than 128
+  // characters.
   string display_name = 1 [(google.api.field_behavior) = REQUIRED];
 
-  // Required. External ID for mapping the created controllable unit with
-  // client-side representation.
+  // Required. External ID for mapping the created controllable unit with client-side
+  // representation. Must be at most 128 bytes long in UTF-8 encoding.
   string external_id = 2 [(google.api.field_behavior) = REQUIRED];
 
-  // Required. Trends of this controllable unit. There must be at least one
-  // trend.
+  // Required. Trends of this controllable unit. There must be at least one trend.
   repeated SerializedTrend trends = 3 [(google.api.field_behavior) = REQUIRED];
 
-  // Required. Setpoints of this controllable unit. There must be at least one
-  // setpoint.
-  repeated SerializedSetpoint setpoints = 4
-      [(google.api.field_behavior) = REQUIRED];
+  // Required. Setpoints of this controllable unit. There must be at least one setpoint.
+  repeated SerializedSetpoint setpoints = 4 [(google.api.field_behavior) = REQUIRED];
 
   // Boolean Google SQL expressions that define the setpoint constraints the AI
   // recommendations should satisfy.
@@ -87,6 +85,7 @@ message SerializedTrend {
   // trend.
   message TrendProperties {
     // Required. Maps the measurement with the same external_id to this trend.
+    // Must be at most 128 characters long.
     string external_id = 1 [(google.api.field_behavior) = REQUIRED];
 
     // Required. The unit of the numerical value, e.g. "FAHRENHEIT" or
@@ -105,13 +104,16 @@ message SerializedTrend {
     google.protobuf.Timestamp end_time = 4;
   }
 
+  // Optional. Human readable name of the controllable unit. Must be less than 128
+  // characters.
+  string display_name = 6 [(google.api.field_behavior) = OPTIONAL];
+
   // Required. The current active trend properties.
   //
   // When the `external_id` of the `current_properties` is referenced in any
   // expression, the unit of the measured value is the unit specified in the
   // `current_properties`.
-  TrendProperties current_properties = 1
-      [(google.api.field_behavior) = REQUIRED];
+  TrendProperties current_properties = 1 [(google.api.field_behavior) = REQUIRED];
 
   // Properties of this trend in the past. The time interval of the previous
   // properties and the current properties must be all disjoint.
@@ -125,27 +127,26 @@ message SerializedTrend {
   // removed from the measurements.
   repeated string health_rules = 4;
 
-  // Required. Rules on how to synthesize trend measurements when measurements
-  // of the trend is missing.
+  // Required. Rules on how to synthesize trend measurements when measurements of the
+  // trend is missing.
   Imputation imputation = 5 [(google.api.field_behavior) = REQUIRED];
 }
 
 // Rules on how to synthesize trend measurements.
 message Imputation {
-  // Required. Copy the most recent past measurement from the same trend if it's
-  // measured no longer than `fill_forward_duration` ago.
+  // Required. Copy the most recent past measurement from the same trend if it's measured
+  // no longer than `fill_forward_duration` ago.
   //
   // It's recommended to set it to the measure period. The Industrial Adaptive
   // Controls system may sample the measurements in shorter periods than the
   // measure periods. Setting `fill_forward_duration` to the measure period lets
   // the system know it should use the most recent measurement in this case.
-  google.protobuf.Duration fill_forward_duration = 1
-      [(google.api.field_behavior) = REQUIRED];
+  google.protobuf.Duration fill_forward_duration = 1 [(google.api.field_behavior) = REQUIRED];
 
-  // Optional. Google SQL expression that defines how to synthesize the
-  // measurements for this trend when forward filling is infeasible. Forward
-  // filling is infeasible if there is no past measurement from the trend, or
-  // the most recent past measurement is measured at the time that exceeds
+  // Optional. Google SQL expression that defines how to synthesize the measurements for
+  // this trend when forward filling is infeasible. Forward filling is
+  // infeasible if there is no past measurement from the trend, or the most
+  // recent past measurement is measured at the time that exceeds
   // `fill_forward_duration`.
   //
   // The expression must return a number if the `spec` of the trend is
@@ -164,11 +165,18 @@ message SerializedSetpoint {
   //
   // This ID must be unique across the setpoints under the same controllable
   // unit. External IDs are not required to be unique between setpoints and
-  // sensors.
+  // sensors. Must be at most 128 characters long.
   string external_id = 1 [(google.api.field_behavior) = REQUIRED];
 
-  string active_setpoint_trend_external_id = 2
-      [(google.api.field_behavior) = REQUIRED];
+  // Optional. Human readable name of the controllable unit. Must be less than 128
+  // characters.
+  string display_name = 6 [(google.api.field_behavior) = OPTIONAL];
+
+  // Required. External ID of the current trend that reports the locally actuated setpoint
+  // value.
+  // The unit of this setpoint is defined by the unit of the corresponding
+  // trend.
+  string active_setpoint_trend_external_id = 2 [(google.api.field_behavior) = REQUIRED];
 
   // External ID of the trend that echos the most recently received
   // recommendation value for this setpoint.
@@ -205,7 +213,9 @@ message TrendSpec {
   }
 
   // Spec for numerical values.
-  message NumericalSpec {}
+  message NumericalSpec {
+
+  }
 
   // Required.
   oneof type {
@@ -245,16 +255,14 @@ message SetpointSpec {
     // of its value.
     google.protobuf.Duration change_period = 7;
 
-    // Optional. Increment/decrement size, where minimum_increment <= step_size
-    // <= maximum_increment && minimum_decrement <= step_size <=
-    // maximum_decrement.
+    // Optional. Denotes increment/decrement step size, where step_size > 0 if set.
+    // Note that the step_size will only be used if there is a resulting
+    // increment/decrement that does not violate any constraints. Otherwise,
+    // no step is taken.
     //
     // If it is not set, while is_integer is true, the step_size defaults to 1.
-    // If it is not set, while is_integer is false, the step_size can be any
-    // number between minimum_increment and maximum_increment and
-    // between minimum_decrement and maximum_decrement.
-    // If it is set, while is_integer is true, the step_size has to be integer
-    // value.
+    // If it is not set, while is_integer is false, Industrial Adaptive
+    // Controls system picks a default step size for this setpoint.
     // If it is set, while is_integer is false, there is no extra constraint.
     double step_size = 8 [(google.api.field_behavior) = OPTIONAL];
 
@@ -300,8 +308,7 @@ message Objective {
   // Required. How should the AI system optimize for the objective function.
   ObjectiveGoal goal = 2 [(google.api.field_behavior) = REQUIRED];
 
-  // Required. Specify how to aggregate the objective function over the
-  // prediction time horizon.
-  AggregateFunction aggregate_function = 3
-      [(google.api.field_behavior) = REQUIRED];
+  // Required. Specify how to aggregate the objective function over the prediction time
+  // horizon.
+  AggregateFunction aggregate_function = 3 [(google.api.field_behavior) = REQUIRED];
 }

@@ -17,10 +17,10 @@ syntax = "proto3";
 
 package google.cloud.industrialadaptivecontrols.v1alpha1;
 
-import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/industrialadaptivecontrols/v1alpha1;industrialadaptivecontrols";
 option java_multiple_files = true;
@@ -41,10 +41,9 @@ message Measurement {
   }
 
   // Required. The time when this measurement occurs.
-  google.protobuf.Timestamp measure_time = 3
-      [(google.api.field_behavior) = REQUIRED];
+  google.protobuf.Timestamp measure_time = 3 [(google.api.field_behavior) = REQUIRED];
 
-  // Required. Value of the measurement. Only `number_value` and `string_value`
-  // are supported.
+  // Required. Value of the measurement. Only `number_value` and `string_value` are
+  // supported.
   google.protobuf.Value value = 4 [(google.api.field_behavior) = REQUIRED];
 }

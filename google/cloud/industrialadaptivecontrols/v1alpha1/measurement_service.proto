@@ -18,11 +18,11 @@ syntax = "proto3";
 package google.cloud.industrialadaptivecontrols.v1alpha1;
 
 import "google/api/annotations.proto";
-import "google/api/client.proto";
 import "google/api/field_behavior.proto";
 import "google/cloud/industrialadaptivecontrols/v1alpha1/io.proto";
 import "google/cloud/industrialadaptivecontrols/v1alpha1/measurement.proto";
 import "google/longrunning/operations.proto";
+import "google/api/client.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/industrialadaptivecontrols/v1alpha1;industrialadaptivecontrols";
 option java_multiple_files = true;
@@ -30,20 +30,15 @@ option java_package = "com.google.cloud.industrialadaptivecontrols.v1alpha1";
 
 // Service for collecting measurements under trends.
 service MeasurementService {
-  option (google.api.default_host) =
-      "industrialadaptivecontrols.googleapis.com";
-  option (google.api.oauth_scopes) =
-      "https://www.googleapis.com/auth/cloud-platform";
+  option (google.api.default_host) = "industrialadaptivecontrols.googleapis.com";
+  option (google.api.oauth_scopes) = "https://www.googleapis.com/auth/cloud-platform";
 
   // Imports facility historical measurements.
   //
   // Use this method to batch import historical measurements collected locally
   // before the facility is set up. For sending new measurements after the
-  // facility is set up, use
-  // [CollectMeasurements][google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.CollectMeasurements]
-  // instead.
-  rpc ImportMeasurements(ImportMeasurementsRequest)
-      returns (google.longrunning.Operation) {
+  // facility is set up, use [CollectMeasurements][google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.CollectMeasurements] instead.
+  rpc ImportMeasurements(ImportMeasurementsRequest) returns (google.longrunning.Operation) {
     option (google.api.http) = {
       post: "/v1alpha1/{parent=projects/*/locations/*/facilities/*}/measurements:import"
       body: "*"
@@ -58,11 +53,8 @@ service MeasurementService {
   //
   // Use this method to send incremental measurements to the AI systems after
   // the facility is set up. For batch import historical measurements collected
-  // locally before the facility is set up, use
-  // [ImportMeasurements][google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.ImportMeasurements]
-  // instead.
-  rpc CollectMeasurements(CollectMeasurementsRequest)
-      returns (CollectMeasurementsResponse) {
+  // locally before the facility is set up, use [ImportMeasurements][google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.ImportMeasurements] instead.
+  rpc CollectMeasurements(CollectMeasurementsRequest) returns (CollectMeasurementsResponse) {
     option (google.api.http) = {
       post: "/v1alpha1/{parent=projects/*/locations/*/facilities/*}/measurements:collect"
       body: "*"
@@ -70,8 +62,7 @@ service MeasurementService {
   }
 }
 
-// Request message for
-// [MeasurementService.ImportMeasurements][google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.ImportMeasurements].
+// Request message for [MeasurementService.ImportMeasurements][google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.ImportMeasurements].
 message ImportMeasurementsRequest {
   oneof source {
     // Reference to historical measurements stored as CSV files in Google Cloud
@@ -106,11 +97,10 @@ message ImportMeasurementsRequest {
   string request_id = 2;
 }
 
-// Request message for
-// [MeasurementService.CollectMeasurements][google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.CollectMeasurements].
+// Request message for [MeasurementService.CollectMeasurements][google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.CollectMeasurements].
 message CollectMeasurementsRequest {
-  // Required. Resource name of the facility from which the measurements are
-  // collected. Form:
+  // Required. Resource name of the facility from which the measurements are collected.
+  // Form:
   // `projects/{project_id}/locations/{location_id}/facilities/{facility_id}`
   string parent = 1 [(google.api.field_behavior) = REQUIRED];
 
@@ -118,12 +108,13 @@ message CollectMeasurementsRequest {
   // dataset scope. Ensures idempotency. Up to 128 characters long.
   string request_id = 2;
 
-  // Required. The data collected from trends. The active/recommended setpoint
-  // values are collected here as well.
-  repeated Measurement measurements = 3
-      [(google.api.field_behavior) = REQUIRED];
+  // Required. The data collected from trends. The active/recommended setpoint values
+  // are collected here as well. At most 1000 measurements per request are
+  // allowed.
+  repeated Measurement measurements = 3 [(google.api.field_behavior) = REQUIRED];
 }
 
-// Response message for
-// [MeasurementService.CollectMeasurements][google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.CollectMeasurements].
-message CollectMeasurementsResponse {}
+// Response message for [MeasurementService.CollectMeasurements][google.cloud.industrialadaptivecontrols.v1alpha1.MeasurementService.CollectMeasurements].
+message CollectMeasurementsResponse {
+
+}
