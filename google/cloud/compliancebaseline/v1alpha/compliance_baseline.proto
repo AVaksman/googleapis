@@ -24,6 +24,7 @@ import "google/type/date.proto";
 
 option go_package = "google.golang.org/genproto/googleapis/cloud/compliancebaseline/v1alpha;compliancebaseline";
 option java_package = "com.google.cloud.compliancebaseline.v1alpha";
+option java_multiple_files = true;
 
 // Compliance Baseline service provides standards certifications data for
 // Google Cloud products and guidelines for best practice usage of those
