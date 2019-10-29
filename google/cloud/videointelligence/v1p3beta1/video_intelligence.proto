@@ -361,7 +361,7 @@ message Celebrity {
   // The celebrity name.
   string display_name = 2;
 
-  // Textual description of addtional information about the celebrity, if
+  // Textual description of additional information about the celebrity, if
   // applicable.
   string description = 3;
 }
