@@ -1,0 +1,43 @@
+type: google.api.Service
+config_version: 3
+name: translate.googleapis.com
+title: Cloud Translation API
+
+apis:
+- name: google.cloud.translation.v3alpha1.TranslationService
+
+documentation:
+  summary: Integrates text translation into your website or application.
+
+http:
+  rules:
+  - selector: google.longrunning.Operations.ListOperations
+    get: '/v3alpha1/projects/*/locations/*/operations'
+    additional_bindings:
+    - get: '/v1/projects/*/operations'
+
+  - selector: google.longrunning.Operations.GetOperation
+    get: '/v3alpha1/projects/*/locations/*/operations/{name=*}'
+    additional_bindings:
+    - get: '/v1/projects/*/operations/{name=*}'
+
+  - selector: google.longrunning.Operations.DeleteOperation
+    delete: '/v3alpha1/projects/*/locations/*/operations/{name=*}'
+    additional_bindings:
+    - delete: '/v1/projects/*/operations/{name=*}'
+
+  - selector: google.longrunning.Operations.CancelOperation
+    post: '/v3alpha1/projects/*/locations/*/operations/{name=*}:cancel'
+    body: '*'
+    additional_bindings:
+    - post: '/v1/projects/*/operations/{name=*}:cancel'
+      body: '*'
+
+
+authentication:
+  rules:
+  - selector: '*'
+    oauth:
+      canonical_scopes: |-
+        https://www.googleapis.com/auth/cloud-platform,
+        https://www.googleapis.com/auth/cloud-translation

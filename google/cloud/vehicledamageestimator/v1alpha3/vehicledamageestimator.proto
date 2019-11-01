@@ -1,0 +1,228 @@
+// Copyright 2018 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.cloud.vehicledamageestimator.v1alpha3;
+
+import "google/api/annotations.proto";
+
+option csharp_namespace = "Google.Cloud.VehicleDamageEstimator.V1Alpha3";
+option go_package = "google.golang.org/genproto/googleapis/cloud/vehicledamageestimator/v1alpha3;vehicledamageestimator";
+option java_multiple_files = true;
+option java_outer_classname = "AppraiserProto";
+option java_package = "com.google.cloud.vehicledamageestimator.v1alpha3";
+option objc_class_prefix = "VDE";
+
+
+// An appraiser service for auto damage predictions.
+service AppraiserService {
+  // Predict damaged parts given one or more images uris.
+  rpc AnalyzeDamagedParts(AnalyzeDamagedPartsRequest) returns (AnalyzeDamagedPartsResponse) {
+    option (google.api.http) = {
+      post: "/v1alpha3/{parent=projects/*}/damagedParts:analyze"
+      body: "*"
+    };
+  }
+
+  // List all available VDE models.
+  rpc ListModels(ListModelsRequest) returns (ListModelsResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha3/{parent=projects/*}/models"
+    };
+  }
+}
+
+// Request for ListModels method.
+message ListModelsRequest {
+  // Required. The name of the project to list available models.
+  string parent = 1;
+}
+
+// Response for ListModels method.
+message ListModelsResponse {
+  // A list of available model.
+  repeated Model models = 1;
+}
+
+// Description for one backend model.
+message Model {
+  // The name of the model. This name can be used in
+  // AnalyzeDamagedPartsRequest.model.
+  string name = 1;
+
+  // A description of what this model is used for.
+  string description = 2;
+
+  // A list of part names that might be returned from VDE API.
+  repeated string part_dictionary = 3;
+}
+
+// Damaged parts prediction request.
+message AnalyzeDamagedPartsRequest {
+  // Required. The resource name of the project (e.g.
+  // projects/happy-armadillo-123).
+  string parent = 1;
+
+  // Claim information.
+  Claim claim = 2;
+
+  // The backend model name for making vehicle damage estimation. All images
+  // will be sent to the same backend model for predictions. This is required
+  // to be a valid one. Get possible values from ListModels method. Valid values
+  // should take the form "projects/foo/models/sedan".
+  string model = 3;
+}
+
+// Claim level information about insurance claim for damage to a single vehicle.
+message Claim {
+  // Vehicle body type.
+  enum BodyType {
+    // Unspecified body type.
+    BODY_TYPE_UNSPECIFIED = 0;
+
+    // Sedan.
+    SEDAN = 1;
+
+    // Truck.
+    TRUCK = 2;
+
+    // Minivan
+    MINIVAN = 3;
+
+    // Coupe.
+    COUPE = 4;
+
+    // SUV.
+    SUV = 5;
+
+    // Hatchback.
+    HATCHBACK = 6;
+  }
+
+  // A list of image URIs located at Google Cloud Storage with format
+  // "gs://bucket_name/object_name". All images should be from the same car
+  // accident. They are captured from different view angles. Image must be in
+  // JPG file format with 3 RGB color channels.
+  repeated string gcs_image_uris = 1;
+
+  // A unique id for this claim.
+  string claim_id = 2;
+
+  // The body type of the vehicle in this claim.
+  BodyType body_type = 3;
+}
+
+// Damaged parts prediction response.
+message AnalyzeDamagedPartsResponse {
+  // A collection of image level predictions.
+  repeated ImagePrediction image_predictions = 1;
+
+  // A summary of prediction results for the claim.
+  ClaimSummary claim_summary = 2;
+}
+
+// An image level prediction result.
+message ImagePrediction {
+  // The image URI for generating the prediction.
+  string image_uri = 1;
+
+  // A collection of region level predictions for all regions in the image. Each
+  // region prediction here is based on the given image.
+  repeated RegionPrediction region_predictions = 2;
+}
+
+// A claim level summary of damage predictions.
+message ClaimSummary {
+  // A collection of fusion prediction results for all the regions appeared in
+  // the claim.
+  repeated RegionPredictionSummary region_prediction_summaries = 1;
+}
+
+// A summary of region level prediction results.
+message RegionPredictionSummary {
+  // A fusion prediction result for a specific region based on a list of
+  // relevant images. The region prediction here is a summary of
+  // many single-image region level predictions.
+  RegionPrediction region_prediction = 1;
+
+  // A collection of relevant image URIs which include the specific region and
+  // are used to derive the summarized region level prediction.
+  repeated string image_uris = 2;
+}
+
+// Prediction results for a region.
+message RegionPrediction {
+  // Required. The name of the region. e.g. front bumper, hood, etc.
+  string region_name = 1;
+
+  // Confidence score for the region being damaged (between 0.0 and 1.0).
+  float confidence = 2;
+
+  // A collection of bounding polygons with confidence scores to locate damages
+  // on the region.
+  repeated LocationPrediction damage_locations = 3;
+
+  // The bounding polygon with confidence score to locate the region on the
+  // image.
+  LocationPrediction region_location = 4;
+
+  // A collection of damage type prediction results on the region.
+  repeated SinglePrediction damage_types = 5;
+
+  // A collection of damaged subpart prediction results on the region.
+  repeated SinglePrediction damaged_subparts = 6;
+
+  // Damage ratio of the region. Range is (0, 1].
+  float damage_ratio = 7;
+}
+
+// A prediction result including predicted label name and confidence score of
+// the prediction.
+message SinglePrediction {
+  // Name of the label. E.g. region name, damage type name, subpart name, etc.
+  string label_name = 1;
+
+  // Confidence score of the prediction.
+  float confidence = 2;
+}
+
+// A prediction result including bounding polygon to locate the object and
+// confidence score of the prediction.
+message LocationPrediction {
+  // Bounding polygon.
+  BoundingPoly polygon = 1;
+
+  // Confidence score for the bounding polygon prediction.
+  float confidence = 2;
+}
+
+// A vertex represents a 2D point in the image. The origin is located at the
+// top-left of image. X-axis goes from left to right, while y-axis goes from top
+// to bottom. The vertex coordinates are in the same scale as the original
+// image in pixels.
+message Vertex {
+  // X coordinate.
+  int32 x = 1;
+
+  // Y coordinate.
+  int32 y = 2;
+}
+
+// A bounding polygon for the detected image annotation.
+message BoundingPoly {
+  // The bounding polygon vertices.
+  repeated Vertex vertices = 1;
+}

@@ -1,0 +1,650 @@
+// Copyright 2019 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.cloud.compliancebaseline.v1alpha;
+
+import "google/api/annotations.proto";
+import "google/api/client.proto";
+import "google/protobuf/timestamp.proto";
+import "google/type/date.proto";
+
+option go_package = "google.golang.org/genproto/googleapis/cloud/compliancebaseline/v1alpha;compliancebaseline";
+option java_package = "com.google.cloud.compliancebaseline.v1alpha";
+option java_multiple_files = true;
+
+// Compliance Baseline service provides standards certifications data for
+// Google Cloud products and guidelines for best practice usage of those
+// products in accordance with standard security controls (objectives).
+service ComplianceBaseline {
+  option (google.api.default_host) = "compliancebaseline.googleapis.com";
+  option (google.api.oauth_scopes) =
+      "https://www.googleapis.com/auth/cloud-platform";
+
+  // Lists the Google Cloud products that may be certified against standards.
+  rpc ListProducts(ListProductsRequest) returns (ListProductsResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha/products"
+    };
+  }
+
+  // Gets the given Google Cloud product.
+  rpc GetProduct(GetProductRequest) returns (Product) {
+    option (google.api.http) = {
+      get: "/v1alpha/{name=products/*}"
+    };
+  }
+
+  // Lists the standards that may be certified against various Google Cloud
+  // products.
+  rpc ListStandards(ListStandardsRequest) returns (ListStandardsResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha/standards"
+    };
+  }
+
+  // Gets the given standard.
+  rpc GetStandard(GetStandardRequest) returns (Standard) {
+    option (google.api.http) = {
+      get: "/v1alpha/{name=standards/*}"
+    };
+  }
+
+  // Lists products certified for a standard along with certificate information
+  // for those products.
+  rpc ListCertifiedProducts(ListCertifiedProductsRequest)
+      returns (ListCertifiedProductsResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha/{parent=standards/*}/certifiedProducts"
+    };
+  }
+
+  // Gets the given certified product
+  rpc GetCertifiedProduct(GetCertifiedProductRequest)
+      returns (CertifiedProduct) {
+    option (google.api.http) = {
+      get: "/v1alpha/{name=standards/*/certifiedProducts/*}"
+    };
+  }
+
+  // Lists the certificates for the standard in reverse chronoligical order by
+  // `expire_date`, `issue_date`
+  rpc ListCertificates(ListCertificatesRequest)
+      returns (ListCertificatesResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha/{parent=standards/*}/certificates"
+    };
+  }
+
+  // Gets the given certificate.
+  rpc GetCertificate(GetCertificateRequest) returns (Certificate) {
+    option (google.api.http) = {
+      get: "/v1alpha/{name=standards/*/certificates/*}"
+    };
+  }
+
+  // Lists the objective groups for a specific standard.
+  rpc ListObjectiveGroups(ListObjectiveGroupsRequest)
+      returns (ListObjectiveGroupsResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha/{parent=standards/*}/objectiveGroups"
+    };
+  }
+
+  // Gets the given objective group.
+  rpc GetObjectiveGroup(GetObjectiveGroupRequest) returns (ObjectiveGroup) {
+    option (google.api.http) = {
+      get: "/v1alpha/{name=standards/*/objectiveGroups/*}"
+    };
+  }
+
+  // Lists the objective for a specific standard objective group.
+  rpc ListObjectives(ListObjectivesRequest) returns (ListObjectivesResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha/{parent=standards/*/objectiveGroups/*}/objectives"
+    };
+  }
+
+  // Gets the given objective.
+  rpc GetObjective(GetObjectiveRequest) returns (Objective) {
+    option (google.api.http) = {
+      get: "/v1alpha/{name=standards/*/objectiveGroups/*/objectives/*}"
+    };
+  }
+
+  // Lists the security controls for a specific standard objective.
+  rpc ListControls(ListControlsRequest) returns (ListControlsResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha/{parent=standards/*/objectiveGroups/*/objectives/*}/controls"
+    };
+  }
+
+  // Gets the given security control.
+  rpc GetControl(GetControlRequest) returns (Control) {
+    option (google.api.http) = {
+      get: "/v1alpha/{name=standards/*/objectiveGroups/*/objectives/*/controls/*}"
+    };
+  }
+}
+
+// Compliance Baseline representation of a Google Cloud product.
+message Product {
+  // The resource name of the Google Cloud product.
+  // Example: `products/PRODUCT_ID`
+  string name = 1;
+
+  // The official name of the Google Cloud product.
+  string title = 2;
+}
+
+// Compliance Baseline representation of a standard.
+message Standard {
+  // The resource name of the standard.
+  // Example: `standards/STANDARD_ID`
+  string name = 1;
+
+  // The official name of the standard.
+  string title = 2;
+
+  // The version of the standard.
+  string version = 3;
+
+  // The resource name of the next newest standard version that replaces this
+  // older version.
+  // For example if we had a standard which represented PCI v1 and one that
+  // represented PCI v2, then this field in v1 would reference the v2 standard.
+  string replacement_standard = 4;
+}
+
+// Notes describing any potential caveats or limitations modifying the scope of
+// a certificate.
+message Note {
+  // Optional
+  // The resource name of the Google Cloud product that this note applies to.
+  // If not set, this note applies to the entire certificate and not a specific
+  // GCP product.
+  string product = 1;
+
+  // The description of the certificate limitation.
+  string text = 2;
+}
+
+// A product and its certifications with notes limiting the approved use of the
+// product
+message CertifiedProduct {
+  // The resource name of the certified product.
+  // Example: `standards/STANDARD_ID/certifiedProducts/PRODUCT_ID`
+  string name = 1;
+
+  // The resource name of the Google Cloud product that has been certified.
+  string product = 2;
+
+  // Note on the usage of the product certified (and any general, not product
+  // specific, GCP platform notes associated with the certification).
+  repeated Note notes = 3;
+
+  // The certificates where this product has been certified to meet this
+  // standard.
+  //
+  // Does not include full certificate product listing (use GetCertificate API
+  // for full resource data).
+  repeated Certificate certificates = 4;
+}
+
+// Represents a certificate that certifies a set of Google Cloud products
+// against a specific standard.
+message Certificate {
+  // The resource name of the certificate.
+  // Example: `standards/STANDARD_ID/certificates/CERTIFICATE_ID`
+  string name = 1;
+
+  // The date that the certificate was issued (effective start date).
+  google.type.Date issue_date = 2;
+
+  // The date that the certificate will expire (effective end date).
+  google.type.Date expire_date = 3;
+
+  // URI that can be used to fetch the actual/unstructured certificate.
+  string certificate_uri = 4;
+
+  // The resource names of the Google Cloud products certified to meet the
+  // standard.
+  //
+  // Will not be populated in ListCertifiedProducts response.
+  repeated string products = 5;
+
+  // Notes describing the specific usage constraints limiting the certified
+  // usage generally and by product.
+  //
+  // Will not be populated in ListCertifiedProducts response.
+  repeated Note notes = 6;
+}
+
+// The group to which a set of control objectives belong.
+// Objective group data (title, description) is copied directly from each
+// standard specification.
+message ObjectiveGroup {
+  // Resource name of the objective group.
+  // Example:
+  // `standards/STANDARD_ID/objectiveGroups/OBJECTIVE_GROUP_ID`
+  string name = 1;
+
+  // The name of the objective group.
+  string title = 2;
+
+  // The description of the objective group.
+  string description = 3;
+}
+
+// The objective achieved by applying a set of security controls.
+// Objective data (title, description) is copied directly from each standard
+// specification.
+message Objective {
+  // Resource name of the objective.
+  // Example:
+  // `standards/STANDARD_ID/objectiveGroups/OBJECTIVE_GROUP_ID/obectives/OBJECTIVE_ID`
+  string name = 1;
+
+  // The name of the objective.
+  string title = 2;
+
+  // The description of the objective.
+  string description = 3;
+}
+
+// Represents one security control from the parent standard.
+message Control {
+  // Resource name of the security control.
+  // Example:
+  // `standards/STANDARD_ID/objectiveGroups/OBJECTIVE_GROUP_ID/obectives/OBJECTIVE_ID/controls/CONTROL_ID`
+  string name = 1;
+
+  // The timestamp when this control and any of its guidelines were last
+  // modified.
+  google.protobuf.Timestamp update_time = 2;
+
+  // The title of the control as documented in the standard.
+  // Control titles are copied directly from each standard specification.
+  string title = 3;
+
+  // The description of the control as documented in the standard.
+  // Control descriptions are copied directly from each standard specification.
+  string description = 4;
+
+  // Google and customer responsibilities that apply to this security control
+  // across the Google Cloud Platform (all GCP products).
+  SharedResponsibilities shared_responsibilities = 5;
+
+  // Customer responsibilities and guidelines specific to keyed GCP Product.
+  //
+  // Note: The Compliance Baseline API provides guidelines to customers to
+  // configure GCP products and services in accordance with certain compliance
+  // standards. Following these guidelines does not imply compliance with a
+  // given standard. You should undertake your own assessment tailored to your
+  // situation and specific use of the GCP products and services.
+  repeated ProductGuidelines product_guidelines = 6;
+
+  // Notes describing any potential caveats or limitations modifying the scope
+  // of the product guidelines.
+  repeated Note notes = 7;
+}
+
+// Definition of a security control's Google and customer shared
+// responsibilities that are general to the GCP platform.
+message SharedResponsibilities {
+  // Whether the customer is responsible for some set of steps to achieve
+  // the control's objective. If false, either Google has fulfilled the full
+  // responsibilities of the control objective relating to this GCP product or
+  // the control objective does not apply to this GCP product.
+  bool is_customer_responsible = 1;
+
+  // Description of the steps Google has taken to fully or partially achieve
+  // the control objective on behalf of the customer.
+  string google_responsibility = 2;
+
+  // The requirements that the customer must fulfill in order to achieve the
+  // control's requirements.
+  string customer_responsibility = 3;
+}
+
+// Definition of a security control's customer responsibilities and guidelines
+// for a specific GCP product.
+message ProductGuidelines {
+  // The resource name of the GCP product for which the customer
+  // responsibilities and guidelines apply.
+  string product = 1;
+
+  // Customer responsibilities and guidelines pertaining to the specified
+  // product.
+  repeated CustomerGuideline customer_guidelines = 2;
+}
+
+// A description of the customer responsibilities and guidelines for a
+// security control for a specific product.
+message CustomerGuideline {
+  // Identifier for tracking guideline updates
+  // Will be unique across a standard -> control -> product.
+  string id = 1;
+
+  // The timestamp when this guideline was last modified.
+  google.protobuf.Timestamp update_time = 2;
+
+  // A high level description of the product specific responsibilities required
+  // of the customer to follow control for proper use of the given product.
+  string customer_responsibilities = 3;
+
+  // Detailed guidance for a possible way to properly configure product usage
+  // towards the control.
+  string guideline_description = 4;
+
+  // Step by step instructions for how to validate and/or remediate the product
+  // configurations outlined in the description.
+  repeated GuidelineStep guideline_steps = 5;
+}
+
+// A specific action that the customer must achieve in order to (partially) meet
+// their responsibilities towards achieving the control's requirements.
+message GuidelineStep {
+  // Text description of a specific step/action that the customer must achieve
+  // in order to (partially) meet their responsibilities towards achieving the
+  // control's requirements.
+  string instructions = 1;
+}
+
+// Request for listing Google Cloud products.
+message ListProductsRequest {
+  // Requested page size.
+  //
+  // The maximum page size is 500. If unspecified, the page size will
+  // be the maximum.
+  int32 page_size = 1;
+
+  // A token identifying a page of results the server will return. To
+  // request the first page results, page_token must be empty. To
+  // request the next page of results, page_token must be the value of
+  // next_page_token from the previous response.
+  string page_token = 2;
+}
+
+// Response from listing Google Cloud products.
+message ListProductsResponse {
+  // The list of Google Cloud products.
+  repeated Product products = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no more
+  // results.
+  string next_page_token = 2;
+}
+
+// Request for getting a Google Cloud product.
+message GetProductRequest {
+  // Relative resource name of the Google Cloud product.
+  // Example: `products/PRODUCT_ID`
+  string name = 1;
+}
+
+// Request for listing standards.
+message ListStandardsRequest {
+  // Requested page size.
+  //
+  // The maximum page size is 500. If unspecified, the page size will
+  // be the maximum.
+  int32 page_size = 1;
+
+  // A token identifying a page of results the server will return. To
+  // request the first page results, page_token must be empty. To
+  // request the next page of results, page_token must be the value of
+  // next_page_token from the previous response.
+  string page_token = 2;
+}
+
+// Response from listing standards.
+message ListStandardsResponse {
+  // The list of standards.
+  repeated Standard standards = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no more
+  // results.
+  string next_page_token = 2;
+}
+
+// Request for getting a standard.
+message GetStandardRequest {
+  // Relative resource name of the standard.
+  // Example: `standards/STANDARD_ID`
+  string name = 1;
+}
+
+// Request for listing individual product certifications.
+message ListCertifiedProductsRequest {
+  // The resource name of the parent standard.
+  // Example: `standards/STANDARD_ID`
+  string parent = 1;
+
+  // Limits certified products returned to those with certificates
+  // that are valid on the given date; only certified products which have
+  // certificate valid on valid_date are returned, i.e. it meets the following
+  // condition:
+  //   `certificate.issue_date <= valid_date <= certificate.expire_date`
+  //
+  // If not provided will default to today.
+  google.type.Date valid_date = 2;
+
+  // Expression that defines the filter to apply across certified products.
+  //
+  // Only the product.name field is filterable and is only
+  // filterable via the equality operator ('=').
+  //
+  // Example valid query string:
+  //   product.name = "products/p1" OR
+  //   product.name = "products/p2"
+  string filter = 3;
+
+  // Requested page size.
+  //
+  // The maximum page size is 500. If unspecified, the page size will
+  // be the maximum.
+  int32 page_size = 4;
+
+  // A token identifying a page of results the server will return. To
+  // request the first page results, page_token must be empty. To
+  // request the next page of results, page_token must be the value of
+  // next_page_token from the previous response.
+  string page_token = 5;
+}
+
+// Response from listing certified products
+message ListCertifiedProductsResponse {
+  // List of certified products with associated certificates.
+  repeated CertifiedProduct certified_products = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no more
+  // results.
+  string next_page_token = 2;
+}
+
+// Request for getting a certified product.
+message GetCertifiedProductRequest {
+  // Relative resource name of the certified product.
+  // Example: `standards/STANDARD_ID/certifiedProducts/PRODUCT_ID`
+  string name = 1;
+}
+
+// Request for listing certificates for a standard.
+message ListCertificatesRequest {
+  // The resource name of the parent standard.
+  // Example: `standards/STANDARD_ID`
+  string parent = 1;
+
+  // Returns certificates for which are active on the specified date, according
+  // to the following condition:
+  //   `certificate.issue_date <= valid_date <= certificate.expire_date`
+  //
+  // If not provided will return all certificates. It's expected to only have
+  // zero or one certificates active on a date but in situations where
+  // the certificate has been updated (for example if a new product needed to
+  // be certified) then can be more than one.
+  google.type.Date valid_date = 2;
+
+  // Requested page size.
+  //
+  // The maximum page size is 500. If unspecified, the page size will
+  // be the maximum.
+  int32 page_size = 3;
+
+  // A token identifying a page of results the server will return. To
+  // request the first page results, page_token must be empty. To
+  // request the next page of results, page_token must be the value of
+  // next_page_token from the previous response.
+  string page_token = 4;
+}
+
+// Response from listing certificates.
+message ListCertificatesResponse {
+  // List of certificates
+  repeated Certificate certificates = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no more
+  // results.
+  string next_page_token = 2;
+}
+
+// Request for getting a certificate.
+message GetCertificateRequest {
+  // Relative resource name of the certificate.
+  // Example: `standards/STANDARD_ID/certificates/CERTIFICATE_ID`
+  string name = 1;
+}
+
+// Request for listing standard objectivegroups.
+message ListObjectiveGroupsRequest {
+  // The resource name of the parent standard.
+  // Example: `standards/STANDARD_ID`
+  string parent = 1;
+
+  // Requested page size.
+  //
+  // The maximum page size is 500. If unspecified, the page size will
+  // be the maximum.
+  int32 page_size = 2;
+
+  // A token identifying a page of results the server will return. To
+  // request the first page results, page_token must be empty. To
+  // request the next page of results, page_token must be the value of
+  // next_page_token from the previous response.
+  string page_token = 3;
+}
+
+// Response from listing a standard's controls.
+message ListObjectiveGroupsResponse {
+  // The list of objective groups.
+  repeated ObjectiveGroup objective_groups = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no more
+  // results.
+  string next_page_token = 2;
+}
+
+// Request for getting a standard objective group.
+message GetObjectiveGroupRequest {
+  // Resource name of the objective group.
+  // Example: `standards/STANDARD_ID/objectiveGroups/OBJECTIVE_GROUP_ID`
+  string name = 1;
+}
+
+// Request for listing standard objectives.
+message ListObjectivesRequest {
+  // The resource name of the parent standard objective group.
+  // Example: `standards/STANDARD_ID/objectiveGroups/OBJECTIVE_GROUP_ID`
+  string parent = 1;
+
+  // Requested page size.
+  //
+  // The maximum page size is 500. If unspecified, the page size will
+  // be the maximum.
+  int32 page_size = 2;
+
+  // A token identifying a page of results the server will return. To
+  // request the first page results, page_token must be empty. To
+  // request the next page of results, page_token must be the value of
+  // next_page_token from the previous response.
+  string page_token = 3;
+}
+
+// Response from listing a standard's controls.
+message ListObjectivesResponse {
+  // The list of objectives.
+  repeated Objective objectives = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no more
+  // results.
+  string next_page_token = 2;
+}
+
+// Request for getting a standard objective.
+message GetObjectiveRequest {
+  // Resource name of the objective.
+  // Example:
+  // `standards/STANDARD_ID/objectiveGroups/OBJECTIVE_GROUP_ID/objectives/OBJECTIVE_ID`
+  string name = 1;
+}
+
+// Request for listing controls.
+message ListControlsRequest {
+  // The resource name of the parent standard.
+  // Example: `standards/STANDARD_ID`
+  string parent = 1;
+
+  // Expression that defines the filter to apply across product guidelines in
+  // the control.
+  //
+  // Only the control.guideline.product.name field is filterable and is only
+  // filterable via the equality operator ('=').
+  //
+  // Example valid query string:
+  //   control.guideline.product.name = "products/p1" OR
+  //   control.guideline.product.name = "products/p2"
+  string filter = 2;
+
+  // Requested page size.
+  //
+  // The maximum page size is 500. If unspecified, the page size will
+  // be the maximum.
+  int32 page_size = 3;
+
+  // A token identifying a page of results the server will return. To
+  // request the first page results, page_token must be empty. To
+  // request the next page of results, page_token must be the value of
+  // next_page_token from the previous response.
+  string page_token = 4;
+}
+
+// Response from listing a standard's controls.
+message ListControlsResponse {
+  // The list of controls.
+  repeated Control controls = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no more
+  // results.
+  string next_page_token = 2;
+}
+
+// Request for getting a security control.
+message GetControlRequest {
+  // Resource name of the control.
+  // Example: `standards/STANDARD_ID/controls/CONTROL_ID`
+  string name = 1;
+}

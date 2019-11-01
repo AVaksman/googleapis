@@ -1,0 +1,20 @@
+type: google.api.Service
+config_version: 3
+name: vehicledamageestimator.googleapis.com
+title: Vehicle Damage Estimator
+
+apis:
+- name: google.cloud.vehicledamageestimator.v1alpha3.AppraiserService
+
+documentation:
+  summary: |-
+    An API to detect vehicle damage areas and repair parts from a set of
+    collision images.
+
+authentication:
+  rules:
+  - selector: '*'
+    oauth:
+      canonical_scopes: |-
+        https://www.googleapis.com/auth/cloud-platform,
+        https://www.googleapis.com/auth/xapi.zoo

@@ -11,6 +11,8 @@ apis:
 types:
   - name: google.spanner.admin.database.v1.CreateDatabaseMetadata
   - name: google.spanner.admin.database.v1.UpdateDatabaseDdlMetadata
+  - name: google.spanner.admin.database.v1.CreateBackupMetadata
+  - name: google.spanner.admin.database.v1.RestoreDatabaseMetadata
 
 authentication:
   rules:

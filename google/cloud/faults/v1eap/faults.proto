@@ -1,0 +1,182 @@
+// Copyright 2019 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.cloud.faults.v1eap;
+
+import "google/api/annotations.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Google.Cloud.Faults.V1eap";
+option go_package = "google.golang.org/genproto/googleapis/cloud/faults/v1eap;faults";
+option java_multiple_files = true;
+option java_outer_classname = "FaultsProto";
+option java_package = "com.google.cloud.faults.v1eap";
+option objc_class_prefix = "GCFLT";
+option php_namespace = "Google\\Cloud\\Faults\\V1eap";
+
+
+// Google Fault Injection Service v1eap.
+//
+// This service allows users to send and manage Fault Injection Tasks.
+// * The service works with a collection of cloud projects, named: `/projects/*`
+// * Each project has a collection of available tasks, named: `/tasks/*`
+// * As such, Tasks instances are resources of the form:
+//   `/projects/{project_id}/tasks/{task_id}`
+service FaultInjectionService {
+  // Lists Tasks.
+  rpc ListTasks(ListTasksRequest) returns (ListTasksResponse) {
+    option (google.api.http) = {
+      get: "/v1eap/{parent=projects/*}/tasks"
+    };
+  }
+
+  // Creates and starts a Task, returning the new Task
+  rpc CreateTask(CreateTaskRequest) returns (Task) {
+    option (google.api.http) = {
+      post: "/v1eap/{parent=projects/*}/tasks"
+      body: "task"
+    };
+  }
+
+  // Gets a Task with task name. Returns empty if the Task does not exist.
+  rpc GetTask(GetTaskRequest) returns (Task) {
+    option (google.api.http) = {
+      get: "/v1eap/{name=projects/*/tasks/*}"
+    };
+  }
+
+  // Cancels a Task.
+  rpc CancelTask(CancelTaskRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1eap/{name=projects/*/tasks/*}:cancel"
+      body: "*"
+    };
+  }
+}
+
+// A Fault Injection Service Task.
+message Task {
+  // Describes the task state.
+  enum State {
+    // The task state is unspecified.
+    STATE_UNSPECIFIED = 0;
+
+    // The task has just been created and is being verified.
+    CREATING = 1;
+
+    // The service is ready to run the task.
+    READY = 2;
+
+    // The task is in progress.
+    RUNNING = 3;
+
+    // The task completed successfully.
+    SUCCEEDED = 4;
+
+    // The task failed.
+    FAILED = 5;
+
+    // The task is being aborted/cancelled.
+    CANCELLING = 6;
+
+    // The task has been aborted/cancelled.
+    CANCELLED = 7;
+  }
+
+  // A single Task. The name is ignored when creating a Task. The system
+  // creates and returns a unique name for the task.
+  string name = 1;
+
+  // Live runs actually execute the task. If false, simulate and report.
+  bool live_run = 2;
+
+  // Output only. The detailed state of a task.
+  State state = 3;
+
+  // The Task spec.
+  string task_type = 5;
+
+  // Use google.protobuf.Struct for parameters for JSON interoperability.
+  google.protobuf.Struct parameters = 6;
+
+  // Start time of the task.
+  google.protobuf.Timestamp start_time = 8;
+
+  // Last update time of the state.
+  google.protobuf.Timestamp update_time = 9;
+
+  // Human readable messages describing details about the executing task.
+  // If failed, detailed error messages will be logged here.
+  google.protobuf.Struct messages = 11;
+}
+
+// Request message for FaultInjectionService.CreateTask.
+message CreateTaskRequest {
+  // Required. The project of this agent.
+  // Format: `projects/{project_id}`.
+  string parent = 1;
+
+  // The full specification of the Task to run.
+  Task task = 2;
+}
+
+// Request message for FaultInjectionService.GetTask.
+message GetTaskRequest {
+  // The name of the Task to retrieve, including the project, e.g.,
+  // "projects/*/tasks/*".
+  string name = 1;
+}
+
+// Request message for FaultInjectionService.CancelTask.
+message CancelTaskRequest {
+  // The name of the Task to cancel, including the project, e.g.,
+  // "projects/*/tasks/*".
+  string name = 1;
+}
+
+// Request message for FaultInjectionService.ListTasks.
+message ListTasksRequest {
+  // Required. The project of this agent.
+  // Format: `projects/{project_id}`.
+  string parent = 1;
+
+  // Requested page size. Server may return fewer Task than requested.
+  // If unspecified, server will pick an appropriate default.
+  int32 page_size = 2;
+
+  // A token identifying a page of results the server should return.
+  // Typically, this is the value of
+  // [ListTasksResponse.next_page_token][google.faults.v1eap.ListTasksResponse.next_page_token]
+  // returned from the previous call to `ListTasks` method.
+  string page_token = 3;
+}
+
+// Response message for FaultInjectionService.ListTasks.
+message ListTasksResponse {
+  // The list of Tasks.
+  repeated Task tasks = 1;
+
+  // A token to retrieve next page of results.
+  // Pass this value in the
+  // [ListTasksRequest.page_token][google.faults.v1eap.ListTasksRequest.page_token]
+  // field in the subsequent call to `ListTasks` method to retrieve the next
+  // page of results.
+  string next_page_token = 2;
+}

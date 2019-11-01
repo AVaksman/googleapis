@@ -1,0 +1,55 @@
+type: google.api.Service
+config_version: 3
+name: cloudfunctions.googleapis.com
+title: Cloud Functions API
+
+apis:
+- name: google.cloud.functions.v1beta2.CloudFunctionsService
+
+types:
+- name: google.cloud.functions.v1beta2.OperationMetadataV1Beta2
+
+documentation:
+  summary: 'Manages lightweight user-provided functions executed in response to events.'
+  overview: 'Manages lightweight user-provided functions executed in response to events.'
+
+backend:
+  rules:
+  - selector: google.longrunning.Operations.ListOperations
+    deadline: 30.0
+  - selector: google.longrunning.Operations.GetOperation
+    deadline: 30.0
+  - selector: google.longrunning.Operations.WaitOperation
+    deadline: 30.0
+  - selector: google.cloud.functions.v1beta2.CloudFunctionsService.ListFunctions
+    deadline: 30.0
+  - selector: google.cloud.functions.v1beta2.CloudFunctionsService.GetFunction
+    deadline: 30.0
+  - selector: google.cloud.functions.v1beta2.CloudFunctionsService.CreateFunction
+    deadline: 30.0
+  - selector: google.cloud.functions.v1beta2.CloudFunctionsService.UpdateFunction
+    deadline: 30.0
+  - selector: google.cloud.functions.v1beta2.CloudFunctionsService.DeleteFunction
+    deadline: 30.0
+  - selector: google.cloud.functions.v1beta2.CloudFunctionsService.CallFunction
+    deadline: 600.0
+  - selector: google.cloud.functions.v1beta2.CloudFunctionsService.GenerateUploadUrl
+    deadline: 120.0
+  - selector: google.cloud.functions.v1beta2.CloudFunctionsService.GenerateDownloadUrl
+    deadline: 30.0
+
+http:
+  rules:
+  - selector: google.longrunning.Operations.ListOperations
+    get: /v1beta2/operations
+
+  - selector: google.longrunning.Operations.GetOperation
+    get: '/v1beta2/{name=operations/*}'
+
+
+authentication:
+  rules:
+  - selector: '*'
+    oauth:
+      canonical_scopes: |-
+        https://www.googleapis.com/auth/cloud-platform

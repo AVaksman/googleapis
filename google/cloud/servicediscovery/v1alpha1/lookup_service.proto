@@ -1,0 +1,66 @@
+// Copyright 2018 Google LLC.  Google Confidential and Proprietary.
+//
+// Non-exclusively licensed under the terms of Google's Trusted Tester Agreement
+// and other applicable Google Cloud Platform agreements with you.
+// Google retains title, ownership and all rights to all copyrights and
+// other intellectual property.
+//
+
+syntax = "proto3";
+
+package google.cloud.servicediscovery.v1alpha1;
+
+import "google/api/annotations.proto";
+
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/cloud/servicediscovery/v1alpha1;servicediscovery";
+option java_multiple_files = true;
+option java_outer_classname = "LookupServiceProto";
+option java_package = "com.google.cloud.servicediscovery.v1alpha1";
+
+
+// Service Discovery API for looking up service data at runtime.
+service LookupService {
+  // Returns all the runtime information of a given
+  // [service][google.cloud.servicediscovery.v1alpha1.Service]. This includes
+  // all service and endpoint data.
+  rpc LookupServiceEndpoints(LookupServiceEndpointsRequest) returns (ServiceRuntimeData) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{name=projects/*/locations/*/registries/*/services/*}:discover"
+    };
+  }
+}
+
+// The request message for [LookupService.LookupServiceEndpoints][google.cloud.servicediscovery.v1alpha1.LookupService.LookupServiceEndpoints].
+// Lookups a service by its name and fetches all endpoints and related metadata.
+message LookupServiceEndpointsRequest {
+  // Required. The name of the service for which to fetch all runtime data.
+  string name = 1;
+}
+
+// The response message for [LookupService.LookupServiceEndpoints][google.cloud.servicediscovery.v1alpha1.LookupService.LookupServiceEndpoints].
+message ServiceRuntimeData {
+  // The fully qualified name of the service.
+  string service_name = 1;
+
+  // Optional service level metadata.
+  map<string, string> service_metadata = 2;
+
+  // A list of endpoint runtime data.
+  repeated EndpointRuntimeData endpoint_data = 3;
+}
+
+// The service endpoint runtime data.
+message EndpointRuntimeData {
+  // The fully quailified name of the individual endpoint.
+  string endpoint_name = 1;
+
+  // The ip of the service endpoint.
+  string ip = 2;
+
+  // The port the service is running on.
+  int32 port = 3;
+
+  // Optional endpoint metadata.
+  map<string, string> endpoint_metadata = 4;
+}

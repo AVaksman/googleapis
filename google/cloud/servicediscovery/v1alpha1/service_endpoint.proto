@@ -1,0 +1,41 @@
+// Copyright 2018 Google LLC.  Google Confidential and Proprietary.
+//
+// Non-exclusively licensed under the terms of Google's Trusted Tester Agreement
+// and other applicable Google Cloud Platform agreements with you.
+// Google retains title, ownership and all rights to all copyrights and
+// other intellectual property.
+//
+
+
+syntax = "proto3";
+
+package google.cloud.servicediscovery.v1alpha1;
+
+import "google/api/annotations.proto";
+
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/cloud/servicediscovery/v1alpha1;servicediscovery";
+option java_multiple_files = true;
+option java_outer_classname = "ServiceEndpointProto";
+option java_package = "com.google.cloud.servicediscovery.v1alpha1";
+
+
+// An individual endpoint that provides a
+// [service][google.cloud.servicediscovery.v1alpha1.Service]. The service must
+// already exist to create an endpoint.
+message ServiceEndpoint {
+  // Output only.
+  // The resource name for the service endpoint in the format
+  // 'projects/*/locations/*/registries/*/services/*/endpoints/*'.
+  string name = 1;
+
+  // Required. The IP address of the service endpoint.
+  string ip = 2;
+
+  // Optional. The port of the service endpoint.
+  int32 port = 3;
+
+  // Optional metadata for the endpoint. This data can be consumed by service
+  // clients.
+  map<string, string> metadata = 4;
+}

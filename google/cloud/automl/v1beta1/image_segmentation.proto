@@ -1,0 +1,106 @@
+// Copyright 2019 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.cloud.automl.v1beta1;
+
+import "google/cloud/automl/v1beta1/data_items.proto";
+import "google/api/annotations.proto";
+
+option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1beta1;automl";
+option java_multiple_files = true;
+option java_package = "com.google.cloud.automl.v1beta1";
+option php_namespace = "Google\\Cloud\\AutoMl\\V1beta1";
+option ruby_package = "Google::Cloud::AutoML::V1beta1";
+
+// Annotation details for image segmentation.
+message ImageSegmentationAnnotation {
+  // Output only. One channel image which is encoded as an 8bit lossless PNG. The size of the
+  // image will be the same as the original image. For a specific pixel, darker
+  // color means less confidence in correctness of the cateogry in the
+  // category_meask for the corresponding pixel. Black means no confidence and
+  // white means full confidence.
+  Image confidence_mask = 1;
+
+  // Required. One channel image which is encoded as an 8bit lossless PNG. Each pixel in
+  // the image mask represents the category which the pixel in the original
+  // image was predicted to belong to. For prediction result, the category must
+  // corresponds to one of
+  //
+  // [thin_annotation_specs'][google.cloud.automl.v1beta1.ImageSegmentationModelMetadata.thin_annotation_specs]
+  // [category][google.cloud.automl.v1beta1.ThinAnnotationSpec.category] in
+  //
+  // [image_segmentation_model_metadata][google.cloud.automl.v1beta1.Model.image_segmentation_model_metadata].
+  // The model will choose the most likely category and if none of the
+  // categories reach the confidence threshold, the pixel will be marked as
+  // background.
+  Image category_mask = 2;
+}
+
+// Model evaluation metrics for image segmentation.
+// Evaluates prediction quality of predicted category masks.
+message ImageSegmentationEvaluationMetrics {
+  // Metrics for a single confidence threshold.
+  message ConfidenceMetricsEntry {
+    // Output only. Metrics are computed with an assumption that the model never returns
+    // predictions with score lower than this value.
+    float confidence_threshold = 1;
+
+    // Output only. Recall (True Positive Rate) for the given confidence threshold.
+    float recall = 2;
+
+    // Output only. Precision for the given confidence threshold.
+    float precision = 3;
+
+    // Output only. DSC or the F1 score: The harmonic mean of recall and precision.
+    float dice_score_coefficient = 4;
+
+    // Output only. IOU score.
+    // The intersection-over-union score, value in [0, 1] or -1.
+    // The measure of overlap of the annotation's category mask with ground
+    // truth category mask on the example.
+    float iou_score = 5;
+  }
+
+  // Confusion matrix of the model running the image segmentation.
+  message ConfusionMatrix {
+    // A row in the confusion matrix.
+    message Row {
+      // Output only. Value of the specific cell in the confusion matrix. The number of
+      // values each row has (i.e. the length of the row) is equal to the length
+      // of the `annotation_spec_id` field.
+      repeated int64 pixel_count = 1;
+    }
+
+    // Output only. IDs of the annotation specs used in the confusion matrix.
+    repeated string annotation_spec_id = 1;
+
+    // Output only. Rows in the confusion matrix. The number of rows is equal to the size of
+    // `annotation_spec_id`. `row[i].value[j]` is the number of pixels that
+    // have ground truth of the `annotation_spec_id[i]` and are predicted as
+    // `annotation_spec_id[j]` by the model being evaluated.
+    repeated Row row = 2;
+  }
+
+  // Output only. Metrics for each confidence_threshold in
+  // 0.00,0.05,0.10,...,0.95,0.96,0.97,0.98,0.99 Precision-recall curve can be
+  // derived from it.
+  repeated ConfidenceMetricsEntry confidence_metrics_entries = 1;
+
+  // Confusion matrix of the evaluation.
+  // Only set for model level evaluation, not for evaluation per label.
+  ConfusionMatrix confusion_matrix = 2;
+}

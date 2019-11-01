@@ -1,0 +1,244 @@
+// Copyright 2019 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.cloud.industrialadaptivecontrols.v1alpha1;
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/cloud/industrialadaptivecontrols/v1alpha1/controllable_unit.proto";
+import "google/cloud/industrialadaptivecontrols/v1alpha1/facility.proto";
+import "google/cloud/industrialadaptivecontrols/v1alpha1/io.proto";
+import "google/cloud/industrialadaptivecontrols/v1alpha1/serialized_entities.proto";
+import "google/longrunning/operations.proto";
+import "google/protobuf/field_mask.proto";
+import "google/api/client.proto";
+
+option go_package = "google.golang.org/genproto/googleapis/cloud/industrialadaptivecontrols/v1alpha1;industrialadaptivecontrols";
+option java_multiple_files = true;
+option java_package = "com.google.cloud.industrialadaptivecontrols.v1alpha1";
+
+// Service for manipulating facility resources and their child resources.
+service FacilityService {
+  option (google.api.default_host) = "industrialadaptivecontrols.googleapis.com";
+  option (google.api.oauth_scopes) = "https://www.googleapis.com/auth/cloud-platform";
+
+  // Creates a facility.
+  rpc CreateFacility(CreateFacilityRequest) returns (Facility) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{parent=projects/*/locations/*}/facilities"
+      body: "facility"
+    };
+  }
+
+  // Gets a facility.
+  rpc GetFacility(GetFacilityRequest) returns (Facility) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{name=projects/*/locations/*/facilities/*}"
+    };
+  }
+
+  // Lists facilities in a project.
+  rpc ListFacilities(ListFacilitiesRequest) returns (ListFacilitiesResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{parent=projects/*/locations/*}/facilities"
+    };
+  }
+
+  // Deletes a facility and all of its contents.
+  rpc DeleteFacility(DeleteFacilityRequest) returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      delete: "/v1alpha1/{name=projects/*/locations/*/facilities/*}"
+    };
+    option (google.longrunning.operation_info) = {
+      response_type: "google.protobuf.Empty"
+      metadata_type: "google.cloud.industrialadaptivecontrols.v1alpha1.OperationMetadata"
+    };
+  }
+
+  // Imports facility data.
+  rpc ImportFacilityData(ImportFacilityDataRequest) returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{name=projects/*/locations/*/facilities/*}:importData"
+      body: "*"
+    };
+    option (google.longrunning.operation_info) = {
+      response_type: "google.protobuf.Empty"
+      metadata_type: "google.cloud.industrialadaptivecontrols.v1alpha1.OperationMetadata"
+    };
+  }
+
+  // Gets a controllable unit.
+  rpc GetControllableUnit(GetControllableUnitRequest) returns (ControllableUnit) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{name=projects/*/locations/*/facilities/*/controllableUnits/*}"
+    };
+  }
+
+  // Lists controllable units in a facility.
+  rpc ListControllableUnits(ListControllableUnitsRequest) returns (ListControllableUnitsResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{parent=projects/*/locations/*/facilities/*}/controllableUnits"
+    };
+  }
+}
+
+// Request message for [FacilityService.CreateFacility][google.cloud.industrialadaptivecontrols.v1alpha1.FacilityService.CreateFacility].
+message CreateFacilityRequest {
+  // Required. The resource name of the project to create the facility for.
+  // Form: `projects/{project_id}/locations/{location_id}`
+  string parent = 1 [(google.api.field_behavior) = REQUIRED];
+
+  // Required. The facility to create.
+  Facility facility = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+// Request message for [FacilityService.GetFacility][google.cloud.industrialadaptivecontrols.v1alpha1.FacilityService.GetFacility].
+message GetFacilityRequest {
+  // Required. The resource name of the facility to retrieve.
+  // Form:
+  // `projects/{project_id}/locations/{location_id}/facilities/{facility_id}`
+  string name = 1 [(google.api.field_behavior) = REQUIRED];
+
+  // Mask specifying which fields to read.
+  google.protobuf.FieldMask read_mask = 2;
+}
+
+// Request message for [FacilityService.ListFacilities][google.cloud.industrialadaptivecontrols.v1alpha1.FacilityService.ListFacilities].
+message ListFacilitiesRequest {
+  // Required. The resource name of the project from which to list facilities.
+  // Form: `projects/{project_id}/locations/{location_id}`
+  string parent = 1 [(google.api.field_behavior) = REQUIRED];
+
+  // Mask specifying which fields to read.
+  google.protobuf.FieldMask read_mask = 2;
+
+  // An expression for filtering the results of the request.
+  //
+  // Supported fields and comparators for filtering:
+  //   * `display_name`: for =.
+  //
+  // Some examples:
+  //   * `display_name=foo`
+  string filter = 3;
+
+  // Requested page size. Server may return fewer results than requested.
+  // If unspecified, server will pick a default size.
+  int32 page_size = 4;
+
+  // A comma-separated list of fields to order by, sorted in ascending order.
+  // Use "desc" after a field name to specify descending order.
+  string order_by = 5;
+
+  // A token identifying a page of results for the server to return
+  // Typically obtained via
+  // [ListFacilitiesResponse.next_page_token][google.cloud.industrialadaptivecontrols.v1alpha1.ListFacilitiesResponse.next_page_token] of the previous
+  // [FacilityService.ListFacilities][google.cloud.industrialadaptivecontrols.v1alpha1.FacilityService.ListFacilities] call.
+  string page_token = 6;
+}
+
+// Response message for [FacilityService.ListFacilities][google.cloud.industrialadaptivecontrols.v1alpha1.FacilityService.ListFacilities].
+message ListFacilitiesResponse {
+  // The facilities read.
+  repeated Facility facilities = 1;
+
+  // A token to retrieve next page of results.
+  // Pass to [ListFacilitiesRequest.page_token][google.cloud.industrialadaptivecontrols.v1alpha1.ListFacilitiesRequest.page_token] to obtain that page.
+  string next_page_token = 2;
+}
+
+// Request message for [FacilityService.DeleteFacility][google.cloud.industrialadaptivecontrols.v1alpha1.FacilityService.DeleteFacility].
+message DeleteFacilityRequest {
+  // Required. The resource name of the facility to delete.
+  string name = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+// Request message for [FacilityService.ImportFacilityData][google.cloud.industrialadaptivecontrols.v1alpha1.FacilityService.ImportFacilityData].
+message ImportFacilityDataRequest {
+  // Required. The source of the facility config to be imported.
+  oneof source {
+    // Serialized facility with all its child resources.
+    SerializedFacility inline_source = 3;
+
+    // The location of the JSON file that represents the facility configuration.
+    // The schema of the JSON format is defined by the
+    // [google.cloud.industrialadaptivecontrols.config.Facility][] Protobuf
+    // message.
+    GcsSource gcs_source = 4;
+  }
+
+  // Required. Existing facility name.
+  string name = 1 [(google.api.field_behavior) = REQUIRED];
+
+  // Unique identifier provided by client, within the ancestor
+  // dataset scope. Ensures idempotency. Up to 128 characters long.
+  string request_id = 2;
+}
+
+// Request message for [FacilityService.GetControllableUnit][google.cloud.industrialadaptivecontrols.v1alpha1.FacilityService.GetControllableUnit].
+message GetControllableUnitRequest {
+  // Required. The resource name of the controllable unit to retrieve.
+  // Form:
+  //
+  // `projects/{project_id}/locations/{location_id}/facilities/{facility_id}/controllableUnits/{controllable_unit_id}`
+  string name = 1 [(google.api.field_behavior) = REQUIRED];
+
+  // Mask specifying which fields to read.
+  google.protobuf.FieldMask read_mask = 2;
+}
+
+// Request message for [FacilityService.ListControllableUnits][google.cloud.industrialadaptivecontrols.v1alpha1.FacilityService.ListControllableUnits].
+message ListControllableUnitsRequest {
+  // Required. The resource name of the facility from which to list controllable units.
+  // Form:
+  // `projects/{project_id}/locations/{location_id}/facilities/{facility_id}`
+  string parent = 1 [(google.api.field_behavior) = REQUIRED];
+
+  // Mask specifying which fields to read.
+  google.protobuf.FieldMask read_mask = 2;
+
+  // An expression for filtering the results of the request.
+  //
+  // Supported fields and comparators for filtering:
+  //   * `display_name`: for =.
+  //
+  // Some examples:
+  //   * `display_name=foo`
+  string filter = 3;
+
+  // Requested page size. Server may return fewer results than requested.
+  // If unspecified, server will pick a default size.
+  int32 page_size = 4;
+
+  // A comma-separated list of fields to order by, sorted in ascending order.
+  // Use "desc" after a field name to specify descending order.
+  string order_by = 5;
+
+  // A token identifying a page of results for the server to return
+  // Typically obtained via
+  // [ListControllableUnitsResponse.next_page_token][google.cloud.industrialadaptivecontrols.v1alpha1.ListControllableUnitsResponse.next_page_token] of the previous
+  // [FacilityService.ListControllableUnits][google.cloud.industrialadaptivecontrols.v1alpha1.FacilityService.ListControllableUnits] call.
+  string page_token = 6;
+}
+
+// Response message for [FacilityService.ListControllableUnits][google.cloud.industrialadaptivecontrols.v1alpha1.FacilityService.ListControllableUnits].
+message ListControllableUnitsResponse {
+  repeated ControllableUnit controllable_units = 1;
+
+  // A token to retrieve next page of results.
+  // Pass to [ListControllableUnitsRequest.page_token][google.cloud.industrialadaptivecontrols.v1alpha1.ListControllableUnitsRequest.page_token] to obtain that page.
+  string next_page_token = 2;
+}

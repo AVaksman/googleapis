@@ -1,0 +1,223 @@
+// Copyright 2019 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.cloud.knowledge.v1alpha2;
+
+import "google/api/annotations.proto";
+import "google/cloud/knowledge/v1alpha2/knowledge_base.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/cloud/knowledge/v1alpha2;knowledge";
+option java_multiple_files = true;
+option java_outer_classname = "QueryRecordsProto";
+option java_package = "com.google.cloud.knowledge.v1alpha2";
+
+
+// Query records are for users to send knowledge service feedback on query
+// results. They are created by the server, and each query record represents
+// one pair of query and answer result. Resource IDs of query record are
+// returned in the responses of queries. With the IDs, users can use the update
+// method to send the server their feedback for each individual query result.
+service QueryRecords {
+  // Gets a query record. Returns NOT_FOUND if the query record does not exist.
+  rpc GetQueryRecord(GetQueryRecordRequest) returns (QueryRecord) {
+    option (google.api.http) = {
+      get: "/v1alpha2/{name=projects/*/locations/*/queryRecords/*}"
+    };
+  }
+
+  // Lists query records in a project in reverse chronological order.
+  // Returns NOT_FOUND if the project does not exist.
+  rpc ListQueryRecords(ListQueryRecordsRequest) returns (ListQueryRecordsResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha2/{parent=projects/*/locations/*}/queryRecords"
+    };
+  }
+
+  // Updates the specified query record.
+  rpc UpdateQueryRecord(UpdateQueryRecordRequest) returns (QueryRecord) {
+    option (google.api.http) = {
+      patch: "/v1alpha2/{query_record.name=projects/*/locations/*/queryRecords/*}"
+      body: "query_record"
+    };
+  }
+
+  // Deletes a query record.
+  rpc DeleteQueryRecord(DeleteQueryRecordRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1alpha2/{name=projects/*/locations/*/queryRecords/*}"
+    };
+  }
+}
+
+// A query record resource.
+message QueryRecord {
+  // The query record resouce name, which has the format of
+  // "projects/{project_id}/locations/{location_id}/queryRecords/{query_record_id}".
+  string name = 1;
+
+  // The query in the query record.
+  KnowledgeBaseQuery knowledge_base_query = 2;
+
+  // The final Answer returned to the user.
+  Answer answer = 3;
+
+  // Expected score for each answer.
+  ConfidenceOverride confidence_override = 4;
+
+  // Feedback of the document for each answer.
+  DocumentFeedback document_feedback = 5;
+}
+
+message KnowledgeBaseQuery {
+  // Output only. The queries of those QueryRecords in the same request have the
+  // same query_id.
+  string knowledge_base_query_id = 1;
+
+  oneof request {
+    // Original QueryKnowledgeBasesRequest.
+    QueryKnowledgeBasesRequest query_knowledge_bases_request = 2;
+  }
+}
+
+message ConfidenceOverride {
+  enum State {
+    STATE_UNSPECIFIED = 0;
+
+    // The only state of a QueryRecord which will be selected at query serving
+    // time.
+    ENABLED = 1;
+
+    // A QueryRecord with DISABLED will be skipped at query serving time.
+    DISABLED = 2;
+  }
+
+  enum CorrectnessLevel {
+    CORRECTNESS_LEVEL_UNSPECIFIED = 0;
+
+    // 0.0
+    NOT_ANSWERED = 1;
+
+    // 0.25
+    SLIGHTLY_ANSWERED = 2;
+
+    // 0.5
+    PARTIALLY_ANSWERED = 3;
+
+    // 0.75
+    MOSTLY_ANSWERED = 4;
+
+    // 1.0
+    FULLY_ANSWERED = 5;
+  }
+
+  State state = 1;
+
+  // An enum value, which will be translated to a float value and override
+  // answer.confidence.
+  //
+  // A typical workflow for users to send Knowledge Service feedback is:
+  // 1. A user sends Knowledge Service a query.
+  // 2. Together with the answers, query_id and query_records are generated
+  //    and returned to the user.
+  // 3. The user uses the query id and query records to call the
+  //    `UpdateQueryRecord` method to send Knowledge Service feedback about
+  //    a specific answer that they believe is wrong.
+  CorrectnessLevel correctness_level = 2;
+}
+
+// Message for the feedback of the document.
+message DocumentFeedback {
+  // Whether or not the document is correct.
+  //
+  // For example, assume that there is a document with the following content
+  // in a knowledge base:
+  // "Items must be returned/exchanged within 60 days of the purchase date."
+  // The ground truth is "No return or exchange is allowed."
+  // Given a query: "Can I return the package in 2 days once received?"
+  // For an answer "Items must be returned/exchanged within 60 days of the
+  // purchase date.", `correctness` should be `INCORRECT`.
+  Correctness correctness = 3;
+}
+
+enum Correctness {
+  CORRECTNESS_UNSPECIFIED = 0;
+
+  // The content of a document is incorrect.
+  INCORRECT = 1;
+
+  // The content of a document is correct.
+  CORRECT = 2;
+}
+
+// Request message for [QueryRecordService.GetQueryRecord][].
+message GetQueryRecordRequest {
+  // Required. The name of the query record to retrieve, which has the format of
+  // "projects/{project_id}/locations/{location_id}/queryRecords/{query_record_id}".
+  string name = 1;
+}
+
+// Request message for [QueryRecordService.ListQueryRecords][].
+message ListQueryRecordsRequest {
+  // Required. The name of the query records' parent, which has the format of
+  // "projects/{project_id}/locations/{location_id}".
+  string parent = 1;
+
+  // Filters to restrict results to specific query records.
+  string filter = 2;
+
+  // Requested page size. Server may return fewer query records than
+  // requested. If unspecified, server will pick an appropriate default. The
+  // default page size is 10 and max page size can be specified is 100.
+  int32 page_size = 3;
+
+  // A token identifying a page of results the server should return.
+  // Typically, this is the value of
+  // [ListQueryRecordsResponse.next_page_token][google.cloud.knowledge.v1alpha2.ListQueryRecordsResponse.next_page_token]
+  string page_token = 4;
+}
+
+// Response message for [QueryRecordService.ListQueryRecords][].
+message ListQueryRecordsResponse {
+  // The list of query records.
+  repeated QueryRecord query_records = 1;
+
+  // A token to retrieve next page of results.
+  // Pass this value in the
+  // [ListQueryRecordsRequest.page_token][google.cloud.knowledge.v1alpha2.ListQueryRecordsRequest.page_token]
+  // field in the subsequent call to `ListQueryRecords` method to retrieve the
+  // next page of results.
+  string next_page_token = 2;
+}
+
+// Request message for [QueryRecordService.UpdateQueryRecord][].
+message UpdateQueryRecordRequest {
+  // Required. Query record to update.
+  QueryRecord query_record = 1;
+
+  // Optional. The mask to control which fields get updated.
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+// Request message for [QueryRecordService.DeleteQueryRecord][].
+message DeleteQueryRecordRequest {
+  // The name of the query record to retrieve, which has the format of
+  // "projects/{project_id}/locations/{location_id}/queryRecords/{query_record_id}".
+  string name = 1;
+}

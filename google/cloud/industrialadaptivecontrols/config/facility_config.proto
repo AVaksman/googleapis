@@ -1,0 +1,260 @@
+// Copyright 2019 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.cloud.industrialadaptivecontrols.config;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "google.golang.org/genproto/googleapis/cloud/industrialadaptivecontrols/config;config";
+option java_multiple_files = true;
+option java_package = "com.google.cloud.industrialadaptivecontrols.config";
+
+// Root entity of the config.
+message Facility {
+  // Optional. If specified the display name of the facility is updated.
+  string display_name = 1;
+
+  // Required. One or more controllable units of this facility.
+  repeated ControllableUnit controllable_units = 2;
+}
+
+// A mechanical systems that can be actuated independent of other mechanical
+// systems.
+message ControllableUnit {
+  // Optional. If specified the display name of the controllable unit is updated.
+  string display_name = 1;
+
+  // Required. One or more trend of this controllable unit.
+  repeated Trend trends = 2;
+
+  // Required. One or more setpoints of this controllable unit.
+  repeated Setpoint setpoints = 3;
+
+  // Optional. Boolean Google SQL expressions that defines the setpoint constraints the AI
+  // recommendations should satisfy.
+  repeated string setpoint_constraints = 4;
+
+  // Optional. Constraints on the predicted values the AI recommendations should satisfy.
+  repeated PredictionConstraint prediction_constraints = 5;
+
+  // Required. The goal the AI system optimises for.
+  Objective objective = 6;
+}
+
+// A logical unit that provide continuous reading of values.
+message Trend {
+  // Configuration of a trend over a period. All measurements measured between
+  // `start_time` and `end_time` labeled with `client_id` are mapped to this
+  // trend.
+  message TrendConfig {
+    // Required. Maps the measurement with the same client_id to this trend.
+    string client_id = 1;
+
+    // Required for numerical data type.
+    // If the numerical value doesn't have
+    // unit, set it to "UNITLESS".
+    string unit = 2;
+
+    // Optional. Inclusive time when the trend with this config starts. If it's not
+    // specified, the trend starts from infinite past.
+    google.protobuf.Timestamp start_time = 3;
+
+    // Optional. Exclusive time when the trend with this config ends. If it's not
+    // specified, the trend doesn't end.
+    google.protobuf.Timestamp end_time = 4;
+  }
+
+  // Required. The current active trend.
+  //
+  // When the `client_id` of the `current_trend` is referenced in any
+  // expression, the unit of the measured value is the unit specified in the
+  // `current_trend`.
+  TrendConfig current_trend = 1;
+
+  // Optional. The previous trends. The time interval of the previous trends and the
+  // current trend must be all disjoint.
+  repeated TrendConfig previous_trends = 2;
+
+  // Required. Type of the value reported by the trend.
+  TrendSpec spec = 3;
+
+  // Optional. Boolean expression for filtering out malformed measurements collected from
+  // this trend. If the expression is evaluated as false for a measurement, it's
+  // removed from the measurements.
+  repeated string health_rules = 4;
+}
+
+// A knob or lever that can be used to control the controllable unit.
+message Setpoint {
+  // Required. Client ID that identifies the setpoint.
+  //
+  // This ID must be unique across the setpoints under the same controllable
+  // unit. Client IDs are not required to be unique between setpoints and
+  // sensors.
+  string client_id = 1;
+
+  string active_setpoint_trend_client_id = 2;
+
+  // Optional. Client ID of the trend that reports the recommended value received from the
+  // AI system.
+  //
+  // When present, the unit of this trend must be the same as the unit of the
+  // trend of active_setpoint_trend_client_id.
+  string recommended_setpoint_trend_client_id = 3;
+
+  // Optional. Client ID of the logical trends for feedbacks, a.k.a processed variable.
+  string measured_value_trend_client_id = 4;
+
+  // Required. Type of the setpoint value and its constraints.
+  SetpointSpec spec = 5;
+}
+
+// Defines a possible category value.
+message Category {
+  // Required. The string value representing this category.
+  string value = 1;
+}
+
+// Spec for measurement value reporting by trends.
+message TrendSpec {
+  // Spec for categorical values.
+  message CategoricalSpec {
+    // Required. All possible categories.
+    repeated Category categories = 1;
+  }
+
+  // Spec for numerical values.
+  message NumericalSpec {
+
+  }
+
+  // Required.
+  oneof type {
+    CategoricalSpec categorical = 1;
+
+    NumericalSpec numerical = 2;
+  }
+}
+
+// Spec for recommended setpoint value.
+message SetpointSpec {
+  // Spec for categorical values.
+  message CategoricalSpec {
+    // Required. All possible categories. Must contain more than 1 element.
+    repeated Category categories = 1;
+
+    // Optional. The value of the setpoint cannot be changed more than once in any window
+    // of its value.
+    google.protobuf.Duration change_period = 2;
+  }
+
+  // Spec for numerical values.
+  message NumericalSpec {
+    // Required.
+    double minimum_value = 1;
+
+    double maximum_value = 2;
+
+    // Required.
+    double minimum_increment = 3;
+
+    double maximum_increment = 4;
+
+    // Required.
+    double minimum_decrement = 5;
+
+    double maximum_decrement = 6;
+
+    // Optional. The value of the setpoint cannot be changed more than once in any window
+    // of its value.
+    google.protobuf.Duration change_period = 7;
+  }
+
+  // Required.
+  oneof type {
+    CategoricalSpec categorical = 1;
+
+    NumericalSpec numerical = 2;
+  }
+}
+
+// Prediction constraint expression. The expression is in the form of binary
+// comparison between predicted values and non-predicted values.
+message PredictionConstraint {
+  enum Comparator {
+    COMPARATOR_UNSPECIFIED = 0;
+
+    LESS_THAN = 1;
+
+    GREATER_THAN = 2;
+
+    LESS_THAN_OR_EQUAL_TO = 3;
+
+    GREATER_THAN_OR_EQUAL_TO = 4;
+  }
+
+  // Required. Left hand side of the expression in BigQuery SQL language with Industrial
+  // Adaptive Controls extensions. Must contain at least one `PREDICTED_VALUE`
+  // function. Must not contain any `MEASURED_VALUE`, `MEASURED_VALUES`, or
+  // `SETPOINT_VALUE` functions. The expression must return a number.
+  string lhs = 1;
+
+  // Required. Comparator between lhs and rhs.
+  Comparator comparator = 2;
+
+  // Required. Right hand side of the expression in BigQuery SQL language with Industrial
+  // Adaptive Controls extensions. Must not contain any `PREDICTED_VALUE`
+  // function. May contain `MEASURED_VALUE` or `SETPOINT_VALUE` functions. The
+  // expression must return a number.
+  string rhs = 3;
+}
+
+// The goal the AI system optimized for.
+message Objective {
+  enum ObjectiveGoal {
+    // Invalid value. Must never be used.
+    OBJECTIVE_GOAL_UNSPECIFIED = 0;
+
+    // Maximize the return value of the objective function.
+    MAXIMIZE = 1;
+
+    // Minimize the return value of the objective function.
+    MINIMIZE = 2;
+  }
+
+  enum AggregateFunction {
+    AGGREGATE_FUNCTION_UNSPECIFIED = 0;
+
+    MAX = 1;
+
+    MIN = 2;
+
+    AVG = 3;
+  }
+
+  // Required. The objective function in BigQuery SQL language with Industrial
+  // Adaptive Controls extensions. The expression must return a number.
+  string function = 1;
+
+  // Required. How should the AI system optimize for the objective function.
+  ObjectiveGoal goal = 2;
+
+  // Required. Specify how to aggregate the objective function over the
+  // prediction time horizon.
+  AggregateFunction aggregate_function = 3;
+}

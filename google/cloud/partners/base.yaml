@@ -1,0 +1,37 @@
+type: google.api.Service
+config_version: 3
+name: cloudpartners.googleapis.com
+title: Cloud Partners API
+
+apis:
+- name: google.cloud.partners.v1.DealService
+
+types:
+- name: google.cloud.partners.v1.Deal
+- name: google.cloud.partners.v1.DealProduct
+
+enums:
+- name: google.cloud.partners.v1.DealStatus
+
+documentation:
+  summary: APIs for Cloud Partners.
+  overview: |-
+    # Introduction
+
+    Partner Sales Tool is the one-stop shop for partners to collaborate with
+    Google on business planning, pre-sales, sales, and post-sales activities.
+    Deal Management is the first set of tools of the Partner Sales Tool suite.
+
+    The Deals API allows partners to programmatically manage their deals without
+    having to go into the UI. Partners with their own CRM systems can integrate
+    with this API to perform the same functions as in the Partner Sales Tool.
+
+    To learn more about the Partner Sales Tool, sign in to [Cloud
+    Connect](https://www.cloudconnect.goog/docs/DOC-19624).
+
+authentication:
+  rules:
+  - selector: '*'
+    oauth:
+      canonical_scopes: |-
+        https://www.googleapis.com/auth/cloud-platform

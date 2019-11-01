@@ -1,0 +1,349 @@
+type: com.google.api.codegen.ConfigProto
+config_schema_version: 1.0.0
+# The settings of generated code in a specific language.
+language_settings:
+  java:
+    package_name: healthcare.scribe.v1alpha
+  python:
+    package_name: healthcare.scribe_v1alpha.gapic
+  go:
+    package_name: google.golang.org/healthcare/scribe/v1alpha
+  csharp:
+    package_name: Healthcare.Scribe.V1alpha
+  ruby:
+    package_name: Healthcare::Scribe::V1alpha
+  php:
+    package_name: Healthcare\Scribe\V1alpha
+  nodejs:
+    package_name: scribe.v1alpha
+# A list of API interface configurations.
+interfaces:
+  # The fully qualified name of the API interface.
+- name: healthcare.scribe.v1alpha.HealthcareScribe
+  # A list of resource collection configurations.
+  # Consists of a name_pattern and an entity_name.
+  # The name_pattern is a pattern to describe the names of the resources of this
+  # collection, using the platform's conventions for URI patterns. A generator
+  # may use this to generate methods to compose and decompose such names. The
+  # pattern should use named placeholders as in `shelves/{shelf}/books/{book}`;
+  # those will be taken as hints for the parameter names of the generated
+  # methods. If empty, no name methods are generated.
+  # The entity_name is the name to be used as a basis for generated methods and
+  # classes.
+  collections:
+  - name_pattern: encounters/{encounter}
+    entity_name: encounter
+  - name_pattern: encounters/{encounter}/inputNotes/{input_note}
+    entity_name: input_note
+  - name_pattern: encounters/{encounter}/transcripts/{transcript}
+    entity_name: transcript
+  # Definition for retryable codes.
+  retry_codes_def:
+  - name: idempotent
+    retry_codes:
+    - UNAVAILABLE
+    - DEADLINE_EXCEEDED
+    - RESOURCE_EXHAUSTED
+  - name: non_idempotent
+    retry_codes: []
+  # Definition for retry/backoff parameters.
+  retry_params_def:
+  - name: default
+    initial_retry_delay_millis: 100
+    retry_delay_multiplier: 1.3
+    max_retry_delay_millis: 60000
+    initial_rpc_timeout_millis: 20000
+    rpc_timeout_multiplier: 1
+    max_rpc_timeout_millis: 20000
+    total_timeout_millis: 600000
+  # A list of method configurations.
+  # Common properties:
+  #
+  #   name - The simple name of the method.
+  #
+  #   flattening - Specifies the configuration for parameter flattening.
+  #   Describes the parameter groups for which a generator should produce method
+  #   overloads which allow a client to directly pass request message fields as
+  #   method parameters. This information may or may not be used, depending on
+  #   the target language.
+  #   Consists of groups, which each represent a list of parameters to be
+  #   flattened. Each parameter listed must be a field of the request message.
+  #
+  #   required_fields - Fields that are always required for a request to be
+  #   valid.
+  #
+  #   resource_name_treatment - An enum that specifies how to treat the resource
+  #   name formats defined in the field_name_patterns and
+  #   response_field_name_patterns fields.
+  #   UNSET: default value
+  #   NONE: the collection configs will not be used by the generated code.
+  #   VALIDATE: string fields will be validated by the client against the
+  #   specified resource name formats.
+  #   STATIC_TYPES: the client will use generated types for resource names.
+  #
+  #   page_streaming - Specifies the configuration for paging.
+  #   Describes information for generating a method which transforms a paging
+  #   list RPC into a stream of resources.
+  #   Consists of a request and a response.
+  #   The request specifies request information of the list method. It defines
+  #   which fields match the paging pattern in the request. The request consists
+  #   of a page_size_field and a token_field. The page_size_field is the name of
+  #   the optional field specifying the maximum number of elements to be
+  #   returned in the response. The token_field is the name of the field in the
+  #   request containing the page token.
+  #   The response specifies response information of the list method. It defines
+  #   which fields match the paging pattern in the response. The response
+  #   consists of a token_field and a resources_field. The token_field is the
+  #   name of the field in the response containing the next page token. The
+  #   resources_field is the name of the field in the response containing the
+  #   list of resources belonging to the page.
+  #
+  #   retry_codes_name - Specifies the configuration for retryable codes. The
+  #   name must be defined in interfaces.retry_codes_def.
+  #
+  #   retry_params_name - Specifies the configuration for retry/backoff
+  #   parameters. The name must be defined in interfaces.retry_params_def.
+  #
+  #   field_name_patterns - Maps the field name of the request type to
+  #   entity_name of interfaces.collections.
+  #   Specifies the string pattern that the field must follow.
+  #
+  #   timeout_millis - Specifies the default timeout for a non-retrying call. If
+  #   the call is retrying, refer to retry_params_name instead.
+  methods:
+  - name: CreateEncounter
+    flattening:
+      groups:
+      - parameters:
+        - encounter
+    required_fields:
+    - encounter
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    timeout_millis: 60000
+  - name: GetEncounter
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    resource_name_treatment: STATIC_TYPES
+    field_name_patterns:
+      name: encounter
+    timeout_millis: 60000
+  - name: UpdateEncounter
+    flattening:
+      groups:
+      - parameters:
+        - encounter
+        - update_mask
+    required_fields:
+    - encounter
+    - update_mask
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    resource_name_treatment: STATIC_TYPES
+    field_name_patterns:
+      encounter.name: encounter
+    timeout_millis: 60000
+  - name: ListEncounters
+    page_streaming:
+      request:
+        page_size_field: page_size
+        token_field: page_token
+      response:
+        token_field: next_page_token
+        resources_field: encounters
+    retry_codes_name: idempotent
+    retry_params_name: default
+    timeout_millis: 60000
+  - name: DeleteEncounter
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    resource_name_treatment: STATIC_TYPES
+    field_name_patterns:
+      name: encounter
+    timeout_millis: 60000
+  - name: CreateTranscript
+    flattening:
+      groups:
+      - parameters:
+        - parent
+        - transcript
+    required_fields:
+    - parent
+    - transcript
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    resource_name_treatment: STATIC_TYPES
+    field_name_patterns:
+      parent: encounter
+    timeout_millis: 60000
+  - name: GetTranscript
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    resource_name_treatment: STATIC_TYPES
+    field_name_patterns:
+      name: transcript
+    timeout_millis: 60000
+  - name: ListTranscripts
+    flattening:
+      groups:
+      - parameters:
+        - parent
+    required_fields:
+    - parent
+    page_streaming:
+      request:
+        page_size_field: page_size
+        token_field: page_token
+      response:
+        token_field: next_page_token
+        resources_field: transcripts
+    retry_codes_name: idempotent
+    retry_params_name: default
+    resource_name_treatment: STATIC_TYPES
+    field_name_patterns:
+      parent: encounter
+    timeout_millis: 60000
+  - name: DeleteTranscript
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    resource_name_treatment: STATIC_TYPES
+    field_name_patterns:
+      name: transcript
+    timeout_millis: 60000
+  - name: RecognizeTranscript
+    flattening:
+      groups:
+      - parameters:
+        - parent
+        - audio
+    required_fields:
+    - parent
+    - audio
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    resource_name_treatment: STATIC_TYPES
+    field_name_patterns:
+      parent: encounter
+    timeout_millis: 60000
+  - name: CreateInputNote
+    flattening:
+      groups:
+      - parameters:
+        - parent
+        - input_note
+    required_fields:
+    - parent
+    - input_note
+    retry_codes_name: non_idempotent
+    retry_params_name: default
+    resource_name_treatment: STATIC_TYPES
+    field_name_patterns:
+      parent: encounter
+    timeout_millis: 60000
+  - name: GetInputNote
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    resource_name_treatment: STATIC_TYPES
+    field_name_patterns:
+      name: input_note
+    timeout_millis: 60000
+  - name: ListInputNotes
+    flattening:
+      groups:
+      - parameters:
+        - parent
+    required_fields:
+    - parent
+    page_streaming:
+      request:
+        page_size_field: page_size
+        token_field: page_token
+      response:
+        token_field: next_page_token
+        resources_field: input_notes
+    retry_codes_name: idempotent
+    retry_params_name: default
+    resource_name_treatment: STATIC_TYPES
+    field_name_patterns:
+      parent: encounter
+    timeout_millis: 60000
+  - name: DeleteInputNote
+    flattening:
+      groups:
+      - parameters:
+        - name
+    required_fields:
+    - name
+    retry_codes_name: idempotent
+    retry_params_name: default
+    resource_name_treatment: STATIC_TYPES
+    field_name_patterns:
+      name: input_note
+    timeout_millis: 60000
+# Configure the generator to use statically typed resource name for the
+# corresponding messages:
+resource_name_generation:
+- message_name: GetEncounterRequest
+  field_entity_map:
+    name: encounter
+- message_name: DeleteEncounterRequest
+  field_entity_map:
+    name: encounter
+- message_name: CreateTranscriptRequest
+  field_entity_map:
+    parent: encounter
+- message_name: RecognizeTranscriptRequest
+  field_entity_map:
+    parent: encounter
+- message_name: GetTranscriptRequest
+  field_entity_map:
+    name: transcript
+- message_name: ListTranscriptsRequest
+  field_entity_map:
+    parent: encounter
+- message_name: DeleteTranscriptRequest
+  field_entity_map:
+    name: transcript
+- message_name: CreateInputNoteRequest
+  field_entity_map:
+    parent: encounter
+- message_name: GetInputNoteRequest
+  field_entity_map:
+    name: input_note
+- message_name: ListInputNotesRequest
+  field_entity_map:
+    parent: encounter
+- message_name: DeleteInputNoteRequest
+  field_entity_map:
+    name: input_note
+

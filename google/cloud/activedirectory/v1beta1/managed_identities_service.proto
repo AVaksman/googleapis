@@ -1,0 +1,253 @@
+// Copyright 2019 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.cloud.managedidentities.v1beta1;
+
+import "google/api/annotations.proto";
+import "google/cloud/activedirectory/v1beta1/resource.proto";
+import "google/longrunning/operations.proto";
+import "google/protobuf/field_mask.proto";
+import "google/api/client.proto";
+
+option csharp_namespace = "Google.Cloud.ManagedIdentities.V1Beta1";
+option go_package = "google.golang.org/genproto/googleapis/cloud/managedidentities/v1beta1;managedidentities";
+option java_multiple_files = true;
+option java_outer_classname = "ManagedIdentitiesServiceProto";
+option java_package = "com.google.cloud.managedidentities.v1beta1";
+option objc_class_prefix = "GCMI";
+option php_namespace = "Google\\Cloud\\ManagedIdentities\\V1beta1";
+
+service ManagedIdentitiesService {
+  option (google.api.default_host) = "managedidentities.googleapis.com";
+  option (google.api.oauth_scopes) = "https://www.googleapis.com/auth/cloud-platform";
+
+  // Creates a Microsoft AD domain.
+  rpc CreateMicrosoftAdDomain(CreateMicrosoftAdDomainRequest) returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      post: "/v1beta1/{parent=projects/*/locations/global}/domains"
+      body: "domain"
+    };
+  }
+
+  // Resets a domain's administrator password.
+  rpc ResetAdminPassword(ResetAdminPasswordRequest) returns (ResetAdminPasswordResponse) {
+    option (google.api.http) = {
+      post: "/v1beta1/{name=projects/*/locations/global/domains/*}:resetAdminPassword"
+      body: "*"
+    };
+  }
+
+  // Lists domains in a project.
+  rpc ListDomains(ListDomainsRequest) returns (ListDomainsResponse) {
+    option (google.api.http) = {
+      get: "/v1beta1/{parent=projects/*/locations/global}/domains"
+    };
+  }
+
+  // Gets information about a domain.
+  rpc GetDomain(GetDomainRequest) returns (Domain) {
+    option (google.api.http) = {
+      get: "/v1beta1/{name=projects/*/locations/global/domains/*}"
+    };
+  }
+
+  // Updates the metadata and configuration of a domain.
+  rpc UpdateDomain(UpdateDomainRequest) returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      patch: "/v1beta1/{domain.name=projects/*/locations/global/domains/*}"
+      body: "domain"
+    };
+  }
+
+  // Deletes a domain.
+  rpc DeleteDomain(DeleteDomainRequest) returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      delete: "/v1beta1/{name=projects/*/locations/global/domains/*}"
+    };
+  }
+
+  // Adds an AD trust to a domain.
+  rpc AttachTrust(AttachTrustRequest) returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      post: "/v1beta1/{name=projects/*/locations/global/domains/*}:attachTrust"
+      body: "*"
+    };
+  }
+
+  // Updates the DNS conditional forwarder.
+  rpc ReconfigureTrust(ReconfigureTrustRequest) returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      post: "/v1beta1/{name=projects/*/locations/global/domains/*}:reconfigureTrust"
+      body: "*"
+    };
+  }
+
+  // Removes an AD trust.
+  rpc DetachTrust(DetachTrustRequest) returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      post: "/v1beta1/{name=projects/*/locations/global/domains/*}:detachTrust"
+      body: "*"
+    };
+  }
+
+  // Validates a trust state, that the target domain is reachable, and that the
+  // target domain is able to accept incoming trust requests.
+  rpc ValidateTrust(ValidateTrustRequest) returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      post: "/v1beta1/{name=projects/*/locations/global/domains/*}:validateTrust"
+      body: "*"
+    };
+  }
+}
+
+message CreateMicrosoftAdDomainRequest {
+  // The resource project name and location using the form:
+  // `projects/{project_id}/locations/global`
+  string parent = 1;
+
+  // The fully qualified domain name.
+  // e.g. mydomain.myorganization.com, with the following restrictions:
+  //
+  //  * Must contain only lowercase letters, numbers, periods and hyphens.
+  //  * Must start with a letter.
+  //  * Must contain between 2-255 characters.
+  //  * Must end with a number or a letter.
+  //  * Must not start with period.
+  //  * Must be unique within the project.
+  string domain_name = 2;
+
+  // A Managed Identity domain resource.
+  Domain domain = 3;
+}
+
+message ResetAdminPasswordRequest {
+  // The domain resource name using the form:
+  // `projects/{project_id}/locations/global/domains/{domain_name}`
+  string name = 1;
+}
+
+message ResetAdminPasswordResponse {
+  // A random password. See [admin][google.cloud.managedidentities.v1beta1.Domain.admin] for more information.
+  string password = 1;
+}
+
+message ListDomainsRequest {
+  // Required. The resource name of the domain location using the form:
+  // `projects/{project_id}/locations/global`
+  string parent = 1;
+
+  // Optional. The maximum number of items to return.
+  // If not specified, a default value of 1000 will be used.
+  // Regardless of the page_size value, the response may include a partial list.
+  // Callers should rely on a response's
+  // [next_page_token][google.cloud.managedidentities.v1beta1.ListDomainsResponse.next_page_token]
+  // to determine if there are additional results to list.
+  int32 page_size = 2;
+
+  // The `next_page_token` value returned from a previous ListDomainsRequest
+  // request, if any.
+  string page_token = 3;
+
+  // Optional. A filter specifying constraints of a list operation.
+  // For example, `Domain.fqdn="mydomain.myorginization"`.
+  string filter = 4;
+
+  // Optional. Specifies the ordering of results. See
+  // [Sorting
+  // order](https://cloud.google.com/apis/design/design_patterns#sorting_order)
+  // for more information.
+  string order_by = 5;
+}
+
+message ListDomainsResponse {
+  // A list of Managed Identities Service domains in the project.
+  repeated Domain domains = 1;
+
+  // A token to retrieve the next page of results, or empty if there are no more
+  // results in the list.
+  string next_page_token = 2;
+
+  // A list of locations that could not be reached.
+  repeated string unreachable = 3;
+}
+
+message GetDomainRequest {
+  // The domain resource name using the form:
+  // `projects/{project_id}/locations/global/domains/{domain_name}`
+  string name = 1;
+}
+
+message UpdateDomainRequest {
+  // Mask of fields to update. At least one path must be supplied in this
+  // field. The elements of the repeated paths field may only include
+  // fields from [Domain][google.cloud.managedidentities.v1beta1.Domain]:
+  //  * `labels`
+  //  * `locations`
+  //  * `authorized_networks`
+  google.protobuf.FieldMask update_mask = 1;
+
+  // Domain message with updated fields. Only supported fields specified in
+  // update_mask are updated.
+  Domain domain = 2;
+}
+
+message DeleteDomainRequest {
+  // The domain resource name using the form:
+  // `projects/{project_id}/locations/global/domains/{domain_name}`
+  string name = 1;
+}
+
+message AttachTrustRequest {
+  // The resource domain name, project name and location using the form:
+  // `projects/{project_id}/locations/global/domains/{domain_name}`
+  string name = 1;
+
+  // The domain trust resource.
+  Trust trust = 2;
+}
+
+message ReconfigureTrustRequest {
+  // The resource domain name, project name and location using the form:
+  // `projects/{project_id}/locations/global/domains/{domain_name}`
+  string name = 1;
+
+  // The fully-qualified target domain name which will be in trust with current
+  // domain.
+  string target_domain_name = 2;
+
+  // The target DNS server IP addresses to resolve the remote domain involved
+  // in the trust.
+  repeated string target_dns_ip_addresses = 3;
+}
+
+message DetachTrustRequest {
+  // The resource domain name, project name, and location using the form:
+  // `projects/{project_id}/locations/global/domains/{domain_name}`
+  string name = 1;
+
+  // The domain trust resource to removed.
+  Trust trust = 2;
+}
+
+message ValidateTrustRequest {
+  // The resource domain name, project name, and location using the form:
+  // `projects/{project_id}/locations/global/domains/{domain_name}`
+  string name = 1;
+
+  // The domain trust to validate trust state for.
+  Trust trust = 2;
+}

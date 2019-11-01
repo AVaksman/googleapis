@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package google.cloud.bigquery.v2;
+
+option java_package = "com.google.cloud.bigquery.v2";
+option java_outer_classname = "ClusteringProto";
+
+// Configures table clustering.
+message Clustering {
+  // One or more fields on which data should be clustered. Only top-level,
+  // non-repeated, simple-type fields are supported. The order of the fields
+  // will determine how clusters will be generated, so it is important.
+  repeated string fields = 1;
+}

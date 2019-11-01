@@ -1,0 +1,265 @@
+// Copyright 2019 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.cloud.knowledge.v1alpha2;
+
+import "google/api/annotations.proto";
+import "google/cloud/knowledge/v1alpha2/document.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/cloud/knowledge/v1alpha2;knowledge";
+option java_multiple_files = true;
+option java_outer_classname = "KnowledgeBaseProto";
+option java_package = "com.google.cloud.knowledge.v1alpha2";
+
+
+service KnowledgeBases {
+  // Creates a knowledge base, and returns the new created knowledge base.
+  rpc CreateKnowledgeBase(CreateKnowledgeBaseRequest) returns (KnowledgeBase) {
+    option (google.api.http) = {
+      post: "/v1alpha2/{parent=projects/*/locations/*}/knowledgeBases"
+      body: "knowledge_base"
+    };
+  }
+
+  // Updates the specified knowledge base.
+  rpc UpdateKnowledgeBase(UpdateKnowledgeBaseRequest) returns (KnowledgeBase) {
+    option (google.api.http) = {
+      patch: "/v1alpha2/{knowledge_base.name=projects/*/locations/*/knowledgeBases/*}"
+      body: "knowledge_base"
+    };
+  }
+
+  // Lists knowledge bases. The order is unspecified but deterministic. Newly
+  // created knowledge bases will not necessarily be added to the end of this
+  // list.
+  rpc ListKnowledgeBases(ListKnowledgeBasesRequest) returns (ListKnowledgeBasesResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha2/{parent=projects/*/locations/*}/knowledgeBases"
+    };
+  }
+
+  // Gets a knowledge base. Returns NOT_FOUND if the knowledge base does not
+  // exist.
+  rpc GetKnowledgeBase(GetKnowledgeBaseRequest) returns (KnowledgeBase) {
+    option (google.api.http) = {
+      get: "/v1alpha2/{name=projects/*/locations/*/knowledgeBases/*}"
+    };
+  }
+
+  // Deletes a knowledge base.
+  rpc DeleteKnowledgeBase(DeleteKnowledgeBaseRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1alpha2/{name=projects/*/locations/*/knowledgeBases/*}"
+    };
+  }
+
+  // Queries multiple knowledge bases with a natural language question. Returns
+  // NOT_FOUND if any knowledge base does not exist. Otherwise it returns a
+  // scored list of top-ranking answers to the question.
+  rpc QueryKnowledgeBases(QueryKnowledgeBasesRequest) returns (QueryKnowledgeBasesResponse) {
+    option (google.api.http) = {
+      post: "/v1alpha2/{parent=projects/*/locations/*}/knowledgeBases:query"
+      body: "*"
+    };
+  }
+}
+
+// A knowledge base resource.
+message KnowledgeBase {
+  // The knowledge base resource name, which has the format of
+  // "projects/{project_id}/locations/{location_id}/knowledgeBases/{knowledge_base_id}".
+  // The name must be empty when creating a knowledge base.
+  string name = 1;
+
+  // The display name of the knowledge base. The name must be 1024 bytes or
+  // less; otherwise, the creation request will fail.
+  string display_name = 2;
+}
+
+// Describes an answer along with a confidence value.
+message Answer {
+  // The natural language answer.
+  string answer = 1;
+
+  // The confidence estimate between 0 and 1. A higher number
+  // indicates an estimated greater likelihood that the answers are correct.
+  // The default of 0 is a sentinel value indicating `confidence` was not set.
+  //
+  // Note: For Article Suggestion results without Q&A, this value can be
+  // greater than 1.
+  float confidence = 2;
+
+  // The knowledge type of the document in which the answer is found.
+  Document.KnowledgeType knowledge_type = 4;
+
+  // The metadata about the document from which the answer originates. The
+  // content of the metadata is defined by the user through
+  // [Document.metadata][google.cloud.knowledge.v1alpha2.Document.metadata] field when calling `CreateDocument`.
+  map<string, string> metadata = 6;
+
+  // A matched question for the input query when the answer is from a FAQ
+  // document.
+  string question = 7;
+
+  // The name of the document from which the answer originates, in the format of
+  // "projects/{project_id}/locations/{location_id}/knowledgeBases/{knowledge_base_id}/documents/{document_id}"
+  string document = 8;
+
+  // The name of query record, in the format of
+  // "projects/{project_id}/locations/{locations_id}/queryRecords/{query_record_id}"
+  string query_record = 10;
+}
+
+// Request message for [KnowledgeService.CreateKnowledgeBase][].
+message CreateKnowledgeBaseRequest {
+  // The name of the knowledge base parent, which has the format of
+  // "projects/{project_id}/locations/{location_id}".
+  // Currently only supported location ID is "global".
+  string parent = 1;
+
+  // The knowledge base to create.
+  KnowledgeBase knowledge_base = 2;
+}
+
+// Request message for [KnowledgeService.UpdateKnowledgeBase][].
+message UpdateKnowledgeBaseRequest {
+  // Required. The knowledge base to update.
+  KnowledgeBase knowledge_base = 1;
+
+  // Optional. The mask to control which fields get updated.
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+// Request message for [KnowledgeService.ListKnowledgeBases][].
+message ListKnowledgeBasesRequest {
+  // The name of the knowledge bases' parent, which has the format of
+  // "projects/{project_id}/locations/{location_id}".
+  string parent = 1;
+
+  // Requested page size. Server may return fewer knowledge bases than
+  // requested. If unspecified, server will pick an appropriate default. The
+  // default page size is 10 and max page size can be specified is 100.
+  int32 page_size = 2;
+
+  // A token identifying a page of results.
+  // It is the value of
+  // [ListKnowledgeBasesResponse.next_page_token][google.cloud.knowledge.v1alpha2.ListKnowledgeBasesResponse.next_page_token]
+  // returned from the previous call to `ListKnowledgeBases` method.
+  string page_token = 3;
+}
+
+// Response message for [KnowledgeService.ListKnowledgeBases][].
+message ListKnowledgeBasesResponse {
+  // The list of knowledge bases.
+  repeated KnowledgeBase knowledge_bases = 1;
+
+  // A token to retrieve next page of results.
+  // Pass this value in the
+  // [ListKnowledgeBasesRequest.page_token][google.cloud.knowledge.v1alpha2.ListKnowledgeBasesRequest.page_token]
+  // field in the subsequent call to `ListKnowledgeBases` method to retrieve the
+  // next page of results.
+  string next_page_token = 2;
+}
+
+// Request message for [KnowledgeService.GetKnowledgeBase][].
+message GetKnowledgeBaseRequest {
+  // The name of the knowledge base to retrieve.
+  string name = 1;
+}
+
+// Request message for [KnowledgeService.DeleteKnowledgeBase][].
+message DeleteKnowledgeBaseRequest {
+  // The name of the knowledge base to delete.
+  string name = 1;
+
+  // Force deletes the knowledge base. When set to true, any documents in
+  // the knowledge base are also deleted. If NOT set set to true, deletion
+  // requests for non-empty knowledge bases will fail with invalid argument
+  // errors.
+  bool force = 2;
+}
+
+// Describes a query request.
+message QueryKnowledgeBasesRequest {
+  // The name of the knowledge bases' parent, which has the format of
+  // "projects/{project_id}/locations/{location_id}".
+  string parent = 1;
+
+  // The name of the knowledge bases to query.
+  repeated string knowledge_bases = 2;
+
+  // A natural language answer-seeking query.
+  string query = 3;
+
+  // The maximum number of results to return. If unset, defaults to 20.
+  int32 max_results = 5;
+
+  // Filters to restrict results to specific entries. The root of the filter
+  // pathes is document. For example, to filter the knowledge types to be
+  // FAQ, the filter should be specified as "knowledge_types:FAQ".
+  string filter = 6;
+
+  // Confidence threshold. Drop emantic_match_results and qa_results with
+  // confidence lower than confidence_threshold. The default threshold is 0.4.
+  // If this value is not provided (i.e. equals to 0.0), the default threshold
+  // is applied. Setting the override to a negative value removes the threshold.
+  float confidence_threshold = 7;
+}
+
+// Describes the response to a query to multiple knowledge bases.
+message QueryKnowledgeBasesResponse {
+  // Keyword search results.
+  repeated Answer search_results = 1;
+
+  // Semantic search results.
+  repeated Answer semantic_match_results = 2;
+
+  // Question answering results.
+  repeated Answer qa_results = 3;
+
+  // The query id of the query.
+  string query_id = 4;
+}
+
+// Metadata in google::longrunning::Operation.
+message OperationMetadata {
+  enum State {
+    STATE_UNSPECIFIED = 0;
+
+    // The operation has been created.
+    PENDING = 1;
+
+    // The operation is currently running.
+    RUNNING = 2;
+
+    // The operation is done, either cancelled or completed.
+    DONE = 3;
+  }
+
+  // Required. The current state of this operation.
+  State state = 1;
+
+  // The failure messages from Manifold endpoints' last failures.
+  repeated string message = 2;
+
+  // The error codes from Manifold endpoints' last failures.
+  repeated int32 error_code = 3;
+}

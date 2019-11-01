@@ -1,0 +1,18 @@
+type: google.api.Service
+config_version: 3
+name: servicediscovery.googleapis.com
+title: Service Discovery API
+
+apis:
+- name: google.cloud.servicediscovery.v1alpha1.LookupService
+- name: google.cloud.servicediscovery.v1alpha1.RegistrationService
+
+documentation:
+  summary: Allows the registration and lookup of service endpoints.
+
+authentication:
+  rules:
+  - selector: '*'
+    oauth:
+      canonical_scopes: |-
+        https://www.googleapis.com/auth/cloud-platform

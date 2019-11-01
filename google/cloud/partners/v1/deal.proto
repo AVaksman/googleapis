@@ -1,0 +1,1045 @@
+// Copyright 2017 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package google.cloud.partners.v1;
+
+import "google/api/annotations.proto";
+import "google/longrunning/operations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/type/date.proto";
+
+option go_package = "google.golang.org/genproto/googleapis/cloud/partners/v1;partners";
+option java_multiple_files = true;
+option java_outer_classname = "DealProto";
+option java_package = "com.google.cloud.partners.v1";
+
+
+// A deal enables a partner to signal intent to sell Google products to an end
+// customer. During the duration of a deal's lifecycle, information is passed
+// between the partner and Google as the deal moves from the early stages
+// towards agreement.
+message Deal {
+  // Unique system-generated identifier for a deal.
+  //
+  // Read only.
+  //
+  // Required to identify the deal in the following API methods:<ul>
+  // <li>[UpdateDeal] [google.cloud.partners.v1.DealService.UpdateDeal]
+  // <li>[DeleteDeal] [google.cloud.partners.v1.DealService.DeleteDeal]
+  // <li>[GetDeal] [google.cloud.partners.v1.DealService.GetDeal]
+  // <li>[SubmitDeal] [google.cloud.partners.v1.DealService.SubmitDeal]
+  // </ul>
+  string id = 1;
+
+  // Deal's current status.
+  //
+  // Read only.
+  DealStatus status = 3;
+
+  // Partner's country.
+  //
+  // Read only.
+  string partner_country = 86;
+
+  // The deal source.
+  //
+  // Read only.
+  //
+  // Value must be set to one of the following:<ul>
+  // <li>Google Sourced
+  // <li>Partner Sourced
+  // <li>Partner Marketing Sourced
+  // </ul>
+  string deal_source = 81;
+
+  // Whether the deal was created by the Bulk Upload tool.
+  //
+  // Read only.
+  bool is_bulk_uploaded = 20;
+
+  // The name of the marketing campaign with which the deal is associated.
+  //
+  // Read only.
+  string marketing_campaign_name = 65;
+
+  // Reason why Google rejected the deal.
+  //
+  // Read only.
+  string rejection_reason = 64;
+
+  // Read only.
+  google.protobuf.Timestamp update_time = 52;
+
+  // Date when the deal is submitted to Google for review.
+  //
+  // Read only.
+  google.type.Date date_submitted = 79;
+
+  // Date when Google approved the deal.
+  //
+  // Read only.
+  google.type.Date deal_approved_date = 80;
+
+  // Estimate of when the deal will be closed. After Google closes the deal,
+  // this field will be automatically updated with the actual close date.
+  //
+  // Required only when [status] [google.cloud.partners.v1.Deal.status]
+  // is "APPROVED". Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "APPROVED", "DRAFT", or
+  // "SUBMITTED".
+  google.type.Date close_date = 22;
+
+  // Partner's notes about the deal.
+  //
+  // Required only when one of the following is true:<ul>
+  // <li>[status] [google.cloud.partners.v1.Deal.status] is "APPROVED".
+  // <li>The deal is being submitted and
+  // [status] [google.cloud.partners.v1.Deal.status] is "DRAFT" or
+  // "REJECTED".
+  // </ul>
+  // Editable only when [status] [google.cloud.partners.v1.Deal.status]
+  // is "DRAFT", "REJECTED", "CLOSED", or "APPROVED".
+  string deal_description = 71;
+
+  // Domain to be associated with the deal. Include only the domain
+  // component, such as "example.com"; exclude the "http://www" prefix.
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "DRAFT" or "REJECTED".
+  string domain = 42;
+
+  // The deal amount based on the SKUs/products targeted to be sold in this
+  // deal. The units are based off [currency_iso_code]
+  // [google.cloud.partners.v1.Deal.currency_iso_code]. The amount
+  // includes the partner's margin.
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "DRAFT" or "REJECTED".
+  double deal_size_amount = 39;
+
+  // Currency that will be used to pay for the products specified in the deal.
+  // SKU/Product pricing is applied accordingly.
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "DRAFT", "REJECTED", or
+  // "CLOSED".
+  //
+  // Value must be set to one of the following:<ul>
+  // <li>USD
+  // <li>MXN
+  // <li>JPY
+  // <li>INR
+  // <li>GBP
+  // <li>EUR
+  // <li>CHF
+  // <li>CAD
+  // <li>AUD
+  // </ul>
+  string currency_iso_code = 91;
+
+  // Indicates the decision-making phase of the deal.
+  //
+  // Required only when the deal is being submitted. Editable
+  // only when [status] [google.cloud.partners.v1.Deal.status] is
+  // "DRAFT" or "REJECTED".
+  //
+  // Value must be set to one of the following:<ul>
+  // <li>Initial research and information-gathering
+  // <li>Currently in-trial or looking to trial/pilot
+  // <li>Final decision
+  // </ul>
+  string decision_phase = 18;
+
+  // Indicates the timeframe by which a decision must be made for the deal.
+  //
+  // Required only when the deal is being submitted. Editable
+  // only when [status] [google.cloud.partners.v1.Deal.status] is
+  // "DRAFT" or "REJECTED".
+  //
+  // Value must be set to one of the following:<ul>
+  // <li>Immediately
+  // <li>This month
+  // <li>Within 3 months
+  // <li>Within 6 months
+  // <li>Within 1 year
+  // <li>More than 1 year
+  // <li>Don't know
+  // </ul>
+  string decision_timeframe = 19;
+
+  // Whether the partner is in communication with a Google Sales Representative.
+  //
+  // Editable only when [status] [google.cloud.partners.v1.Deal.status]
+  // is "DRAFT" or "REJECTED".
+  bool is_google_cloud_sales_engaged = 47;
+
+  // Name of the Google Sales Representative that the partner is working with.
+  //
+  // Editable only when [status] [google.cloud.partners.v1.Deal.status]
+  // is "DRAFT" or "REJECTED" and
+  // [is_google_cloud_sales_engaged][google.cloud.partners.v1.Deal.is_google_cloud_sales_engaged]
+  // is true.
+  string engaged_sales_rep_name = 51;
+
+  // Partner contact email.
+  //
+  // Required only when the deal is being submitted and
+  // [status] [google.cloud.partners.v1.Deal.status] is "REJECTED" or
+  // "DRAFT". Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "DRAFT", "REJECTED",
+  // "CLOSED", or "APPROVED".
+  string partner_contact_email = 69;
+
+  // Partner-provided unique identifier for the deal. This allows the partner to
+  // correlate the deals in Google's CRM system with the deals in their own CRM
+  // system.
+  //
+  // Editable only when [status] [google.cloud.partners.v1.Deal.status]
+  // is "DRAFT" or "REJECTED".
+  string partner_sourced_deal_id = 73;
+
+  // Industry of the customer's company.
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "DRAFT" or "REJECTED".
+  //
+  // Value must be set to one of the following:<ul>
+  // <li>Business Services
+  // <li>Education
+  // <li>Energy, Chemicals & Utilities
+  // <li>Farming, Forestry, Fishing
+  // <li>Financial Services
+  // <li>Government - US Federal
+  // <li>Government - US State
+  // <li>Government - US Local
+  // <li>Health & Social Care
+  // <li>Holding Companies
+  // <li>Manufacturing
+  // <li>Media & Entertainment
+  // <li>Mining & Construction
+  // <li>Non-profit
+  // <li>Retail & Wholesale Trade
+  // <li>Technology
+  // <li>Travel & Transport
+  // </ul>
+  string industry = 36;
+
+  // Customer company name.
+  //
+  // Required only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "REJECTED" or "DRAFT".
+  string customer_company = 23;
+
+  // Customer company's website.
+  //
+  // Editable only when [status] [google.cloud.partners.v1.Deal.status]
+  // is "DRAFT" or "REJECTED".
+  string customer_website = 37;
+
+  // Number of employees employed by the customer's company. It is used to
+  // determine deal qualification.
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "DRAFT" or "REJECTED".
+  int32 customer_number_of_employees = 38;
+
+  // Range for the customer company's number of employees, according to
+  // [customer_number_of_employees]
+  // [google.cloud.partners.v1.Deal.customer_number_of_employees].
+  //
+  // Read only.
+  string customer_employee_range = 82;
+
+  // Customer contact's street address, for example, "1600 Amphitheatre Pkwy".
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "DRAFT" or "REJECTED".
+  string customer_contact_street = 30;
+
+  // Customer contact's city.
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "DRAFT" or "REJECTED".
+  string customer_contact_city = 31;
+
+  // Customer contact's state.
+  //
+  // Required only when [submit_for_review]
+  // [google.cloud.partners.v1.Deal.submit_for_review] is true and
+  // [status] [google.cloud.partners.v1.Deal.status] is "DRAFT" or
+  // "REJECTED". Editable only when [status]
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "DRAFT" or "REJECTED".
+  string customer_contact_state = 32;
+
+  // Customer contact's country.
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "DRAFT" or "REJECTED".
+  string customer_contact_country = 33;
+
+  // Customer contact's postal code.
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "DRAFT" or "REJECTED".
+  string customer_contact_postal_code = 34;
+
+  // Customer contact's first name.
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "DRAFT", "REJECTED", or
+  // "CLOSED".
+  string customer_contact_first_name = 24;
+
+  // Customer contact's last name.
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "DRAFT", "REJECTED", or
+  // "CLOSED".
+  string customer_contact_last_name = 25;
+
+  // Customer contact's title, for example, CEO, CIO, Technical Manager.
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "DRAFT" or "REJECTED".
+  string customer_contact_title = 26;
+
+  // Customer contact's phone number.
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "DRAFT", "REJECTED", or
+  // "CLOSED".
+  //
+  // The phone number must be in the
+  // international format based on [customer_contact_country]
+  // [google.cloud.partners.v1.Deal.customer_contact_country], for
+  // example,
+  // "+1-201-555-5555" for the United States.
+  string customer_contact_phone = 27;
+
+  // Customer contact's mobile number.
+  //
+  // Editable only when [status] [google.cloud.partners.v1.Deal.status]
+  // is "DRAFT" or "REJECTED".
+  //
+  // The phone
+  // number must be in the international format based on
+  // [customer_contact_country]
+  // [google.cloud.partners.v1.Deal.customer_contact_country], for
+  // example,
+  // "+1-201-555-5555" for the United States.
+  string customer_contact_mobile = 28;
+
+  // Customer contact's email.
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "CLOSED", "DRAFT", or
+  // "REJECTED".
+  string customer_contact_email = 29;
+
+  // The main product that the customer is interested in purchasing.
+  //
+  // Required only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "DRAFT" or "REJECTED".
+  string primary_product_interest = 53;
+
+  // Email server currently used by the customer's company.
+  //
+  // Editable only when [status] [google.cloud.partners.v1.Deal.status]
+  // is "CLOSED", "DRAFT", or "REJECTED" and [primary_product_interest]
+  // [google.cloud.partners.v1.Deal.primary_product_interest] is "Apps",
+  // "Drive", "Vault", "Android EDU", "Android for Work", "AndroidForEdu", or
+  // "AndroidAtWork".
+  //
+  // Value must be set to one of the following:<ul>
+  // <li>Exchange Server 2010
+  // <li>Exchange Server 2007
+  // <li>Exchange Server 2003
+  // <li>Exchange Server 2000
+  // <li>Exchange Server 5.5
+  // <li>Exchange Server
+  // <li>Exchange Server (Hosted)
+  // <li>Microsoft Office 365
+  // <li>BPOS-S
+  // <li>BPOS-D
+  // <li>BPOS
+  // <li>Lotus Domino R8
+  // <li>Lotus Domino R7
+  // <li>Lotus Domino R6
+  // <li>Lotus Domino R5
+  // <li>Lotus Domino R4
+  // <li>Lotus Domino
+  // <li>Novell Groupwise V8
+  // <li>Novell Groupwise V7
+  // <li>Novell Groupwise V6
+  // <li>Novell Groupwise
+  // <li>Webmail/ISP
+  // <li>Zimbra
+  // <li>Zoho
+  // <li>Google Mail
+  // <li>G Suite Business
+  // <li>G Suite
+  // <li>Other
+  // </ul>
+  string current_email_server = 40;
+
+  // Estimated number of users or seats for G Suite products.
+  //
+  // Editable only when [primary_product_interest]
+  // [google.cloud.partners.v1.Deal.primary_product_interest] is "Apps",
+  // "Drive", "Vault", "Android EDU", "Android for Work", "AndroidForEdu", or
+  // "AndroidAtWork" and [status] [google.cloud.partners.v1.Deal.status]
+  // is "DRAFT" or "REJECTED". Required only when editable and
+  // the deal is being submitted.
+  int32 est_users = 49;
+
+  // Whether this Deal is part of the G Suite EA Promo.
+  //
+  // Editable only when [status] [google.cloud.partners.v1.Deal.status]
+  // is "CLOSED", "DRAFT", or "REJECTED" and
+  // [primary_product_interest]
+  // [google.cloud.partners.v1.Deal.primary_product_interest] is "Apps",
+  // "Drive", "Vault", "Android EDU", "Android for Work", "AndroidForEdu", or
+  // "AndroidAtWork".
+  bool is_part_of_gsuite_ea_promo = 59;
+
+  // The type of G Suite EA promo that the customer has in their organization.
+  //
+  // Editable only when [primary_product_interest]
+  // [google.cloud.partners.v1.Deal.primary_product_interest] is "Apps",
+  // "Drive", "Vault", "Android EDU", "Android for Work", "AndroidForEdu", or
+  // "AndroidAtWork" and [status] [google.cloud.partners.v1.Deal.status]
+  // is "CLOSED", "DRAFT", or "REJECTED".
+  //
+  // Value must be set to one of the following:<ul>
+  // <li>Simple
+  // <li>Medium
+  // <li>Complex
+  // </ul>
+  string type_of_contract = 46;
+
+  // When the customer's current G Suite EA promo expires.
+  //
+  // Required only when [is_part_of_gsuite_ea_promo]
+  // [google.cloud.partners.v1.Deal.is_part_of_gsuite_ea_promo] is true
+  // and [status] [google.cloud.partners.v1.Deal.status] is "DRAFT" or
+  // "REJECTED". Editable only when [primary_product_interest]
+  // [google.cloud.partners.v1.Deal.primary_product_interest] is "Apps",
+  // "Drive", "Vault", "Android EDU", "Android for Work", "AndroidForEdu", or
+  // "AndroidAtWork" and [status] [google.cloud.partners.v1.Deal.status]
+  // is "CLOSED", "DRAFT", or "REJECTED".
+  google.type.Date contract_expiration_date = 45;
+
+  // [is_part_of_gsuite_ea_promo][google.cloud.partners.v1.Deal.is_part_of_gsuite_ea_promo]
+  // is true. Editable only when
+  // [primary_product_interest]
+  // [google.cloud.partners.v1.Deal.primary_product_interest] is "Apps",
+  // "Drive", "Vault", "Android EDU", "Android for Work", "AndroidForEdu", or
+  // "AndroidAtWork" and [status] [google.cloud.partners.v1.Deal.status]
+  // is "CLOSED", "DRAFT", or "REJECTED".
+  bool is_gsuite_ea_promo_terms_acknowledged_by_customer = 60;
+
+  // Whether this deal has been conditionally approved for
+  // deployment vouchers in accordance with the G Suite EA Promo guidelines.
+  //
+  // Editable only when [status] [google.cloud.partners.v1.Deal.status]
+  // is "CLOSED" and
+  // [primary_product_interest]
+  // [google.cloud.partners.v1.Deal.primary_product_interest] is "Apps",
+  // "Drive", "Vault", "Android EDU", "Android for Work", "AndroidForEdu", or
+  // "AndroidAtWork".
+  bool is_approved_for_deployment_vouchers = 58;
+
+  // Industry of the customer company.
+  //
+  // A product is Maps-related if the product is one of the following:<ul>
+  // <li>Maps API
+  // <li>Maps Engine
+  // <li>Maps Engine Pro
+  // <li>Earth Enterprise
+  // <li>Earth Pro
+  // <li>Coordinate
+  // </ul>
+  //
+  // Required only when one of the following is true:<ul>
+  // <li>The deal is being submitted,
+  // [primary_product_interest]
+  // [google.cloud.partners.v1.Deal.primary_product_interest] is
+  // Maps-related, and [deal_source]
+  // [google.cloud.partners.v1.Deal.deal_source] is "Partner Sourced".
+  // <li>[status] [google.cloud.partners.v1.Deal.status] is "APPROVED",
+  // [primary_product_interest]
+  // [google.cloud.partners.v1.Deal.primary_product_interest] is
+  // Maps-related, and [deal_source]
+  // [google.cloud.partners.v1.Deal.deal_source] is "Partner Sourced".
+  // </ul>
+  //
+  // Editable only when [primary_product_interest]
+  // [google.cloud.partners.v1.Deal.primary_product_interest] is
+  // Maps-related and [status]
+  // [google.cloud.partners.v1.Deal.status] is "DRAFT", "REJECTED",
+  // "CLOSED", or "APPROVED".
+  //
+  // Value must be set to one of the following:<ul>
+  // <li>Asset Tracking
+  // <li>Automotive
+  // <li>Financial Services
+  // <li>Manufacturing
+  // <li>Media & Entertainment
+  // <li>Retail & Wholesale Trade
+  // <li>Telecommunications
+  // <li>Travel & Transport
+  // <li>Government
+  // <li>Utilities
+  // <li>Real Estate
+  // <li>Medical / Health Services
+  // <li>Hospitality / Tourism
+  // <li>Resources / Energy
+  // <li>Other
+  // </ul>
+  string maps_vertical = 57;
+
+  // The customer's reason(s) for purchasing a Maps product, restricted by the
+  // selected value for [maps_vertical]
+  // [google.cloud.partners.v1.Deal.maps_vertical].
+  //
+  // Same conditions for requiredness and editability as
+  // [maps_vertical] [google.cloud.partners.v1.Deal.maps_vertical].
+  //
+  // The allowed value(s), grouped by [maps_vertical]
+  // [google.cloud.partners.v1.Deal.maps_vertical], are:
+  // <ul><li>Asset Tracking:<ul>
+  // <li>End to End Journey Planner
+  // <li>Field Force Management
+  // <li>Fleet Management
+  // <li>Last Mile Delivery
+  // <li>Locator
+  // <li>Mobile Device Management
+  // <li>Taxis and Ride Sharing
+  // <li>Tracking and Safety
+  // <li>Other</ul>
+  // <li>Automotive:<ul>
+  // <li>Interactive Driving
+  // <li>Locator
+  // <li>Scenic Tour Map
+  // <li>Store Locator
+  // <li>Street View
+  // <li>Other</ul>
+  // <li>Financial Services:<ul>
+  // <li>Bank / ATM Locator
+  // <li>CRM
+  // <li>Jobs Platform / Recruiting
+  // <li>Real Estate
+  // <li>Security Validation
+  // <li>Other</ul>
+  // <li>Government:<ul>
+  // <li>Field Worker
+  // <li>GIS Planning
+  // <li>Locator
+  // <li>Natural Resource / Environmental Modeling
+  // <li>Network / Pipeline Mapping / Management
+  // <li>Public Safety / Emergency Management
+  // <li>Public Works
+  // <li>Tax / Appraisal District Assessments
+  // <li>Transportation
+  // <li>Other</ul>
+  // <li>Hospitality / Tourism:<ul>
+  // <li>Bookings
+  // <li>Hotel Finder
+  // <li>Indoor Mapping
+  // <li>Indoor Street View
+  // <li>Travel Planner
+  // <li>Other</ul>
+  // <li>Manufacturing:<ul>
+  // <li>Heatmaps / Footfall Analytics
+  // <li>Internal Street View
+  // <li>Internal Users
+  // <li>Last Mile Delivery
+  // <li>Locator (for example, Dealer Locator)
+  // <li>Product Finder
+  // <li>Vehicle Tracking
+  // <li>Other</ul>
+  // <li>Media & Entertainment:<ul>
+  // <li>Ad Campaigns
+  // <li>Locator
+  // <li>Thematic Maps
+  // <li>Other</ul>
+  // <li>Medical / Health Services:<ul>
+  // <li>Bookings
+  // <li>Doctor / Patient Finder
+  // <li>Other</ul>
+  // <li>Real Estate:<ul>
+  // <li>Property Finder
+  // <li>Workforce Management
+  // <li>Other</ul>
+  // <li>Resources / Energy:<ul>
+  // <li>Data Visualization
+  // <li>Heat Mapping
+  // <li>Locator
+  // <li>Stock Control / Management
+  // <li>Other</ul>
+  // <li>Retail & Wholesale Trade:<ul>
+  // <li>Click-and-collect
+  // <li>Customer Delivery
+  // <li>Customer Online Checkout
+  // <li>E-commerce
+  // <li>Internal Customer Database
+  // <li>Internal Delivery Driver Coordination
+  // <li>Internal Users
+  // <li>Online Travel / Retailer
+  // <li>Retail Distribution
+  // <li>Store Locator
+  // <li>Other</ul>
+  // <li>Telecommunications:<ul>
+  // <li>Coverage / Outage Maps
+  // <li>Customer Intelligence
+  // <li>Infrastructure Management
+  // <li>Locator
+  // <li>Other</ul>
+  // <li>Travel & Transport:<ul>
+  // <li>Assistance and Route Planner
+  // <li>Booking Platform
+  // <li>Custom & Indoor Street View
+  // <li>End to End Journey Planner
+  // <li>Inspirational Map Deployments
+  // <li>Last Mile Delivery
+  // <li>Locator
+  // <li>Social Gaming
+  // <li>Social, Sharing Journeys
+  // <li>Tracking and Safety
+  // <li>Travel Guide
+  // <li>Other</ul>
+  // <li>Utilities:<ul>
+  // <li>Business Intelligence / Data Visualization
+  // <li>Customer Service
+  // <li>Locator
+  // <li>Network / Pipeline Mapping / Management
+  // <li>Workforce Management
+  // <li>Other</ul>
+  // <li>Other:<ul>
+  // <li>Internet of Things
+  // <li>Social Networking / Internet Chat
+  // <li>Other</ul>
+  // </ul>
+  repeated string maps_use_case = 56;
+
+  // The Client ID for the customer's Maps product.
+  //
+  // Read only. Only relevant if [is_renewal]
+  // [google.cloud.partners.v1.Deal.is_renewal] is true.
+  string client_id = 78;
+
+  // Classification of the customer contact's authority in the decision-making
+  // process for the customer company. This field
+  // indicates the partner's clarity about the customer contact's authority.
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "CLOSED", "DRAFT", or
+  // "REJECTED".
+  //
+  // Value must be set to one of the following:<ul>
+  // <li>Have clearly identified process & people
+  // <li>Have vague understanding
+  // <li>Don't know
+  // <li>Confirmed NO authority decided
+  // </ul>
+  string bant_authority = 9;
+
+  // Additional notes for [bant_authority]
+  // [google.cloud.partners.v1.Deal.bant_authority].
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "CLOSED", "DRAFT",
+  // "REJECTED", or "APPROVED".
+  //
+  // Must be at least 10 characters long.
+  string bant_authority_notes = 10;
+
+  // Classification of the customer's budget for deal qualification. This field
+  // indicates the partner's clarity about the customer's budget situation for
+  // the deal.
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "CLOSED", "DRAFT", or
+  // "REJECTED".
+  //
+  // Value must be set to one of the following:<ul>
+  // <li>Exact budget given
+  // <li>Budget exists; not specified
+  // <li>Refuse to disclose
+  // <li>Confirmed NO budget
+  // </ul>
+  string bant_budget = 11;
+
+  // Additional notes for [bant_budget]
+  // [google.cloud.partners.v1.Deal.bant_budget].
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "CLOSED", "DRAFT",
+  // "REJECTED", or "APPROVED".
+  //
+  // Must be at least 10 characters long.
+  string bant_budget_notes = 12;
+
+  // Classification of how compelling is the customer's need to purchase a
+  // solution to solve a business problem.
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "CLOSED", "DRAFT", or
+  // "REJECTED".
+  //
+  // Value must be set to one of the following:<ul>
+  // <li>Compelling need
+  // <li>Clear need
+  // <li>No need
+  // </ul>
+  string bant_need = 13;
+
+  // Additional notes for [bant_need]
+  // [google.cloud.partners.v1.Deal.bant_need].
+  //
+  // Required only when
+  // submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "CLOSED", "DRAFT",
+  // "REJECTED", or "APPROVED".
+  //
+  // Must be at least 10 characters long.
+  string bant_need_notes = 14;
+
+  // Classification of the customer's decision timeline for the deal. This
+  // indicates how quickly the customer can decide about the deal proposal.
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "CLOSED", "DRAFT", or
+  // "REJECTED".
+  //
+  // Value must be set to one of the following:<ul>
+  // <li>Specific decision-dates given
+  // <li>Vague decision-dates given
+  // <li>Refused to give date
+  // <li>Confirmed NO decision date
+  // </ul>
+  string bant_timeline = 15;
+
+  // Additional notes for [bant_timeline]
+  // [google.cloud.partners.v1.Deal.bant_timeline].
+  //
+  // Required only when submitting the deal. Editable only when [status]
+  // [google.cloud.partners.v1.Deal.status] is "CLOSED", "DRAFT",
+  // "REJECTED", or "APPROVED".
+  //
+  // Must be at least 10 characters long.
+  string bant_timeline_notes = 16;
+
+  // Partner Incentive Program (PIP) campaign name with which the deal is
+  // associated.
+  //
+  // Editable only when [status] [google.cloud.partners.v1.Deal.status]
+  // is "REJECTED" or "DRAFT".
+  string pip_campaign_name = 21;
+
+  // Total number of devices expected to be sold to the customer.
+  //
+  // Editable only when [status] [google.cloud.partners.v1.Deal.status]
+  // is "DRAFT" or "CLOSED".
+  int32 total_number_devices = 43;
+
+  // Total number of devices actually sold to the customer.
+  //
+  // Editable only when [status] [google.cloud.partners.v1.Deal.status]
+  // is "CLOSED".
+  int32 total_number_won_devices = 44;
+
+  // Partner agrees that this submission is compliant
+  // with the governing Partner Incentive Program Amendment entered into by
+  // Partner and Google.
+  //
+  // Editable only when [status] [google.cloud.partners.v1.Deal.status]
+  // is "DRAFT" or "REJECTED".
+  bool agree_to_partner_marketing_compliance = 72;
+
+  // Unique name to identify the Deal in the Partner Sales Tool, for example,
+  // "PD-000000001".
+  //
+  // Read only.
+  string deal_name = 66;
+
+  // The current stage of the deal.
+  //
+  // Read only.
+  string stage_name = 99;
+
+  // Products associated with the deal.
+  //
+  // Read only.
+  repeated DealProduct deal_products = 6;
+
+  // Partner's account name.
+  //
+  // Read only.
+  string account_name = 7;
+
+  // Sales channel by which the deal was created.
+  //
+  // Read only.
+  string sales_channel = 85;
+
+  // Name of the primary Google Sales contact assigned to the deal.
+  //
+  // Read only.
+  string primary_google_sales_contact = 87;
+
+  // Name of the secondary Google Sales contact assigned to the deal.
+  //
+  // Read only.
+  string secondary_google_sales_contact = 89;
+
+  // The registered G Suite discount given to the partner.
+  //
+  // Read only.
+  string gsuite_discount = 88;
+
+  // Forecast category name.
+  //
+  // Required only when [status] [google.cloud.partners.v1.Deal.status]
+  // is "APPROVED".
+  //
+  // Value must be set to one of the following:<ul>
+  // <li>Omitted
+  // <li>Pipeline
+  // <li>Upside
+  // <li>Forecast
+  // <li>Closed
+  // </ul>
+  string forecast_category_name = 50;
+
+  // Next action needed to move the Deal forward. This field is populated by
+  // the partner.
+  //
+  // Required only when [status] [google.cloud.partners.v1.Deal.status]
+  // is "APPROVED".
+  // Editable only when [status] [google.cloud.partners.v1.Deal.status]
+  // is "APPROVED" or "CLOSED".
+  string next_step = 62;
+
+  // Key aspects of the customer that are critical to the deal's success.
+  //
+  // Editable only when [status] [google.cloud.partners.v1.Deal.status]
+  // is "APPROVED" or "CLOSED".
+  string critical_success_factors = 17;
+
+  // Key product in the primary competitor's offering to the customer.
+  //
+  // Editable only when [stage_name]
+  // [google.cloud.partners.v1.Deal.stage_name] is "Lost".
+  string competitor_product = 41;
+
+  // The reason why the deal was lost.
+  //
+  // Required only when [stage_name]
+  // [google.cloud.partners.v1.Deal.stage_name] is "Lost" and [status]
+  // [google.cloud.partners.v1.Deal.status] is "APPROVED". Editable only
+  // when [stage_name]
+  // [google.cloud.partners.v1.Deal.stage_name] is "Lost" and [status]
+  // [google.cloud.partners.v1.Deal.status] is "APPROVED" or "CLOSED".
+  //
+  // Value must be set to one of the following:<ul>
+  // <li>Billing Issues
+  // <li>Change Management: C-Level
+  // <li>Change Management: IT
+  // <li>Cost/Price
+  // <li>Data Center Location
+  // <li>Data Location, Security, Privacy Issues
+  // <li>Dead - No Opportunity
+  // <li>Dead - No Decision
+  // <li>Dead - Duplicate
+  // <li>Early Renewal
+  // <li>End of Life
+  // <li>Features
+  // <li>Interoperability
+  // <li>Lost to Competition
+  // <li>No Budget
+  // <li>Qualified in Error
+  // <li>Qualified Out
+  // <li>Product Ease of Use
+  // <li>Other
+  // </ul>
+  string lost_reason = 54;
+
+  // Additional information for why the deal was lost.
+  //
+  // Required only when [lost_reason]
+  // [google.cloud.partners.v1.Deal.lost_reason] is "Other" and [status]
+  // [google.cloud.partners.v1.Deal.status] is "APPROVED". Editable only
+  // when [lost_reason] [google.cloud.partners.v1.Deal.lost_reason] is
+  // "Other" and [status] [google.cloud.partners.v1.Deal.status] is
+  // "APPROVED" or "CLOSED".
+  string lost_reason_other_text = 55;
+
+  // Registration expiration date.
+  //
+  // Editable only when [status] [google.cloud.partners.v1.Deal.status]
+  // is "CLOSED",
+  // [customer_number_of_employees][google.cloud.partners.v1.Deal.customer_number_of_employees]
+  // is at least 750, and [primary_product_interest]
+  // [google.cloud.partners.v1.Deal.primary_product_interest] is "Apps",
+  // "Drive", or "Vault".
+  google.type.Date registration_expiration_date = 70;
+
+  // ID of the order placed for this deal.
+  //
+  // Read only.
+  string deal_order_id = 67;
+
+  // Whether the deal is a renewal.
+  bool is_renewal = 83;
+
+  // Whether the deal should be automatically renewed.
+  //
+  // Editable only when
+  // [is_renewal] [google.cloud.partners.v1.Deal.is_renewal] is true and
+  // [status] [google.cloud.partners.v1.Deal.status] is "APPROVED" or
+  // "CLOSED".
+  //
+  // Value must be set to one of the following:<ul>
+  // <li>Auto Renew
+  // <li>Needs Review
+  // <li>Do Not Renew - Termination
+  // <li>Do Not Renew - Moving Online
+  // <li>Renew + User Increase
+  // <li>Renew + User Decrease
+  // </ul>
+  string should_auto_renew = 8;
+
+  // Estimated number of documents for Search.
+  //
+  // Read only.
+  string estimated_documents = 48;
+}
+
+// A product to be purchased under a deal. All fields are read only.
+message DealProduct {
+  // Unique identifier for a deal product.
+  //
+  // Read only.
+  string id = 22;
+
+  // The [id] [google.cloud.partners.v1.Deal.id] of the
+  // deal to which this deal product is associated.
+  //
+  // Read only.
+  string deal_id = 8;
+
+  // Read only.
+  google.protobuf.Timestamp create_time = 2;
+
+  // Read only.
+  google.protobuf.Timestamp update_time = 12;
+
+  // Unique name to identify the Deal Product in the Partner Sales Tool, for
+  // example, "PDP-000000001".
+  //
+  // Read only.
+  string name = 7;
+
+  // The Stock Keeping Unit (sku) associated with the deal product.
+  //
+  // Read only.
+  string sku = 1;
+
+  // The name of the deal product, for example, "Google Maps API for Business".
+  //
+  // Read only.
+  string product_name = 10;
+
+  // The category of the deal product, for example, "Apps".
+  //
+  // Read only.
+  string product_category = 19;
+
+  // Description of the deal product, for example, "Google Apps for Work: 12
+  // month license/support term; 1 seat".
+  //
+  // Read only.
+  string product_description = 20;
+
+  // The product hierarchy for the deal product, for example, "Apps / Google
+  // Apps for Business".
+  //
+  // Read only.
+  string product_hierarchy = 21;
+
+  // The currency to be used to purchase the deal product.
+  //
+  // Value must be set to one of the following:<ul>
+  // <li>USD
+  // <li>MXN
+  // <li>JPY
+  // <li>INR
+  // <li>GBP
+  // <li>EUR
+  // <li>CHF
+  // <li>CAD
+  // <li>AUD
+  // </ul>
+  string currency_iso_code = 3;
+
+  // The list price for the deal product.
+  //
+  // Read only.
+  double list_price = 6;
+
+  // The partner's selling price, which can be different
+  // from the
+  // [list_price][google.cloud.partners.v1.DealProduct.list_price].
+  //
+  // Read only.
+  double unit_price = 14;
+
+  // The quantity of the deal product to be purchased.
+  //
+  // Read only.
+  double quantity = 11;
+
+  // The total price for purchasing this deal product, which is equal to
+  // [quantity][google.cloud.partners.v1.DealProduct.quantity] *
+  // [unit_price][google.cloud.partners.v1.DealProduct.unit_price].
+  //
+  // Read only.
+  double total_price = 13;
+}
+
+// Deal status.
+enum DealStatus {
+  // Unspecified.
+  DEAL_STATUS_UNSPECIFIED = 0;
+
+  // Draft.
+  DRAFT = 1;
+
+  // Submitted.
+  SUBMITTED = 2;
+
+  // Rejected.
+  REJECTED = 3;
+
+  // Approved.
+  APPROVED = 4;
+
+  // Closed.
+  CLOSED = 5;
+}

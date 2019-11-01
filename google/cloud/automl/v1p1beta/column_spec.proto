@@ -1,0 +1,124 @@
+// Copyright 2019 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package google.cloud.automl.v1p1beta;
+
+import "google/cloud/automl/v1p1beta/data_stats.proto";
+import "google/cloud/automl/v1p1beta/data_types.proto";
+import "google/api/annotations.proto";
+
+option go_package = "google.golang.org/genproto/googleapis/cloud/automl/v1p1beta;automl";
+option java_multiple_files = true;
+option java_package = "com.google.cloud.automl.v1p1beta";
+option php_namespace = "Google\\Cloud\\AutoMl\\V1p1beta";
+option ruby_package = "Google::Cloud::AutoML::V1p1beta";
+
+// A representation of a column in a relational table. When listing them, column specs are returned in the same order in which they were
+// given on import .
+// Used by:
+//   *   Tables
+message ColumnSpec {
+  // Additional metadata for the column spec used for AutoML Tables FORECASTING
+  //
+  // [prediction_type][google.cloud.automl.v1p1beta.TablesModelMetadata.prediction_type].
+  message ForecastingMetadata {
+    // Describes how the column should be understood by the FORECASTING
+    // model training.
+    enum ColumnType {
+      // An un-set value of this enum.
+      COLUMN_TYPE_UNSPECIFIED = 0;
+
+      // Key columns are used to identify timeseries. The union of key columns
+      // in a row specifies to which timeseries the row belongs. If a table
+      // has no such column, it is assumed all its rows pertain to a single time
+      // series for a single entity. Any such column must be not
+      // [nullable][google.cloud.automl.v1p1beta.DataType.nullable].
+      // E.g. A table could have the key consisting of 3 columns which would be
+      // city's name, state and country.
+      KEY = 1;
+
+      // This column contains information describing static properties of the
+      // entities identified by the key column(s) (e.g. city's ZIP code).
+      // Note: it is enough if these properties are static over the period
+      // intended for forecasting (e.g. ZIP codes may sometimes change, but
+      // rarely enough to likely not matter for forecasting done within a scope
+      // of a few years).
+      KEY_METADATA = 2;
+
+      // This column contains information for the given entity and
+      // [time][google.cloud.automl.v1p1beta.TableSpec.time_column_spec_id],
+      // which information is, generally, known for the past but not the future
+      // (e.g. population of the city in a given year, or weather on a
+      // given day).
+      TIME_SERIES_AVAILABLE_PAST_ONLY = 3;
+
+      // This column contains information for the given entity and
+      // [time][google.cloud.automl.v1p1beta.TableSpec.time_column_spec_id],
+      // which information is, generally, known both for the past and the
+      // sufficiently far future (see
+      //
+      // [horizon][[google.cloud.automl.v1p1beta.TablesModelMetadata.ForecastingConfig.horizon]]).
+      // E.g. are Olympics held in the city in a given year.
+      TIME_SERIES_AVAILABLE_PAST_AND_FUTURE = 4;
+    }
+
+    // Required. The type of the column for FORECASTING model training
+    // purposes.
+    ColumnType column_type = 1;
+  }
+
+  // Identifies the table's column, and its correlation with the column this
+  // ColumnSpec describes.
+  message CorrelatedColumn {
+    // The column_spec_id of the correlated column, which belongs to the same
+    // table as the in-context column.
+    string column_spec_id = 1;
+
+    // Correlation between this and the in-context column.
+    CorrelationStats correlation_stats = 2;
+  }
+
+  // Output only. The resource name of the column specs.
+  // Form:
+  //
+  // `projects/{project_id}/locations/{location_id}/datasets/{dataset_id}/tableSpecs/{table_spec_id}/columnSpecs/{column_spec_id}`
+  string name = 1;
+
+  // The data type of elements stored in the column.
+  DataType data_type = 2;
+
+  // Output only. The name of the column to show in the interface. The name can
+  // be up to 100 characters long and can consist only of ASCII Latin letters
+  // A-Z and a-z, ASCII digits 0-9, underscores(_), and forward slashes(/), and
+  // must start with a letter or a digit.
+  string display_name = 3;
+
+  // Additional column metadata specific to AutoML Tables FORECASTING
+  //
+  // [prediction_type][google.cloud.automl.v1p1beta.TablesModelMetadata.prediction_type].
+  ForecastingMetadata forecasting_metadata = 7;
+
+  // Output only. Stats of the series of values in the column.
+  // This field may be stale, see the ancestor's
+  // Dataset.tables_dataset_metadata.stats_update_time field
+  // for the timestamp at which these stats were last updated.
+  DataStats data_stats = 4;
+
+  // Used to perform consistent read-modify-write updates. If not set, a blind
+  // "overwrite" update happens.
+  string etag = 6;
+}
